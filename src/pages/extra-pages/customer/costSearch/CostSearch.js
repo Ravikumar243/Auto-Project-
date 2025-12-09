@@ -433,7 +433,7 @@ const CostSearch = () => {
                     />
                   </div>
                   <div className="col-md-3 mb-3">
-                    <Typography varient="h6">V to I KMs TESTTTT</Typography>
+                    <Typography varient="h6">V to I KMs </Typography>
                     <TextField
                       fullWidth
                       type="text"
