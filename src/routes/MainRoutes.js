@@ -29,6 +29,11 @@ import SpinneyData from 'pages/extra-pages/Vcrf/SpinneyData';
 import { element } from 'prop-types';
 import { OldMisUpload } from 'pages/extra-pages/misDeshboard/OldMisUpload';
 import ViewPage from 'pages/extra-pages/Viewpage/ViewPage';
+import VendorDashboard from 'pages/extra-pages/deshboard/vendorDashboard/VendorDashboard';
+import ClientDashboard from 'pages/extra-pages/deshboard/clientDashboard/ClientDashboard';
+import AgentDashboard from 'pages/extra-pages/deshboard/agentDashboard/AgentDashboard';
+import CaseAgeingDashboard from 'pages/extra-pages/deshboard/caseAgeingDashboard/CaseAgeingDashboard';
+import VendorFailureDashboard from 'pages/extra-pages/deshboard/vendorFailure/VendorFailureDashboard';
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -42,6 +47,26 @@ const MainRoutes = {
     {
       path: 'dashboarddetails',
       element: <DashboardDetails />
+    },
+    {
+      path: "vendor-dashboard",
+      element : <VendorDashboard/>
+    },
+    {
+      path: "client-dashboard",
+      element : <ClientDashboard/>
+    },
+    {
+      path: "agent-dashboard",
+      element : <AgentDashboard/>
+    },
+    {
+      path: "case-ageing-dashboard",
+      element : <CaseAgeingDashboard/>
+    },
+    {
+      path: "venodr-failure-dashboard",
+      element : <VendorFailureDashboard/>
     },
     {
       path: 'createTickets',

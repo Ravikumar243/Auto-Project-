@@ -45,7 +45,7 @@ const CompleteDeatils = () => {
     handleSelect,
     remarkLoading,
     remarkLogsData,
-    handleDownloadHistory
+    handleDownloadHistory,
   } = useContext(CustomerContext);
 
   const status = ["Accepeted", "Rejected", "Re-Assign"];
@@ -1059,58 +1059,31 @@ const CompleteDeatils = () => {
                       }
                     />
                   </div>
-                  {fetcdataListItems?.externalAssistanceSummary !== "" ? (
-                    <div className="col-md-3 mb-4">
-                      <Typography
-                        id="simple-select-label"
-                        variant="h6"
-                        gutterBottom
-                      >
-                        External Assistance Summary{" "}
-                      </Typography>
-                      <TextareaAutosize
-                        placeholder=""
-                        minRows={3}
-                        type="text"
-                        value={fetcdataListItems?.externalAssistanceSummary}
-                        variant="outlined"
-                        onChange={handleAssist}
-                        style={{
-                          width: "100%",
-                          borderRadius: "5px",
-                          padding: "0px 5px",
-                          resize: "none",
-                          backgroundColor: "#f5f5f5",
-                          fontSize: "16px",
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="col-md-3 mb-4">
-                      <Typography
-                        id="simple-select-label"
-                        variant="h6"
-                        gutterBottom
-                      >
-                        External Assistance Summary
-                      </Typography>
-                      <TextareaAutosize
-                        placeholder="External assistance Summary"
-                        minRows={3}
-                        type="text"
-                        name="externalAssistanceSummary"
-                        value={formAssistance.externalAssistanceSummary}
-                        variant="outlined"
-                        onChange={handleAssist}
-                        style={{
-                          width: "100%",
-                          borderRadius: "5px",
-                          padding: "0px 5px",
-                          resize: "none",
-                        }}
-                      />
-                    </div>
-                  )}
+                  <div className="col-md-3 mb-4">
+                    <Typography
+                      id="simple-select-label"
+                      variant="h6"
+                      gutterBottom
+                    >
+                      External Assistance Summary
+                    </Typography>
+
+                    <TextareaAutosize
+                      placeholder="External Assistance Summary"
+                      minRows={3}
+                      type="text"
+                      name="externalAssistanceSummary"
+                      value={formAssistance.externalAssistanceSummary || ""}
+                      onChange={handleAssist}
+                      style={{
+                        width: "100%",
+                        borderRadius: "5px",
+                        padding: "0px 5px",
+                        resize: "none",
+                        fontSize: "16px",
+                      }}
+                    />
+                  </div>
 
                   <div className="container mt-4">
                     {/* Table 1 */}
@@ -1245,7 +1218,7 @@ const CompleteDeatils = () => {
 
                   <div className="col-md-3 d-flex align-items-end mb-4  ms-auto">
                     <button
-                     type="button"
+                      type="button"
                       className="btn text-white w-100"
                       style={{
                         backgroundColor: "#7E00D1",

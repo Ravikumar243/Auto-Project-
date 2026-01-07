@@ -38,7 +38,12 @@ const CostSearch = () => {
     calculatedTotalAmountWithGst,
   } = useContext(CustomerContext);
 
-  console.log(  formUploadAssist.totalKilometers,"  formUploadAssist.totalKilometers")
+  console.log(
+  formUploadAssist.customerPaidAmount ,"formUploadAssist.customerPaidAmount "
+  );
+  const hasApiProduct = Boolean(fetcdataListItems?.product);
+  const hasApiPaymentType = Boolean(fetcdataListItems?.paymentType);
+
 
   const vehicleType = [
     "Vehicle Dispatch Type",
@@ -339,7 +344,7 @@ const CostSearch = () => {
                     <Typography varient="h6"> Toll Charges</Typography>
                     <TextField
                       fullWidth
-                      type="number"
+                      type="text"
                       name="totalCharges"
                       value={formUploadAssist.totalCharges}
                       onChange={handleCostVendor}
@@ -406,15 +411,14 @@ const CostSearch = () => {
                       name="totalKilometers"
                       value={
                         formUploadAssist.totalKilometers
-                          ? parseFloat(formUploadAssist.totalKilometers).toFixed(2) +' km'
+                          ? parseFloat(
+                              formUploadAssist.totalKilometers
+                            ).toFixed(2) + " km"
                           : ""
                       }
                       onChange={handleCostVendor}
                       placeholder="Total Kilometer"
                       variant="outlined"
-                      InputProps={{
-                        readOnly: true,
-                      }}
                     />
                   </div>
                   <div className="col-md-3 mb-3">
@@ -474,7 +478,6 @@ const CostSearch = () => {
                       fullWidth
                       type="text"
                       name="totalKilometersCharges"
-                     
                       value={Number(
                         formUploadAssist?.totalKilometersCharges
                           ? formUploadAssist.totalKilometersCharges
@@ -530,6 +533,9 @@ const CostSearch = () => {
                         // }}
                         variant="outlined"
                         required
+                        InputProps={{
+                          readOnly: true,
+                        }}
                       />
                     </div>
                   )}
@@ -542,29 +548,26 @@ const CostSearch = () => {
                       fullWidth
                       type="text"
                       name="finalAmountWithGST"
-                      // value={
-                      //   fetcdataListItems?.finalAmountWithGST &&
-                      //   fetcdataListItems.finalAmountWithGST !== ""
-                      //     ? fetcdataListItems.finalAmountWithGST
-                      //     : calculatedTotalAmountWithGst
-                      //       ? Number(
-                      //           calculatedTotalAmountWithGst
-                      //         ).toFixed(2)
-                      //       : ""
-                      // }
+                     
                       value={formUploadAssist?.finalAmountWithGST}
                       onChange={handleCostVendor}
                       variant="outlined"
                       required
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
                   </div>
                   <div className="col-md-3 mb-3">
                     <Typography varient="h6">Customer paid Amount </Typography>
                     <TextField
                       fullWidth
-                      type="number"
+                      type="text"
                       name="customerPaidAmount"
-                      value={formUploadAssist.customerPaidAmount}
+                      value={
+                        formUploadAssist.customerPaidAmount 
+                      }
+                      
                       onChange={handleCostVendor}
                       placeholder="Customer paid Amount "
                       variant="outlined"
@@ -577,9 +580,13 @@ const CostSearch = () => {
                       fullWidth
                       type="date"
                       name="customerPaidDate"
-                      value={formUploadAssist.customerPaidDate}
+                      value={
+                        formUploadAssist.customerPaidDate ||
+                        fetcdataListItems.customerPaidDate
+                      }
                       onChange={handleCostVendor}
                       placeholder="Customer paid Date "
+                      disabled={fetcdataListItems.customerPaidDate}
                       inputProps={{
                         min: new Date().toISOString().split("T")[0],
                       }}
@@ -596,6 +603,7 @@ const CostSearch = () => {
                         formUploadAssist.paymentUpdatedTime ||
                         fetcdataListItems?.paymentUpdatedTime
                       }
+                      disabled={fetcdataListItems?.paymentUpdatedTime}
                       onChange={handleCostVendor}
                       placeholder="Customer paid Date "
                       variant="outlined"
@@ -607,18 +615,21 @@ const CostSearch = () => {
                       fullWidth
                       type="text"
                       name="referenceNo"
-                      value={formUploadAssist.referenceNo}
+                      value={
+                        formUploadAssist.referenceNo ||
+                        fetcdataListItems.referenceNo
+                      }
                       onChange={handleCostVendor}
                       placeholder="Reference No "
                       variant="outlined"
                     />
                   </div>
-                  <div className="col-md-3 mb-3">
+                  {/* <div className="col-md-3 mb-3">
                     <Typography varient="h6">Vehicle Type</Typography>
                     <Select
                       fullWidth
                       name="product"
-                      value={formUploadAssist.product}
+                      value={formUploadAssist.product || fetcdataListItems.product}
                       onChange={handleCostVendor}
                       variant="outlined"
                       displayEmpty
@@ -639,33 +650,79 @@ const CostSearch = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                  </div>
+                  </div> */}
                   <div className="col-md-3 mb-3">
-                    <Typography varient="h6">Payment Type </Typography>
-                    <Select
-                      fullWidth
-                      name="paymentType"
-                      value={formUploadAssist.paymentType}
-                      onChange={handleCostVendor}
-                      variant="outlined"
-                      displayEmpty
-                      renderValue={(select) => {
-                        if (!select) {
-                          return "Select";
-                        }
-                        return select;
-                      }}
-                      required
-                    >
-                      <MenuItem value="" disabled>
-                        Select
-                      </MenuItem>
-                      {PaymentType.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
+                    <Typography variant="h6">Vehicle Type</Typography>
+
+                    {hasApiProduct ? (
+                      // ✅ READ-ONLY INPUT (API VALUE)
+                      <TextField
+                        fullWidth
+                        value={fetcdataListItems.product}
+                        variant="outlined"
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                      />
+                    ) : (
+                      // ✅ SELECT DROPDOWN (USER INPUT)
+                      <Select
+                        fullWidth
+                        name="product"
+                        value={formUploadAssist.product || ""}
+                        onChange={handleCostVendor}
+                        variant="outlined"
+                        displayEmpty
+                        renderValue={(selected) => selected || "Select"}
+                        required
+                      >
+                        <MenuItem value="" disabled>
+                          Select
                         </MenuItem>
-                      ))}
-                    </Select>
+
+                        {vehicleType.map((item, index) => (
+                          <MenuItem key={index} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  </div>
+
+                  <div className="col-md-3 mb-3">
+                    <Typography variant="h6">Payment Type</Typography>
+
+                    {hasApiPaymentType ? (
+                      // ✅ API value → show read-only input
+                      <TextField
+                        fullWidth
+                        value={fetcdataListItems.paymentType}
+                        variant="outlined"
+                        InputProps={{ readOnly: true }}
+                      />
+                    ) : (
+                      // ✅ No API value → editable Select
+                      <Select
+                        fullWidth
+                        name="paymentType"
+                        value={formUploadAssist.paymentType || ""}
+                        onChange={handleCostVendor}
+                        variant="outlined"
+                        displayEmpty
+                        renderValue={(selected) => selected || "Select"}
+                        required
+                      >
+                        <MenuItem value="" disabled>
+                          Select
+                        </MenuItem>
+
+                        {PaymentType.map((item, index) => (
+                          <MenuItem key={index} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
                   </div>
 
                   <div className=" d-flex justify-content-center gap-5">

@@ -876,7 +876,6 @@ const VendorDeatils = () => {
                     </Typography>
                     <TextField
                       fullWidth
-                      placeholder="RSA Time Line Status"
                       type="datetime-local"
                       name="followup_DateTime"
                       value={formSrnStatus.followup_DateTime}
@@ -935,112 +934,9 @@ const VendorDeatils = () => {
                     </div>
                   )}
 
-                  {selectedRsaStatus === "Reached at Incident location" && (
-                    // <div className="col-md-3 mb-4">
-                    //   <Typography variant="h6" gutterBottom>
-                    //     Vendor Reach Time<span className="text-danger">*</span>
-                    //   </Typography>
-                    //   <TextField
-                    //     fullWidth
-                    //     type="datetime-local"
-                    //     name="vendorReachTime"
-                    //     value={
-                    //       fetcdataListItems?.vendorReachTime !== ""
-                    //         ? fetcdataListItems?.vendorReachTime
-                    //         : formSrnStatus.vendorReachTime || ""
-                    //     }
-                    //     onChange={(e) => {
-                    //       const value = e.target.value;
-
-                    //       // ✅ Static or API-based info date for validation
-                    //       const infoDateTimeString =
-                    //         fetcdataListItems?.informationDateTime;
-
-                    //       if (!infoDateTimeString) {
-                    //         toast.warning(
-                    //           "Please select Information Date & Time first."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // Convert both to local Date objects
-                    //       const [infoDatePart, infoTimePart] =
-                    //         infoDateTimeString.split("T");
-                    //       const [infoYear, infoMonth, infoDay] = infoDatePart
-                    //         .split("-")
-                    //         .map(Number);
-                    //       const [infoHour, infoMinute] = infoTimePart
-                    //         .split(":")
-                    //         .map(Number);
-                    //       const infoDateTime = new Date(
-                    //         infoYear,
-                    //         infoMonth - 1,
-                    //         infoDay,
-                    //         infoHour,
-                    //         infoMinute
-                    //       );
-
-                    //       const vendorReachTime = new Date(value);
-                    //       const now = new Date();
-
-                    //       // Extract date portions only
-                    //       const infoDate = new Date(
-                    //         infoDateTime.getFullYear(),
-                    //         infoDateTime.getMonth(),
-                    //         infoDateTime.getDate()
-                    //       );
-                    //       const reachDate = new Date(
-                    //         vendorReachTime.getFullYear(),
-                    //         vendorReachTime.getMonth(),
-                    //         vendorReachTime.getDate()
-                    //       );
-                    //       const today = new Date(
-                    //         now.getFullYear(),
-                    //         now.getMonth(),
-                    //         now.getDate()
-                    //       );
-
-                    //       // ❌ 1️⃣ Future date not allowed
-                    //       if (reachDate > today) {
-                    //         toast.error(
-                    //           "Future dates are not allowed for Vendor Reach Time."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // ❌ 2️⃣ Vendor reach time can't be before information time
-                    //       if (reachDate < infoDate) {
-                    //         toast.error(
-                    //           "Vendor Reach Time can't be before Information Date."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // ❌ 3️⃣ If same date → time must be greater
-                    //       if (reachDate.getTime() === infoDate.getTime()) {
-                    //         const infoMinutes =
-                    //           infoDateTime.getHours() * 60 +
-                    //           infoDateTime.getMinutes();
-                    //         const reachMinutes =
-                    //           vendorReachTime.getHours() * 60 +
-                    //           vendorReachTime.getMinutes();
-
-                    //         if (reachMinutes <= infoMinutes) {
-                    //           toast.error(
-                    //             "Vendor Reach Time must be greater than Information Date & Time."
-                    //           );
-                    //           return;
-                    //         }
-                    //       }
-                    //       setFormSrnStatus((prev) => ({
-                    //         ...prev,
-                    //         vendorReachTime: e.target.value,
-                    //       }));
-                    //     }}
-                    //     disabled={fetcdataListItems?.vendorReachTime !== ""}
-                    //     required
-                    //   />
-                    // </div>
+                  {(selectedRsaStatus === "Reached at Incident location" ||
+                    fetcdataListItems?.rsaStatus === "Case Completed" ||
+                    fetcdataListItems?.srN_Status === "Vendor Close Issue") && (
                     <div className="col-md-3 mb-4">
                       <Typography variant="h6" gutterBottom>
                         Vendor Reach Time<span className="text-danger">*</span>
@@ -1058,98 +954,46 @@ const VendorDeatils = () => {
                         onChange={(e) => {
                           const value = e.target.value;
 
-                          // ✅ Get Information Date & Time
-                          const infoDateTimeString =
-                            fetcdataListItems?.informationDateTime;
+                          const followUpString =
+                            formSrnStatus?.followup_DateTime;
 
-                          if (!infoDateTimeString) {
+                          if (!followUpString) {
                             toast.warning(
-                              "Please select Information Date & Time first."
+                              "Please select Follow-up Date & Time first."
                             );
                             return;
                           }
 
-                          // Convert both to local Date objects
-                          const [infoDatePart, infoTimePart] =
-                            infoDateTimeString.split("T");
-                          const [infoYear, infoMonth, infoDay] = infoDatePart
-                            .split("-")
-                            .map(Number);
-                          const [infoHour, infoMinute] = infoTimePart
-                            .split(":")
-                            .map(Number);
+                          // Convert follow-up time to local Date
+                          const [fDate, fTime] = followUpString.split("T");
+                          const [fY, fM, fD] = fDate.split("-").map(Number);
+                          const [fH, fMin] = fTime.split(":").map(Number);
 
-                          const infoDateTime = new Date(
-                            infoYear,
-                            infoMonth - 1,
-                            infoDay,
-                            infoHour,
-                            infoMinute
+                          const followUpDateTime = new Date(
+                            fY,
+                            fM - 1,
+                            fD,
+                            fH,
+                            fMin
                           );
-
-                          const vendorReachTime = new Date(value);
+                          const reachTime = new Date(value);
                           const now = new Date();
 
-                          // Extract only the date portions
-                          const infoDate = new Date(
-                            infoDateTime.getFullYear(),
-                            infoDateTime.getMonth(),
-                            infoDateTime.getDate()
-                          );
-
-                          const reachDate = new Date(
-                            vendorReachTime.getFullYear(),
-                            vendorReachTime.getMonth(),
-                            vendorReachTime.getDate()
-                          );
-
-                          const today = new Date(
-                            now.getFullYear(),
-                            now.getMonth(),
-                            now.getDate()
-                          );
-
-                          // ❌ 1️⃣ Future date not allowed
-                          if (reachDate > today) {
-                            toast.error(
-                              "Future dates are not allowed for Vendor Reach Time."
-                            );
-                            return;
-                          }
-
-                          // ❌ 2️⃣ Vendor reach time can't be before information time
-                          if (reachDate < infoDate) {
-                            toast.error(
-                              "Vendor Reach Time can't be before Information Date."
-                            );
-                            return;
-                          }
-
-                          // ❌ 3️⃣ If same date → time must be greater
-                          if (reachDate.getTime() === infoDate.getTime()) {
-                            const infoMinutes =
-                              infoDateTime.getHours() * 60 +
-                              infoDateTime.getMinutes();
-                            const reachMinutes =
-                              vendorReachTime.getHours() * 60 +
-                              vendorReachTime.getMinutes();
-
-                            if (reachMinutes <= infoMinutes) {
-                              toast.error(
-                                "Vendor Reach Time must be greater than Information Date & Time."
-                              );
-                              return;
-                            }
-                          }
-
-                          // ⭐ NEW FIX ⭐
-                          // Compare up to MINUTES (ignore seconds)
+                          // Trim seconds for accurate comparison
                           const reachTrimmed = new Date(
-                            vendorReachTime.getFullYear(),
-                            vendorReachTime.getMonth(),
-                            vendorReachTime.getDate(),
-                            vendorReachTime.getHours(),
-                            vendorReachTime.getMinutes()
+                            reachTime.getFullYear(),
+                            reachTime.getMonth(),
+                            reachTime.getDate(),
+                            reachTime.getHours(),
+                            reachTime.getMinutes()
+                          );
+
+                          const followTrimmed = new Date(
+                            followUpDateTime.getFullYear(),
+                            followUpDateTime.getMonth(),
+                            followUpDateTime.getDate(),
+                            followUpDateTime.getHours(),
+                            followUpDateTime.getMinutes()
                           );
 
                           const nowTrimmed = new Date(
@@ -1160,18 +1004,28 @@ const VendorDeatils = () => {
                             now.getMinutes()
                           );
 
-                          // ❌ Vendor Reach Time cannot be equal or greater than current minute
-                          if (reachTrimmed.getTime() >= nowTrimmed.getTime()) {
+                          // ❌ Rule 1: Reach time must be > follow-up time
+                          if (
+                            reachTrimmed.getTime() < followTrimmed.getTime()
+                          ) {
                             toast.error(
-                              "Vendor Reach Time cannot be equal to or greater than the current time."
+                              "Vendor Reach Time must be greater than or equal to Follow-up Date & Time."
                             );
                             return;
                           }
-                          // ⭐ END FIX ⭐
 
+                          // ❌ Rule 2: Cannot be future — current time is allowed
+                          if (reachTrimmed.getTime() > nowTrimmed.getTime()) {
+                            toast.error(
+                              "Vendor Reach Time cannot be in the future."
+                            );
+                            return;
+                          }
+
+                          // If all good → update state
                           setFormSrnStatus((prev) => ({
                             ...prev,
-                            vendorReachTime: e.target.value,
+                            vendorReachTime: value,
                           }));
                         }}
                         disabled={fetcdataListItems?.vendorReachTime !== ""}
@@ -1180,248 +1034,109 @@ const VendorDeatils = () => {
                     </div>
                   )}
 
-                  {selectedRsaStatus === "Drop Completed" && (
-                    // <div className="col-md-3 mb-4">
-                    //   <Typography variant="h6" gutterBottom>
-                    //     Vendor Drop Time<span className="text-danger">*</span>
-                    //   </Typography>
-                    //   <TextField
-                    //     fullWidth
-                    //     type="datetime-local"
-                    //     name="vendorDropTime"
-                    //     value={
-                    //       fetcdataListItems?.vendorDropTime !== ""
-                    //         ? fetcdataListItems?.vendorDropTime
-                    //         : formSrnStatus.vendorDropTime || ""
-                    //     }
-                    //     onChange={(e) => {
-                    //       const value = e.target.value;
+                  {fetcdataListItems?.serviceDrop_IncidentType !== "RSR" &&
+                    (selectedRsaStatus === "Drop Completed" ||
+                      fetcdataListItems?.rsaStatus === "Case Completed" ||
+                      fetcdataListItems?.srN_Status ===
+                        "Vendor Close Issue") && (
+                      <div className="col-md-3 mb-4">
+                        <Typography variant="h6" gutterBottom>
+                          Vendor Drop Time<span className="text-danger">*</span>
+                        </Typography>
 
-                    //       // ✅ Get reach time from API or form
-                    //       const reachTimeString =
-                    //         fetcdataListItems?.vendorReachTime ||
-                    //         "2025-11-03T17:10"; // static fallback for testing
-
-                    //       if (!reachTimeString) {
-                    //         toast.warning(
-                    //           "Please select Vendor Reach Time first."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // Convert both to local Date objects
-                    //       const [reachDatePart, reachTimePart] =
-                    //         reachTimeString.split("T");
-                    //       const [reachYear, reachMonth, reachDay] =
-                    //         reachDatePart.split("-").map(Number);
-                    //       const [reachHour, reachMinute] = reachTimePart
-                    //         .split(":")
-                    //         .map(Number);
-                    //       const vendorReachTime = new Date(
-                    //         reachYear,
-                    //         reachMonth - 1,
-                    //         reachDay,
-                    //         reachHour,
-                    //         reachMinute
-                    //       );
-
-                    //       const vendorDropTime = new Date(value);
-                    //       const now = new Date();
-
-                    //       // Extract only the date portions
-                    //       const reachDate = new Date(
-                    //         vendorReachTime.getFullYear(),
-                    //         vendorReachTime.getMonth(),
-                    //         vendorReachTime.getDate()
-                    //       );
-                    //       const dropDate = new Date(
-                    //         vendorDropTime.getFullYear(),
-                    //         vendorDropTime.getMonth(),
-                    //         vendorDropTime.getDate()
-                    //       );
-                    //       const today = new Date(
-                    //         now.getFullYear(),
-                    //         now.getMonth(),
-                    //         now.getDate()
-                    //       );
-
-                    //       // ❌ 1️⃣ Future date not allowed
-                    //       if (dropDate > today) {
-                    //         toast.error(
-                    //           "Future dates are not allowed for Vendor Drop Time."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // ❌ 2️⃣ Drop time can't be before reach time
-                    //       if (dropDate < reachDate) {
-                    //         toast.error(
-                    //           "Vendor Drop Time can't be before Vendor Reach Time."
-                    //         );
-                    //         return;
-                    //       }
-
-                    //       // ❌ 3️⃣ If same date, time must be greater
-                    //       if (dropDate.getTime() === reachDate.getTime()) {
-                    //         const reachMinutes =
-                    //           vendorReachTime.getHours() * 60 +
-                    //           vendorReachTime.getMinutes();
-                    //         const dropMinutes =
-                    //           vendorDropTime.getHours() * 60 +
-                    //           vendorDropTime.getMinutes();
-
-                    //         if (dropMinutes <= reachMinutes) {
-                    //           toast.error(
-                    //             "Vendor Drop Time must be greater than Vendor Reach Time."
-                    //           );
-                    //           return;
-                    //         }
-                    //       }
-                    //       setFormSrnStatus((prev) => ({
-                    //         ...prev,
-                    //         vendorDropTime: e.target.value,
-                    //       }));
-                    //     }}
-                    //     disabled={fetcdataListItems?.vendorDropTime !== ""}
-                    //     required
-                    //   />
-                    // </div>
-                    <div className="col-md-3 mb-4">
-                      <Typography variant="h6" gutterBottom>
-                        Vendor Drop Time<span className="text-danger">*</span>
-                      </Typography>
-
-                      <TextField
-                        fullWidth
-                        type="datetime-local"
-                        name="vendorDropTime"
-                        value={
-                          fetcdataListItems?.vendorDropTime !== ""
-                            ? fetcdataListItems?.vendorDropTime
-                            : formSrnStatus.vendorDropTime || ""
-                        }
-                        onChange={(e) => {
-                          const value = e.target.value;
-
-                          // Get reach time from API or form
-                          const reachTimeString =
-                            fetcdataListItems?.vendorReachTime ||
-                            "2025-11-03T17:10"; 
-
-                          if (!reachTimeString) {
-                            toast.warning(
-                              "Please select Vendor Reach Time first."
-                            );
-                            return;
+                        <TextField
+                          fullWidth
+                          type="datetime-local"
+                          name="vendorDropTime"
+                          value={
+                            fetcdataListItems?.vendorDropTime !== ""
+                              ? fetcdataListItems?.vendorDropTime
+                              : formSrnStatus.vendorDropTime || ""
                           }
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          // Convert both to Date objects
-                          const [reachDatePart, reachTimePart] =
-                            reachTimeString.split("T");
-                          const [reachYear, reachMonth, reachDay] =
-                            reachDatePart.split("-").map(Number);
-                          const [reachHour, reachMinute] = reachTimePart
-                            .split(":")
-                            .map(Number);
+                            const followUpString =
+                              formSrnStatus?.followup_DateTime;
 
-                          const vendorReachTime = new Date(
-                            reachYear,
-                            reachMonth - 1,
-                            reachDay,
-                            reachHour,
-                            reachMinute
-                          );
-
-                          const vendorDropTime = new Date(value);
-                          const now = new Date();
-
-                          // Extract date portions
-                          const reachDate = new Date(
-                            vendorReachTime.getFullYear(),
-                            vendorReachTime.getMonth(),
-                            vendorReachTime.getDate()
-                          );
-
-                          const dropDate = new Date(
-                            vendorDropTime.getFullYear(),
-                            vendorDropTime.getMonth(),
-                            vendorDropTime.getDate()
-                          );
-
-                          const today = new Date(
-                            now.getFullYear(),
-                            now.getMonth(),
-                            now.getDate()
-                          );
-
-                          // Future date NOT allowed
-                          if (dropDate > today) {
-                            toast.error(
-                              "Future dates are not allowed for Vendor Drop Time."
-                            );
-                            return;
-                          }
-
-                          // Drop date cannot be before reach date
-                          if (dropDate < reachDate) {
-                            toast.error(
-                              "Vendor Drop Time can't be before Vendor Reach Time."
-                            );
-                            return;
-                          }
-
-                          //  If same date → time must be greater
-                          if (dropDate.getTime() === reachDate.getTime()) {
-                            const reachMinutes =
-                              vendorReachTime.getHours() * 60 +
-                              vendorReachTime.getMinutes();
-
-                            const dropMinutes =
-                              vendorDropTime.getHours() * 60 +
-                              vendorDropTime.getMinutes();
-
-                            if (dropMinutes <= reachMinutes) {
-                              toast.error(
-                                "Vendor Drop Time must be greater than Vendor Reach Time."
+                            if (!followUpString) {
+                              toast.warning(
+                                "Please enter Follow-up Date & Time first."
                               );
                               return;
                             }
-                          }
 
-                     
-                          const dropTrimmed = new Date(
-                            vendorDropTime.getFullYear(),
-                            vendorDropTime.getMonth(),
-                            vendorDropTime.getDate(),
-                            vendorDropTime.getHours(),
-                            vendorDropTime.getMinutes()
-                          );
-
-                          const nowTrimmed = new Date(
-                            now.getFullYear(),
-                            now.getMonth(),
-                            now.getDate(),
-                            now.getHours(),
-                            now.getMinutes()
-                          );
-
-                          if (dropTrimmed.getTime() >= nowTrimmed.getTime()) {
-                            toast.error(
-                              "Vendor Drop Time cannot be equal to or greater than the current time."
+                            // -----------------------------
+                            // Convert Follow-up Date Time
+                            // -----------------------------
+                            const followDT = new Date(followUpString);
+                            const followTrimmed = new Date(
+                              followDT.getFullYear(),
+                              followDT.getMonth(),
+                              followDT.getDate(),
+                              followDT.getHours(),
+                              followDT.getMinutes()
                             );
-                            return;
-                          }
 
-                          setFormSrnStatus((prev) => ({
-                            ...prev,
-                            vendorDropTime: e.target.value,
-                          }));
-                        }}
-                        disabled={fetcdataListItems?.vendorDropTime !== ""}
-                        required
-                      />
-                    </div>
-                  )}
+                            // -----------------------------
+                            // Convert Vendor Drop Time
+                            // -----------------------------
+                            const dropDT = new Date(value);
+                            const dropTrimmed = new Date(
+                              dropDT.getFullYear(),
+                              dropDT.getMonth(),
+                              dropDT.getDate(),
+                              dropDT.getHours(),
+                              dropDT.getMinutes()
+                            );
+
+                            // -----------------------------
+                            // NOW trimmed
+                            // -----------------------------
+                            const now = new Date();
+                            const nowTrimmed = new Date(
+                              now.getFullYear(),
+                              now.getMonth(),
+                              now.getDate(),
+                              now.getHours(),
+                              now.getMinutes()
+                            );
+
+                            // --------------------------------------------------------
+                            // 🚨 Rule 1 → Drop time must be > Follow-up time
+                            // --------------------------------------------------------
+                            if (
+                              dropTrimmed.getTime() < followTrimmed.getTime()
+                            ) {
+                              toast.error(
+                                "Vendor Drop Time must be greater than or equal to Follow-up Date & Time."
+                              );
+                              return;
+                            }
+
+                            // --------------------------------------------------------
+                            // 🚨 Rule 2 → Cannot be in future (current allowed)
+                            // --------------------------------------------------------
+                            if (dropTrimmed.getTime() > nowTrimmed.getTime()) {
+                              toast.error(
+                                "Vendor Drop Time cannot be in the future."
+                              );
+                              return;
+                            }
+
+                            // --------------------------------------------------------
+                            // Passed all validations
+                            // --------------------------------------------------------
+                            setFormSrnStatus((prev) => ({
+                              ...prev,
+                              vendorDropTime: value,
+                            }));
+                          }}
+                          disabled={fetcdataListItems?.vendorDropTime !== ""}
+                          required
+                        />
+                      </div>
+                    )}
 
                   <div className="col-md-3 mb-4">
                     <Typography id="v-contact" variant="h6" gutterBottom>

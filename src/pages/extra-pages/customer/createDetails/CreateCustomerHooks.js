@@ -16,6 +16,8 @@ export const CustomerProvider = ({ children }) => {
   const [remarkLogsData, setRemarkLogsData] = useState([]);
   const [activeStep, setActiveStep] = useState();
   const [spinnerloading, setSpinnerLoading] = useState(false);
+  const [vendorSerachLoading, setVendorSerachLoading] = useState(false);
+  const [vendorApiFulfilled, setVendorApiFulfilled] = useState(false);
   const [uploadDetailsFrom, setUploadDetailsFrom] = useState([]);
   const [completed, setCompleted] = useState({});
   const [boolean, setBoolean] = useState(true);
@@ -450,7 +452,7 @@ export const CustomerProvider = ({ children }) => {
     exceptionalApprovalKMs: "",
     exceptionalApprovalPolicyCoverage: "",
     vcrfForm: true,
-    totalCharges: 0,
+    totalCharges: "",
     waitingHoursCharge: "",
     vehicleCustodyHoursCharge: "",
     otherCharges: "",
@@ -506,6 +508,11 @@ export const CustomerProvider = ({ children }) => {
     Upload: null,
     AlternateNumber: false,
   });
+
+  const serviceTypeFromGetSrnData =
+    fetcdataListItems?.serviceDrop_IncidentType === "RSR"
+      ? "RSR"
+      : fetcdataListItems?.serviceDrop_IncidentDetails;
 
   useEffect(() => {
     if (formAssignVendorsDetails?.gtoG_KM) {
@@ -874,8 +881,8 @@ export const CustomerProvider = ({ children }) => {
         selectedDateTime.getHours() * 60 + selectedDateTime.getMinutes();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-      if (selectedMinutes >= currentMinutes) {
-        toast.error("Call Time must be earlier than the current time.");
+      if (selectedMinutes > currentMinutes) {
+        toast.error("Call Time cannot be in the future.");
         return;
       }
     }
@@ -985,7 +992,7 @@ export const CustomerProvider = ({ children }) => {
 
       // Define columns
       sheet.columns = [
-        {header:"SRN Number", key : "srnNo", width:40},
+        { header: "SRN Number", key: "srnNo", width: 40 },
         { header: "Customer First Name", key: "firstName", width: 25 },
         { header: "Assistance Remark", key: "remark", width: 40 },
         { header: "External Remark", key: "externalRemark", width: 40 },
@@ -993,15 +1000,18 @@ export const CustomerProvider = ({ children }) => {
         { header: "Stage", key: "stage", width: 20 },
         { header: "Agent Id", key: "agentId", width: 15 },
       ];
-      
-      console.log(fetcdataListItems?.customerFirstName,"fetckjdkfdataListItemssjdkljsfd")
+
+      console.log(
+        fetcdataListItems?.customerFirstName,
+        "fetckjdkfdataListItemssjdkljsfd"
+      );
 
       remarkLogsData.forEach((item) => {
         sheet.addRow({
-          srnNo : fetcdataListItems?.srN_No || "N/A",
+          srnNo: fetcdataListItems?.srN_No || "N/A",
           firstName: fetcdataListItems?.customerFirstName || "N/A",
           remark: item?.assistanceSummary ?? "N/A",
-           externalRemark: item?.externalAssistanceSummary ?? "N/A",
+          externalRemark: item?.externalAssistanceSummary ?? "N/A",
           date: item?.date ?? "",
           stage: item?.stage ?? "",
           agentId: item?.agentId ?? "",
@@ -1037,7 +1047,7 @@ export const CustomerProvider = ({ children }) => {
           ServiceType: value,
         }));
       } else if (value === "TOWING") {
-        setServiceType(""); // clear until details selected
+        setServiceType("");
         setVendorDistance((prev) => ({
           ...prev,
           ServiceType: "",
@@ -1136,11 +1146,35 @@ export const CustomerProvider = ({ children }) => {
         selectedInfoDateTime.getMinutes();
       const callMinutes = callTime.getHours() * 60 + callTime.getMinutes();
 
-      if (selectedMinutes <= callMinutes) {
-        toast.error("Time must be greater than Call Time.");
-        return; // stop update
+      if (selectedMinutes < callMinutes) {
+        toast.error("Time must be greater than or equal to Call Time.");
+        return;
+      }
+
+      const now = new Date();
+
+      const nowTrimmed = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        now.getHours(),
+        now.getMinutes()
+      );
+
+      const selectedTrimmed = new Date(
+        selectedInfoDateTime.getFullYear(),
+        selectedInfoDateTime.getMonth(),
+        selectedInfoDateTime.getDate(),
+        selectedInfoDateTime.getHours(),
+        selectedInfoDateTime.getMinutes()
+      );
+
+      if (selectedTrimmed.getTime() > nowTrimmed.getTime()) {
+        toast.error("Time cannot be in the future.");
+        return;
       }
     }
+
     setFormAssignVendorsDetails((prev) => ({
       ...prev,
       srN_No: generatedSRN,
@@ -1164,7 +1198,7 @@ export const CustomerProvider = ({ children }) => {
       vendorContactNumber: "",
     }));
   };
-  // vendor details - incedent status
+
   const handleStatus = (e) => {
     const { name, value } = e.target;
 
@@ -1174,57 +1208,113 @@ export const CustomerProvider = ({ children }) => {
 
     if (name === "followup_DateTime" && value) {
       const infoDateTimeString = fetcdataListItems?.informationDateTime;
+      const vendorReachString = fetcdataListItems?.vendorReachTime;
+      const vendorDropString = fetcdataListItems?.vendorDropTime;
 
       if (!infoDateTimeString) {
         toast.warning("Please select Information Date & Time first.");
         return;
       }
 
-      // ✅ Parse API datetime properly (local timezone)
-      const [infoDatePart, infoTimePart] = infoDateTimeString.split("T");
-      const [infoYear, infoMonth, infoDay] = infoDatePart
-        .split("-")
-        .map(Number);
-      const [infoHour, infoMinute] = infoTimePart.split(":").map(Number);
-      const infoDateTime = new Date(
-        infoYear,
-        infoMonth - 1,
-        infoDay,
-        infoHour,
-        infoMinute
+      // Convert follow-up time
+      const followDT = new Date(value);
+      const followTrimmed = new Date(
+        followDT.getFullYear(),
+        followDT.getMonth(),
+        followDT.getDate(),
+        followDT.getHours(),
+        followDT.getMinutes()
       );
 
-      const followupDateTime = new Date(value);
-
-      // 🔹 Extract just the date (ignore time)
-      const infoDate = new Date(
-        infoDateTime.getFullYear(),
-        infoDateTime.getMonth(),
-        infoDateTime.getDate()
-      );
-      const followDate = new Date(
-        followupDateTime.getFullYear(),
-        followupDateTime.getMonth(),
-        followupDateTime.getDate()
+      // Current time (trim seconds)
+      const now = new Date();
+      const nowTrimmed = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        now.getHours(),
+        now.getMinutes()
       );
 
-      // ❌ 1️⃣ Follow-up date can't be before Information date
-      if (followDate < infoDate) {
-        toast.error("Follow-up Date can't be before Information Date.");
-        return;
+      // -------------------------------------------------------------------
+      // CASE 3 → Vendor DROP time exists (HIGHEST PRIORITY RULE)
+      // -------------------------------------------------------------------
+      if (vendorDropString) {
+        const vd = new Date(vendorDropString);
+        const vdTrimmed = new Date(
+          vd.getFullYear(),
+          vd.getMonth(),
+          vd.getDate(),
+          vd.getHours(),
+          vd.getMinutes()
+        );
+
+        if (followTrimmed.getTime() < vdTrimmed.getTime()) {
+          toast.error(
+            "Follow-up Date & Time must be greater than or equal to Vendor Drop Time."
+          );
+          return;
+        }
+
+        if (followTrimmed.getTime() > nowTrimmed.getTime()) {
+          toast.error("Follow-up Date & Time cannot be in the future.");
+          return;
+        }
       }
 
-      // ❌ 2️⃣ If same date, follow-up time must be greater
-      if (followDate.getTime() === infoDate.getTime()) {
-        const infoMinutes =
-          infoDateTime.getHours() * 60 + infoDateTime.getMinutes();
-        const followMinutes =
-          followupDateTime.getHours() * 60 + followupDateTime.getMinutes();
+      // -------------------------------------------------------------------
+      // CASE 2 → Vendor Reach Time exists BUT vendor drop doesn't
+      // -------------------------------------------------------------------
+      else if (vendorReachString) {
+        const vr = new Date(vendorReachString);
+        const vrTrimmed = new Date(
+          vr.getFullYear(),
+          vr.getMonth(),
+          vr.getDate(),
+          vr.getHours(),
+          vr.getMinutes()
+        );
 
-        if (followMinutes <= infoMinutes) {
+        if (followTrimmed.getTime() < vrTrimmed.getTime()) {
           toast.error(
-            "Follow-up time must be greater than Information Date & Time."
+            "Follow-up Date & Time must be greater than or equal to Vendor Reach Time."
           );
+          return;
+        }
+
+        if (followTrimmed.getTime() > nowTrimmed.getTime()) {
+          toast.error("Follow-up Date & Time cannot be in the future.");
+          return;
+        }
+      }
+
+      // -------------------------------------------------------------------
+      // CASE 1 → No reach time + No drop time → validate using Info Date/Time
+      // -------------------------------------------------------------------
+      else {
+        const [d, t] = infoDateTimeString.split("T");
+        const [y, m, day] = d.split("-").map(Number);
+        const [h, min] = t.split(":").map(Number);
+
+        const infoDT = new Date(y, m - 1, day, h, min);
+
+        const infoTrimmed = new Date(
+          infoDT.getFullYear(),
+          infoDT.getMonth(),
+          infoDT.getDate(),
+          infoDT.getHours(),
+          infoDT.getMinutes()
+        );
+
+        if (followTrimmed.getTime() < infoTrimmed.getTime()) {
+          toast.error(
+            "Follow-up Date & Time must be greater than or equal to Information Date & Time."
+          );
+          return;
+        }
+
+        if (followTrimmed.getTime() > nowTrimmed.getTime()) {
+          toast.error("Follow-up Date & Time cannot be in the future.");
           return;
         }
       }
@@ -1240,10 +1330,19 @@ export const CustomerProvider = ({ children }) => {
         };
       }
 
+      if (name === "rsaTimeLineStatus") {
+        return {
+          ...prev,
+          rsaTimeLineStatus: value,
+          followup_DateTime: "",
+          assistance_Summary: "",
+          externalAssistanceSummary: "",
+        };
+      }
+
       return { ...prev, [name]: value, srN_No: generatedSRN };
     });
   };
-  // cost Details ->recah Time
 
   const handleCostVendor = (e) => {
     const { name, value } = e.target;
@@ -1253,25 +1352,40 @@ export const CustomerProvider = ({ children }) => {
       if (!numberRegx.test(value)) return;
     }
 
-    // ✅ Validate: paymentUpdatedTime > vendorDropTime
+    // ✅ Conditional validation for paymentUpdatedTime
     if (name === "paymentUpdatedTime" && value) {
-      const vendorDropTimeString =
-        fetcdataListItems?.vendorDropTime || "2025-11-03T17:30"; // fallback
+      const isRSR = fetcdataListItems?.serviceDrop_IncidentType === "RSR";
 
-      if (!vendorDropTimeString) {
-        toast.warning("Please select Vendor Drop Time first.");
+      const baseTimeString = isRSR
+        ? fetcdataListItems?.vendorReachTime // 🔁 RSR case
+        : fetcdataListItems?.vendorDropTime; // 🔁 normal case
+
+      if (!baseTimeString) {
+        toast.warning(
+          isRSR
+            ? "Please select Vendor Reach Time first."
+            : "Please select Vendor Drop Time first."
+        );
         return;
       }
 
-      // Convert both strings to Date objects
-      const vendorDropTime = new Date(vendorDropTimeString);
+      const baseTime = new Date(baseTimeString);
       const paymentTime = new Date(value);
+      const now = new Date();
 
-      // ✅ Strict comparison
-      if (paymentTime <= vendorDropTime) {
+      // ✅ Payment time must be greater than base time
+      if (paymentTime < baseTime) {
         toast.error(
-          "Payment Date & Time must be greater than Vendor Drop Time."
+          isRSR
+            ? "Payment Date & Time must be greater than or equal to Vendor Reach Time."
+            : "Payment Date & Time must be greater than or equal to Vendor Drop Time."
         );
+        return;
+      }
+
+      // ✅ Payment time must be in past
+      if (paymentTime >= now) {
+        toast.error("Payment Date & Time cannot be in the future.");
         return;
       }
     }
@@ -1310,16 +1424,6 @@ export const CustomerProvider = ({ children }) => {
     formUploadAssist.totalCharges,
     calculatedAmount?.totalAmount,
   ]);
-
-  // useEffect(() => {
-
-  //   const total =
-  //     parseFloat(formUploadAssist.totalCharges || 0) +
-  //     parseFloat(formUploadAssist.waitingHoursCharge || 0) +
-  //     parseFloat(formUploadAssist.vehicleCustodyHoursCharge || 0) +
-  //     parseFloat(formUploadAssist.totalKilometersCharges || 0) +
-  //     parseFloat(formUploadAssist.otherCharges || 0);
-  //   const finalamout = total + (total * 18) / 100;
 
   const handleswitch = (e) => {
     handleAccordionChange(e);
@@ -1365,13 +1469,16 @@ export const CustomerProvider = ({ children }) => {
     }
   }, [fetchForm]);
 
+  const normalizeTollAmount = (value) => {
+    if (value === "0.00" || value === 0 || value === "0") return "";
+    return value ?? "";
+  };
+
   useEffect(() => {
     if (fetcdataListItems.length === 0) {
       return;
     }
-    // if (!uploadDetailsFrom || Object.keys(uploadDetailsFrom || {}).length === 0) {
-    // 	return;
-    // }
+
     localStorage.setItem(
       "pickupCoordinates",
       JSON.stringify({ lat: pickupCoordinates.lat, lon: pickupCoordinates.lon })
@@ -1447,7 +1554,7 @@ export const CustomerProvider = ({ children }) => {
 
     setFormUploadAssist((prev) => ({
       ...prev,
-      totalCharges: fetcdataListItems?.totalCharges || "",
+      totalCharges: normalizeTollAmount(fetcdataListItems?.totalCharges),
       waitingHoursCharge: fetcdataListItems?.waitingHoursCharge || "",
       vehicleCustodyHoursCharge:
         fetcdataListItems?.vehicleCustodyHoursCharge || "",
@@ -1489,6 +1596,17 @@ export const CustomerProvider = ({ children }) => {
       vendorContactNumber: fetcdataListItems?.vendorContactNumber || "",
     }));
   }, [fetcdataListItems]);
+
+  // useEffect(() => {
+  //   setFormIncident((prev) => ({
+  //     ...prev,
+  //     assistanceSummary: fetcdataListItems?.externalAssistanceSummary || "",
+  //     externalAssistanceSummary:
+  //       fetcdataListItems?.externalAssistanceSummary_Drop ||
+  //       fetcdataListItems?.externalAssistanceSummary ||
+  //       "",
+  //   }));
+  // }, [fetcdataListItems]);
 
   useEffect(() => {
     setServiceType(fetcdataListItems?.serviceDrop_IncidentType);
@@ -1831,7 +1949,7 @@ export const CustomerProvider = ({ children }) => {
           await fetchSrnRemarkLogs();
           toast.success("Form Submitted Succesfully !");
           setSpinnerLoading(true);
-          await fetchVendorList(generatedSRN);
+          // await fetchVendorList(generatedSRN);
           console.log("caseTypekjdjfsd:", formIncident?.caseType, expanded);
           if (
             formIncident?.caseType === "Complete-Enquiry" ||
@@ -1961,16 +2079,23 @@ export const CustomerProvider = ({ children }) => {
   //Service Request -> SaveServiceDropDetails -> show vendor list
   const fetchVendorList = async () => {
     const { Latitude, Longitude, City, State } = vendorDistance;
+    console.log(serviceTypeFromGetSrnData, "serviceTypeFromGetSrnData");
+
     const storedServiceType = localStorage.getItem("serviceType");
+    const finalServiceType =
+      serviceTypeFromGetSrnData && serviceTypeFromGetSrnData.trim() !== ""
+        ? serviceTypeFromGetSrnData
+        : storedServiceType;
     const queryParams = new URLSearchParams({
       Latitude,
       Longitude,
       City,
       State,
-      ServiceType: storedServiceType,
+      ServiceType: finalServiceType,
       srnNO: generatedSRN,
     }).toString();
-    setSpinnerLoading(true);
+    setVendorApiFulfilled(false);
+    setVendorSerachLoading(true);
     console.log(queryParams, "query params");
     try {
       const response = await fetch(
@@ -1990,7 +2115,9 @@ export const CustomerProvider = ({ children }) => {
     } catch (error) {
       console.log("Error message", error);
     } finally {
-      setSpinnerLoading(false);
+      // setSpinnerLoading(false)
+      setVendorSerachLoading(false);
+      setVendorApiFulfilled(true);
     }
   };
   useEffect(() => {
@@ -2005,13 +2132,28 @@ export const CustomerProvider = ({ children }) => {
     if (isLocalSearch) {
       const localVendorPayload = {
         vendorname: formAssignVendorsDetails.vendorName,
-        rsr: storedServiceType === "RSR" ? storedServiceType : "",
-        _2WFBT: storedServiceType === "2W-Flatbed" ? storedServiceType : "",
-        ul: storedServiceType === "Underlift" ? storedServiceType : "",
-        _4WFBT: storedServiceType === "4W-Flatbed" ? storedServiceType : "",
+        rsr:
+          serviceTypeFromGetSrnData === "RSR" ? serviceTypeFromGetSrnData : "",
+        _2WFBT:
+          serviceTypeFromGetSrnData === "2W-Flatbed"
+            ? serviceTypeFromGetSrnData
+            : "",
+        ul:
+          serviceTypeFromGetSrnData === "Underlift"
+            ? serviceTypeFromGetSrnData
+            : "",
+        _4WFBT:
+          serviceTypeFromGetSrnData === "4W-Flatbed"
+            ? serviceTypeFromGetSrnData
+            : "",
         _4WZERODEGREE:
-          storedServiceType === "Zero-Degree" ? storedServiceType : "",
-        miniTruck: storedServiceType === "Mini Truck" ? storedServiceType : "",
+          serviceTypeFromGetSrnData === "Zero-Degree"
+            ? serviceTypeFromGetSrnData
+            : "",
+        miniTruck:
+          serviceTypeFromGetSrnData === "Mini Truck"
+            ? serviceTypeFromGetSrnData
+            : "",
         city: localVendorStateCity?.localVendorCity,
         state: localVendorStateCity?.localVendorState,
         geolocation: formAssignVendorsDetails?.vendorLocation,
@@ -2025,55 +2167,55 @@ export const CustomerProvider = ({ children }) => {
           ? String(formAssignVendorsDetails?.vendorContactNumber)
           : "",
         rsrDayupto20kms:
-          storedServiceType === "RSR"
+          serviceTypeFromGetSrnData === "RSR"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         rsrNightupto20kms: "",
         rsrDayperkm:
-          storedServiceType === "RSR"
+          serviceTypeFromGetSrnData === "RSR"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
         rsrNightperkm: "",
         underliftupto40kms:
-          storedServiceType === "Underlift"
+          serviceTypeFromGetSrnData === "Underlift"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         underliftperkm:
-          storedServiceType === "Underlift"
+          serviceTypeFromGetSrnData === "Underlift"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
         _4WFBTupto40kms:
-          storedServiceType === "4W-Flatbed"
+          serviceTypeFromGetSrnData === "4W-Flatbed"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         _4WFBTperkm:
-          storedServiceType === "4W-Flatbed"
+          serviceTypeFromGetSrnData === "4W-Flatbed"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
         _2WFBTupto40kms:
-          storedServiceType === "2W-Flatbed"
+          serviceTypeFromGetSrnData === "2W-Flatbed"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         _2Wperkm:
-          storedServiceType === "2W-Flatbed"
+          serviceTypeFromGetSrnData === "2W-Flatbed"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
         miniTruckupto40kms:
-          storedServiceType === "Mini Truck"
+          serviceTypeFromGetSrnData === "Mini Truck"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         miniTruckupto40kmsforTVS: "",
         miniTruckupto40kmsforOLA: "",
         miniTruckperkm:
-          storedServiceType === "Mini Truck"
+          serviceTypeFromGetSrnData === "Mini Truck"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
         _4WZERODEGREEupto40kms:
-          storedServiceType === "Zero-Degree"
+          serviceTypeFromGetSrnData === "Zero-Degree"
             ? String(formAssignVendorsDetails.baseRate)
             : "",
         _4WZERODEGREEperkm:
-          storedServiceType === "Zero-Degree"
+          serviceTypeFromGetSrnData === "Zero-Degree"
             ? String(localVendorStateCity?.ratePerKm)
             : "",
       };
@@ -2213,7 +2355,7 @@ export const CustomerProvider = ({ children }) => {
 
       const cleanedPayload = {
         ...formUploadAssist,
-        totalCharges: Number(formUploadAssist.totalCharges) || 0, // send as number
+        totalCharges: Number(formUploadAssist.totalCharges) || 0,
         totalKilometers: formUploadAssist.totalKilometers
           ? formUploadAssist.totalKilometers.replace(/[^0-9.]/g, "") // remove "KM" etc.
           : "",
@@ -2258,17 +2400,6 @@ export const CustomerProvider = ({ children }) => {
   const [inputValue, setInputValue] = useState("");
   const [inputVendor, setInputVendor] = useState("");
   const [loading, setLoading] = useState(false);
-  // Debounced search effect
-  // useEffect(() => {
-  //   if (inputValue.length < 2 || !isTyping) {
-  //     setSuggestions([]);
-  //     return;
-  //   }
-  //   const delayDebounceFn = setTimeout(() => {
-  //     fetchSuggestions(inputValue);
-  //   }, 500);
-  //   return () => clearTimeout(delayDebounceFn);
-  // }, [inputValue]);
 
   useEffect(() => {
     if (inputValue.length < 2 || !isTyping || isSelecting) {
@@ -2355,26 +2486,87 @@ export const CustomerProvider = ({ children }) => {
     setInputValue(e.target.value);
     setFormAssistance((prev) => ({ ...prev, location: e.target.value }));
   };
+  // const handleSelect = (place) => {
+  //   // console.log(place, 'placeee placee');
+  //   const state = extractState(place.description);
+  //   const city = extractCity(place.description);
+  //   const location = extractLocation(place.description);
+
+  //   const cleanCity = city?.replace(/State/i, "").trim();
+  //   console.log(cleanCity,"cleancity")
+  //   if (cleanCity?.toLowerCase().includes("chandigarh state")) {
+  //     cleanCity = cleanCity.split(" ")[0];
+  //   }
+
+  //   if (cleanCity?.toLowerCase().includes("New Delhi")) {
+  //     cleanCity = "Delhi";
+  //   }
+
+  //   const cleanStateValue = (value) => value?.replace(/\d+/g, "").trim() || "";
+
+  //   const finalState =
+  //     cleanCity?.trim().toLowerCase() === "chandigarh"
+  //       ? "Chandigarh"
+  //       : cleanStateValue(state);
+
+  //   const finalCity =
+  //     state?.trim().toLowerCase() === "delhi"
+  //       ? "Delhi"
+  //       : state?.trim().toLowerCase() === "chandigarh"
+  //         ? "Chandigarh"
+  //         : cleanCity;
+
+  //   setIsSelecting(true);
+
+  //   setFormAssistance((prev) => ({
+  //     ...prev,
+  //     location: location,
+  //     state: finalState,
+  //     city: finalCity,
+  //     pincode: "",
+  //   }));
+
+  //   // setInputValue(place.description);
+  //   setInputValue(location);
+  //   setSuggestions([]);
+  //   setIsTyping(false);
+  //   //Update formArea
+  //   setFormArea((prev) => ({
+  //     ...prev,
+  //     area: place.description,
+  //     srN_No: generatedSRN,
+  //   }));
+  //   // Call API with selected area immediately
+  //   handleCoordinatesAPI(place.description, "pickup");
+  //   setTimeout(() => setIsSelecting(false), 300);
+  // };
+
   const handleSelect = (place) => {
-    // console.log(place, 'placeee placee');
     const state = extractState(place.description);
     const city = extractCity(place.description);
     const location = extractLocation(place.description);
 
-    const cleanCity = city?.replace(/State/i, "").trim();
-    if (cleanCity?.toLowerCase().includes("chandigarh state")) {
-      cleanCity = cleanCity.split(" ")[0];
+    // ✅ use LET (not const)
+    let cleanCity = city?.replace(/state/i, "").replace(/district/i, "").replace(/road/i, "").replace(/\s+/g, " ").trim();
+
+    console.log(cleanCity, "cleanCity");
+
+    // ✅ Chandigarh fix
+    if (cleanCity?.toLowerCase().includes("chandigarh")) {
+      cleanCity = "Chandigarh";
+    }
+
+    // ✅ New Delhi fix (CORRECT)
+    if (cleanCity?.toLowerCase().includes("new delhi")) {
+      cleanCity = "Delhi";
     }
 
     const cleanStateValue = (value) => value?.replace(/\d+/g, "").trim() || "";
 
     const finalState =
-      cleanCity?.trim().toLowerCase() === "chandigarh"
+      cleanCity?.toLowerCase() === "chandigarh"
         ? "Chandigarh"
         : cleanStateValue(state);
-
-    // const finalState =
-    //   cleanCity?.trim().toLowerCase() === "chandigarh" ? "Chandigarh" : state;
 
     const finalCity =
       state?.trim().toLowerCase() === "delhi"
@@ -2387,23 +2579,22 @@ export const CustomerProvider = ({ children }) => {
 
     setFormAssistance((prev) => ({
       ...prev,
-      location: location,
+      location,
       state: finalState,
       city: finalCity,
       pincode: "",
     }));
 
-    // setInputValue(place.description);
     setInputValue(location);
     setSuggestions([]);
     setIsTyping(false);
-    //Update formArea
+
     setFormArea((prev) => ({
       ...prev,
       area: place.description,
       srN_No: generatedSRN,
     }));
-    // Call API with selected area immediately
+
     handleCoordinatesAPI(place.description, "pickup");
     setTimeout(() => setIsSelecting(false), 300);
   };
@@ -2780,10 +2971,7 @@ export const CustomerProvider = ({ children }) => {
   const cleanedGtoG_KM = storedGtoG_KM
     ? storedGtoG_KM.toLowerCase().split("km")[0].trim()
     : "";
-  const serviceTypeFromGetSrnData =
-    fetcdataListItems?.serviceDrop_IncidentType === "RSR"
-      ? "RSR"
-      : fetcdataListItems?.serviceDrop_IncidentDetails;
+
   useEffect(() => {
     if (
       storedSRN &&
@@ -2826,6 +3014,31 @@ export const CustomerProvider = ({ children }) => {
       calculateTotalAmount();
     }
   }, [storedSRN, cleanedGtoG_KM, serviceTypeFromGetSrnData, vendorIdFromSrn]);
+
+  const normalizeAmount = (value) => {
+    if (value === undefined || value === null) return "";
+    if (value === "0.00" || value === 0 || value === "0") return "";
+    return String(value);
+  };
+
+  useEffect(() => {
+    if (!fetcdataListItems) return;
+
+    setFormUploadAssist((prev) => ({
+      ...prev,
+      customerPaidAmount:
+        prev.customerPaidAmount ||
+        normalizeAmount(fetcdataListItems.customerPaidAmount),
+
+      customerPaidDate:
+        prev.customerPaidDate || fetcdataListItems.customerPaidDate || "",
+      paymentUpdatedTime:
+        prev.paymentUpdatedTime || fetcdataListItems.paymentUpdatedTime || "",
+      referenceNo: prev.referenceNo || fetcdataListItems.referenceNo || "",
+      product: prev.product || fetcdataListItems.product || "",
+      paymentType: prev.paymentType || fetcdataListItems.paymentType || "",
+    }));
+  }, [fetcdataListItems]);
 
   return (
     <CustomerContext.Provider
@@ -2986,6 +3199,8 @@ export const CustomerProvider = ({ children }) => {
         setShowPopup,
         makeComaniesList,
         service,
+        vendorSerachLoading,
+        vendorApiFulfilled,
       }}
     >
       {children}

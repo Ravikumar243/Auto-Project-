@@ -15,7 +15,9 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import DataTable from "react-data-table-component";
-import CreateCustomerHooks, { CustomerContext } from "../createDetails/CreateCustomerHooks";
+import CreateCustomerHooks, {
+  CustomerContext,
+} from "../createDetails/CreateCustomerHooks";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
@@ -29,49 +31,52 @@ import { modalStyle } from "../Style";
 
 const VendorSearch = () => {
   const {
-  handleSubmitAgentfeedback,
-  loadingTest,
-  expanded,
-  handleAccordionChange,
-  spinnerloading,
-  handleVendorDetailsFetch,
-  selected,
-  setSelected,
-  generatedSRN,
-  formAssignVendorsDetails,
-  fetcdataListItems,
-  handleAssignvendorDetails,
-  handleVendorAssign,
-  incidentStatus,
-  vendorFetchList,
-  userLatitude,
-  userLongitude,
-  pickupCoordinates,
-  loading,
-  suggestions_Vedor,
-  handleVednoLoc_Change,
-  handleSelectVendor,
-  dLon,
-  dLat,
-  iLon,
-  iLat,
-  vLon,
-  vLat,
-  handleNovendorAssign,
-  handleAssignSubmitClose,
-  venderAssign,
-  inputVendor,
-  localVendorStateCity,
-  handleLocalVendorChange,
-  selectedVendorId,
-  setSelectedVendorId,
-  handleAssignClose,
-  venderModal,
-  service
-} = useContext(CustomerContext);
+    handleSubmitAgentfeedback,
+    loadingTest,
+    expanded,
+    handleAccordionChange,
+    spinnerloading,
+    handleVendorDetailsFetch,
+    selected,
+    setSelected,
+    generatedSRN,
+    formAssignVendorsDetails,
+    fetcdataListItems,
+    handleAssignvendorDetails,
+    handleVendorAssign,
+    incidentStatus,
+    vendorFetchList,
+    vendorSerachLoading,
+    userLatitude,
+    userLongitude,
+    pickupCoordinates,
+    loading,
+    suggestions_Vedor,
+    handleVednoLoc_Change,
+    handleSelectVendor,
+    dLon,
+    dLat,
+    iLon,
+    iLat,
+    vLon,
+    vLat,
+    handleNovendorAssign,
+    handleAssignSubmitClose,
+    venderAssign,
+    inputVendor,
+    localVendorStateCity,
+    handleLocalVendorChange,
+    selectedVendorId,
+    setSelectedVendorId,
+    handleAssignClose,
+    venderModal,
+    service,
+    vendorApiFulfilled,
+  } = useContext(CustomerContext);
 
+  console.log(vendorSerachLoading, "vendorSerachLoadingjjh");
 
- console.log(service, "service kdsflkd")
+  console.log(formAssignVendorsDetails, "formAssignVendorsDetails");
   // const [currentTimeDate, setCurrentTimeDate] = useState(
   //   dayjs().format("YYYY-MM-DDTHH:mm")
   // );
@@ -93,7 +98,10 @@ const VendorSearch = () => {
   //   }, 1000);
   //   return () => clearInterval(interval);
   // }, []);
-  const storedServiceType = localStorage.getItem("serviceType");
+  const storedServiceType =
+    fetcdataListItems?.serviceDrop_IncidentType === "RSR"
+      ? "RSR"
+      : fetcdataListItems?.serviceDrop_IncidentDetails;
 
   const VendorSearchcolumns = [
     {
@@ -199,8 +207,8 @@ const VendorSearch = () => {
     },
     {
       name: "Service Type",
-      selector: (row) =>  service,
-        // row.rsr ==="RSR" ? row.rsr : row.fourW_FBT==="4W-flatbed" ? row.fourW_FBT : row.twoW_FBT,
+      selector: (row) => service,
+      // row.rsr ==="RSR" ? row.rsr : row.fourW_FBT==="4W-flatbed" ? row.fourW_FBT : row.twoW_FBT,
       width: "120px",
     },
     {
@@ -364,7 +372,7 @@ const VendorSearch = () => {
             type="button"
             onClick={() =>
               handleMapLocation(
-               row.latitudes,
+                row.latitudes,
                 row.longitudes,
                 pickupCoordinates.lat,
                 pickupCoordinates.lon
@@ -558,7 +566,7 @@ const VendorSearch = () => {
 
   return (
     <>
-     <Accordion
+      <Accordion
         expanded={expanded === "open5"}
         onChange={handleAccordionChange("open5")}
         sx={{ margin: "0px 0px 18px 0px" }}
@@ -583,17 +591,43 @@ const VendorSearch = () => {
         </AccordionSummary>
 
         <form onSubmit={(e) => handleAssignvendorDetails(e, checked)}>
-          <AccordionDetails>
-            <div className="d-flex justify-content-center items-center w-full h-64 mt-4">
-              <ClipLoader
-                color="#7e00d1"
-                loading={spinnerloading}
-                size={40}
-                width={2}
-                height={10}
-              />
-            </div>
+          {/* <AccordionDetails>
+              {!(
+              fetcdataListItems?.rsaStatus === "Case Completed" ||
+              fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
+              fetcdataListItems?.srN_Remark === "Case Cancelled" ||
+              fetcdataListItems?.caseType === "Complete-Enquiry" ||
+              fetcdataListItems?.caseType === "Case Denied" ||
+              fetcdataListItems?.caseType === "Case Cancelled"
+            ) && (
+              <>
+                {vendorSerachLoading && (
+                  <div
+                    className="d-flex flex-column justify-content-center align-items-center"
+                    
+                  >
+                    <ClipLoader size={45} color="#7e00d1" />
+                    <span className="mt-3 fw-semibold text-primary">
+                      Searching nearby vendors...
+                    </span>
+                  </div>
+                )}
 
+        
+                {!vendorSerachLoading && (
+                  <DataTable
+                    columns={VendorSearchcolumns}
+                    data={vendorFetchList}
+                    customStyles={tableCustomStyles}
+                    defaultSortFieldId="distance"
+                    defaultSortAsc={true}
+                  />
+                )}
+              </>
+            )}
+          </AccordionDetails> */}
+
+          <AccordionDetails>
             {!(
               fetcdataListItems?.rsaStatus === "Case Completed" ||
               fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
@@ -602,13 +636,40 @@ const VendorSearch = () => {
               fetcdataListItems?.caseType === "Case Denied" ||
               fetcdataListItems?.caseType === "Case Cancelled"
             ) && (
-              <DataTable
-                columns={VendorSearchcolumns}
-                data={vendorFetchList}
-                customStyles={tableCustomStyles}
-                defaultSortFieldId="distance"
-                defaultSortAsc={true}
-              />
+              <>
+                {/* 🔄 Loader until API is fulfilled */}
+                {!vendorApiFulfilled && (
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <ClipLoader size={45} color="#7e00d1" />
+                    <span className="mt-3 fw-semibold text-primary">
+                      Searching nearby vendors...
+                    </span>
+                  </div>
+                )}
+
+                
+                {vendorApiFulfilled && vendorFetchList.length > 0 && (
+                  <DataTable
+                    columns={VendorSearchcolumns}
+                    data={vendorFetchList}
+                    customStyles={tableCustomStyles}
+                    defaultSortFieldId="distance"
+                    defaultSortAsc={true}
+                  />
+                )}
+                {console.log(vendorApiFulfilled,"vendorApiFulfilled",  vendorFetchList.length)}
+                {vendorApiFulfilled && vendorFetchList.length === 0 && (
+                  <div className="text-center text-muted mt-3">
+                    No nearby vendors found
+                  </div>
+                )}
+
+                {/* {!vendorApiFulfilled && vendorFetchList.length === 0 && (
+                  <div className="text-center text-muted mt-3">
+                    No nearby vendors found
+                  </div>
+                )} */}
+              </>
             )}
           </AccordionDetails>
 
@@ -1214,9 +1275,6 @@ const VendorSearch = () => {
                       value={formAssignVendorsDetails.informationDateTime || ""}
                       onChange={handleVendorAssign}
                       variant="outlined"
-                      // inputProps={{
-                      //   max: maxDateTime,
-                      // }}
                       required
                       disabled={
                         fetcdataListItems?.rsaStatus === "Case Completed" ||

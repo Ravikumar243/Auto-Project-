@@ -26,6 +26,7 @@ const CreateUser = () => {
     QA: "Auto",
     SME : "Auto",
     TL : "Auto",
+    Vendor: "Auto"
   };
 
   useEffect(() => {
@@ -182,7 +183,7 @@ const CreateUser = () => {
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
-        {["Admin", "Advisor", "AM","HeadAC","QA","SME","TL"].map((role) => (
+        {["Admin", "Advisor", "AM","HeadAC","QA","SME","TL","Vendor"].map((role) => (
           <li className="nav-item" key={role}>
             <button
               className={`nav-link ${activeTab === role ? "active" : ""}`}
@@ -295,6 +296,7 @@ const CreateUser = () => {
                       <option value="QA">QA</option>
                       <option value="SME">SME</option>
                       <option value="TL">TL</option>
+                      <option value="Vendor">Vendor</option>
                     </select>
                     {errors.role && (
                       <small className="text-danger">{errors.role}</small>

@@ -7,140 +7,167 @@ import { Card, CardContent, Typography, Box } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import ActiveCses from "./ActiveCses";
 import ActiveCasesHook from "./ActiveCasesHook";
+import VendorDashboard from "./vendorDashboard/VendorDashboard";
 
 // import { Data } from './ActiveCses'
 
 const DashboardDetails = () => {
   const { activeCases, escalated, mycases } = ActiveCasesHook();
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userRole = (userInfo?.role || "Agent").toLowerCase();
+  console.log(userRole, "userRole");
+
+  const allCards = [
+    {
+      title: "Total Cases",
+      value: activeCases.length,
+      bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
+      titleColor: "#1E6FFF",
+      roles: ["admin", "vendor"],
+    },
+    {
+      title: "My Cases",
+      value: mycases.length,
+      bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
+      titleColor: "#0E8F7A",
+      roles: ["admin", "vendor"],
+    },
+    {
+      title: "Escalated",
+      value: escalated.length,
+      bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
+      titleColor: "#D28A00",
+      roles: ["admin", "vendor"],
+    },
+    {
+      title: "Closed Cases",
+      value: 10,
+      bg: "linear-gradient(135deg, #C7D1E2 0%, #E6ECF5 100%)",
+      titleColor: "#7A869A",
+      roles: ["vendor"],
+    },
+    {
+      title: "Pending Cases",
+      value: 7,
+      bg: "linear-gradient(135deg, #9C8CFF 0%, #D6CFFF 100%)",
+      titleColor: "#6A5BFF",
+      roles: ["vendor"],
+    },
+  ];
+
+  const visibleCards = allCards.filter((card) => card.roles.includes(userRole));
+
   return (
     <>
-      <MainCard title="All Travel Claims">
+      <MainCard
+        title="All Travel Claims"
+        sx={{
+          background: "transparent",
+          boxShadow: "none",
+          border: "none",
+          padding: 0, // optional
+        }}
+      >
         <Grid item xs={12} md={12} lg={12}>
           <Grid>
             <ToastContainer />
           </Grid>
-          <div className="d-flex  gap-5">
-            <Grid container spacing={4} >
-              {/* Total Cases Card */}
-              <Grid item xs={12} sm={6} lg={3} >
-                <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 2,
-                      background:
-                        "linear-gradient(135deg, #5b79feff 0%, #c899f6ff 100%)",
-                      color: "#fff",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">Total Cases</Typography>
-                      <Typography variant="h4" fontWeight="bold">
-                        {activeCases.length}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: "rgba(76, 175, 80, 0.2)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 50,
-                        height: 50,
-						 background:
-                        "linear-gradient(135deg, #5b79feff 0%, #c899f6ff 100%)",
-                      color: "#fff",
-                      }}
-                    >
-                      <TrendingUpIcon sx={{ color: "green", fontSize: 30 }} />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
 
-              {/* My Cases Card */}
-              <Grid item xs={12} sm={6}  lg={3}>
-                <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
+          {/* <div className="d-flex gap-5"> */}
+            <Grid
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(3, 1fr)",
+                },
+                gap: 2,
+              }}
+            >
+              {visibleCards.map((card, index) => (
+                <Card
+                  sx={{
+                    width: "100%",
+                    borderRadius: 3,
+                    boxShadow: 2,
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* CARD CONTENT */}
                   <CardContent
                     sx={{
+                      background: card.bg,
+                      height: 120,
                       display: "flex",
-                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: 2,
-					   background:
-                        "linear-gradient(135deg, #cc7bdcff 0%, #825ca8ff 100%)",
-                      color: "#fff",
+                      padding: "16px 20px",
                     }}
                   >
                     <Box>
-                      <Typography variant="h6">My Cases</Typography>
-                      <Typography variant="h4" fontWeight="bold">
-                        {mycases.length}
+                      <Typography
+                        sx={{
+                          color: card.titleColor,
+                          fontWeight: 600,
+                          fontSize: "20px",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {card.title}
                       </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: "rgba(76, 175, 80, 0.2)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 50,
-                        height: 50,
-						 background:
-                        "linear-gradient(135deg, #fea75bff 0%, #c899f6ff 100%)",
-                      color: "#fff",
-                      }}
-                    >
-                      <TrendingUpIcon sx={{ color: "green", fontSize: 30 }} />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
 
-              {/* Escalated Cases Card */}
-              <Grid item xs={12} sm={6} lg={3} >
-                <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 2,
-					   background:
-                        "linear-gradient(135deg, #fea75bff 0%, #c899f6ff 100%)",
-                      color: "#fff",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">Escalated </Typography>
-                      <Typography variant="h4" fontWeight="bold">
-                        {escalated.length}
+                      <Typography
+                        sx={{
+                          color: "#fff",
+                          fontWeight: 700,
+                          fontSize: "40px",
+                          marginTop: "10px",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {card.value}
                       </Typography>
                     </Box>
-                    <Box
-                      sx={{
-                        backgroundColor: "rgba(76, 175, 80, 0.2)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 50,
-                        height: 50,
-						
-                      }}
-                    >
-                      <TrendingUpIcon sx={{ color: "green", fontSize: 30 }} />
-                    </Box>
                   </CardContent>
+
+                  {/* 🔥 RIGHT-MIDDLE → BOTTOM-MIDDLE WAVE */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      right: 0,
+                      bottom: 0,
+                      width: "75%",
+                      height: "80%",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    <svg
+                      viewBox="0 0 300 300"
+                      width="100%"
+                      height="100%"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="
+            M300 120
+            C240 100, 220 180, 170 190
+            C120 200, 90 250, 150 300
+            L300 300 Z
+          "
+                        fill="rgba(255,255,255,0.35)"
+                      />
+                    </svg>
+                  </Box>
                 </Card>
-              </Grid>
+              ))}
             </Grid>
-          </div>
-          <ActiveCses />
+          {/* </div> */}
+
+          {userRole === "admin" && <ActiveCses />}
+
+          {userRole === "vendor" && <VendorDashboard />}
         </Grid>
       </MainCard>
     </>

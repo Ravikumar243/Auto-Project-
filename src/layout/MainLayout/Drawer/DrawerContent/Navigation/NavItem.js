@@ -32,21 +32,59 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "Dashboard",
       icon: <DirectionsCarIcon />,
       url: "/dashboarddetails",
-      roles: ["Admin", "Agent","Advisor","AM","HeadAC","QA","SME","TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+    },
+    {
+      id: "vendorDashboard",
+      label: "Vendor Dashboard",
+      icon: <DirectionsCarIcon />,
+      url: "/vendor-dashboard",
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+    },
+    {
+      id: "clientDashboard",
+      label: "client Dashboard",
+      icon: <DirectionsCarIcon />,
+      url: "/client-dashboard",
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+    },
+    {
+      id: "agentDashboard",
+      label: "agent Dashboard",
+      icon: <DirectionsCarIcon />,
+      url: "/agent-dashboard",
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+    },
+    {
+      id: "caseAgeingDashboard",
+      label: "Case Ageing",
+      icon: <DirectionsCarIcon />,
+      url: "/case-ageing-dashboard",
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+    },
+    {
+      id: "vendorFailureDashboard",
+      label: "Vendor Failure",
+      icon: <DirectionsCarIcon />,
+      url: "/venodr-failure-dashboard",
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
     },
     {
       id: "searchdashboard",
       label: "Search Support",
       icon: <SearchIcon />,
       url: "/Index",
-      roles: ["Admin", "Agent","Advisor","AM","HeadAC","QA","SME","TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL"],
     },
     {
       id: "createSupport",
       label: "Create Support Ticket",
       icon: <DescriptionOutlinedIcon />,
       url: "/createTickets",
-      roles: ["Admin", "Agent", "Advisor","AM","HeadAC","SME","TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "SME", "TL"],
+      // onClick: () => {
+      //   window.location.href = "/createTickets";
+      // },
     },
     {
       id: "uploadDetails",
@@ -74,14 +112,14 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "VCRF Record",
       icon: <DescriptionOutlinedIcon />,
       url: "/vcrf-record",
-      roles: ["Admin", "Agent","Advisor","AM","HeadAC","SME","TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "SME", "TL"],
     },
     {
       id: "feedback",
       label: "Feedback Record",
       icon: <DescriptionOutlinedIcon />,
       url: "/feedback",
-      roles: ["Admin", "Agent","AM","HeadAC","QA","SME","TL"],
+      roles: ["Admin", "Agent", "AM", "HeadAC", "QA", "SME", "TL"],
     },
     {
       id: "spinny",
@@ -95,7 +133,7 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "MIS",
       icon: <SpeedIcon />,
       url: "/misreport",
-      roles: ["Admin", "Agent","Advisor","AM","HeadAC","TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "TL"],
     },
     {
       id: "oldmis",
@@ -109,7 +147,7 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "SLA Report",
       icon: <SpeedIcon />,
       url: "/slnDeshboard",
-      roles: ["Admin","AM","HeadAC"],
+      roles: ["Admin", "AM", "HeadAC"],
     },
     {
       id: "uploadStatecity",
@@ -134,18 +172,21 @@ const NavItem = ({ level, drawerOpen }) => {
         .map((menu) => (
           <ListItemButton
             key={menu.id}
-            component={Link}
-            to={menu.url}
+            component = {Link}
+            to = {menu.url}
+            // component={menu.id === "createSupport" ? "a" : Link}
+            // href={menu.id === "createSupport" ? menu.url : undefined}
+            // to={menu.id !== "createSupport" ? menu.url : undefined}
             selected={selectedVal === menu.id}
             onClick={() => itemHandler(menu.id)}
             sx={{
               pl: drawerOpen ? `${level * 28}px` : 1.5,
               py: 1,
               "&.Mui-selected": {
-                backgroundColor: "rgb(126,0,209)", 
-                color: "#ffffffff", 
+                backgroundColor: "rgb(126,0,209)",
+                color: "#ffffffff",
                 "&:hover": {
-                  backgroundColor: "rgb(126,0,209)", 
+                  backgroundColor: "rgb(126,0,209)",
                   color: "#ffffffff",
                 },
               },
@@ -157,7 +198,6 @@ const NavItem = ({ level, drawerOpen }) => {
                 },
               },
             }}
-            
           >
             <ListItemIcon
               sx={{ color: selectedVal === menu.id ? "white" : "#282828" }}

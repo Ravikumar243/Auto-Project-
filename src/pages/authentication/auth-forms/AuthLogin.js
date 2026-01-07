@@ -75,6 +75,8 @@ const AuthLogin = () => {
           navigate("/dashboarddetails");
         } else if (data.role === "TL") {
           navigate("/dashboarddetails");
+        } else if (data.role === "Vendor") {
+          navigate("/dashboarddetails");
         }
 
         setStatus({ success: true });

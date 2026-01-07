@@ -8,7 +8,9 @@ import {
   Container,
 } from "@mui/material";
 
-import CreateCustomerHooks, { CustomerContext } from "../createDetails/CreateCustomerHooks";
+import CreateCustomerHooks, {
+  CustomerContext,
+} from "../createDetails/CreateCustomerHooks";
 import Accordion from "@mui/material/Accordion";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -95,61 +97,58 @@ const insuranceev = [
   "Complimentary Hospicash",
   "Complimentary Loan Protect",
 ];
-  const subCategoryOptions = {
-    "Complete-Enquiry": [
-      "Complete-Enquiry",
-      
-    ],
-    "Case Denied": ["Vehicle Started", "Customer Arrage Alternative Service"],
-    "Case Cancelled": [
-      "RSA Not Covered",
-      "RSA With Other Company",
-      "Issue Fixed",
-      "Customer Will Call Back Later",
-      "Police Involvement",
-      "Out Of Scope",
-      "Customer Not Responding",
-      "Not Ready to Wait as Per Standard ETA",
-      "Duplicate Case Id",
-      "Cancel By Client",
-      "Other Reason",
-      "Refused for Extra KM and Toll Charges",
-      "Network Failure",
-      "Location Change",
-      "Service Center unavailability",
-      "Vehicle is in Drivable Condition",
-      "Vehicle is at Service Center",
-      "Have Not placed any RSA request",
-      "Not Entry Zone",
-    ],
-  };
+const subCategoryOptions = {
+  "Complete-Enquiry": ["Complete-Enquiry"],
+  "Case Denied": ["Vehicle Started", "Customer Arrage Alternative Service"],
+  "Case Cancelled": [
+    "RSA Not Covered",
+    "RSA With Other Company",
+    "Issue Fixed",
+    "Customer Will Call Back Later",
+    "Police Involvement",
+    "Out Of Scope",
+    "Customer Not Responding",
+    "Not Ready to Wait as Per Standard ETA",
+    "Duplicate Case Id",
+    "Cancel By Client",
+    "Other Reason",
+    "Refused for Extra KM and Toll Charges",
+    "Network Failure",
+    "Location Change",
+    "Service Center unavailability",
+    "Vehicle is in Drivable Condition",
+    "Vehicle is at Service Center",
+    "Have Not placed any RSA request",
+    "Not Entry Zone",
+  ],
+};
 const taxiassitanceev = ["Taxi Assistance"];
 const hotelassitanceev = ["Hotel Assistance"];
 // const incireason = [];
 const Requestdetails = () => {
   const {
     inputdropValue,
-  loadingTest,
-  expanded,
-  handleAccordionChange,
-  handleService,
-  formIncident,
-  fetcdataListItems,
-  handleIncidenceClose,
-  handleIncidenceOpen,
-  handleCoordinates,
-  handleServiceDetails,
-  area,
-  incidentStatus,
-  handleInput_Change,
-  loading,
-  suggestions_drop,
-  handleSelectDrop,
-  generatedSRN,
-  remarkLoading,
-  remarkLogsData,
-  handleDownloadHistory
-} = useContext(CustomerContext)
+    loadingTest,
+    expanded,
+    handleAccordionChange,
+    handleService,
+    formIncident,
+    fetcdataListItems,
+    handleIncidenceClose,
+    handleIncidenceOpen,
+    handleCoordinates,
+    handleServiceDetails,
+    area,
+    incidentStatus,
+    handleInput_Change,
+    loading,
+    suggestions_drop,
+    handleSelectDrop,
+    generatedSRN,
+    remarkLoading,
+    remarkLogsData,
+    handleDownloadHistory,
+  } = useContext(CustomerContext);
 
   useEffect(() => {
     localStorage.setItem("incident_lats", fetcdataListItems?.user_Latitude);
@@ -252,7 +251,7 @@ const Requestdetails = () => {
                       name="vehicleType"
                       fullWidth
                       required
-                      value={formIncident?.vehicleType ||  ""}
+                      value={formIncident?.vehicleType || ""}
                       displayEmpty
                       renderValue={(select) => {
                         if (!select) {
@@ -261,13 +260,14 @@ const Requestdetails = () => {
                         return select;
                       }}
                       onChange={handleService}
-                       disabled={
-                            fetcdataListItems?.rsaStatus === "Case Completed" ||
-                      fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="" disabled>
                         Select
@@ -919,13 +919,14 @@ const Requestdetails = () => {
                       value={formIncident.locationType}
                       fullWidth
                       onChange={handleService}
-                       disabled={
-                            fetcdataListItems?.rsaStatus === "Case Completed" ||
-                      fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       <MenuItem value="Within City">Within City</MenuItem>
@@ -933,7 +934,7 @@ const Requestdetails = () => {
                       <MenuItem value="Home">Home</MenuItem>
                     </Select>
                   </div>
-                  <div className="col-md-3 mb-4">
+                  {/* <div className="col-md-3 mb-4">
                     <Typography
                       id="simple-select-label"
                       variant="h6"
@@ -946,8 +947,9 @@ const Requestdetails = () => {
                         placeholder="Assistance Summary"
                         minRows="3"
                         type="text"
+                        name="assistanceSummary"
                         value={fetcdataListItems?.externalAssistanceSummary}
-                        onChange={(e) => e.target.value}
+                        onChange={handleService}
                         variant="outlined"
                         style={{
                           width: "100%",
@@ -958,34 +960,72 @@ const Requestdetails = () => {
                         }}
                          disabled={
                             fetcdataListItems?.rsaStatus === "Case Completed" ||
-                      fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
+                           fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                           fetcdataListItems?.caseType === "Complete-Enquiry" ||
                           fetcdataListItems?.caseType === "Case Denied" ||
                           fetcdataListItems?.caseType === "Case Cancelled"
                         }
                       />
                     ) : (
-                      <TextareaAutosize
-                        placeholder="Assistance Summary"
-                        minRows="3"
-                        type="text"
-                        name="assistanceSummary"
-                        value={formIncident.assistanceSummary || ""}
-                        onChange={handleService}
-                        variant="outlined"
-                        style={{
-                          width: "100%",
-                          borderRadius: "5px",
-                          padding: "0px 5px",
-                          resize: "none",
-                        }}
-                        required
-                         disabled={
+                    <TextareaAutosize
+                      placeholder="Assistance Summary"
+                      minRows="3"
+                      type="text"
+                      name="assistanceSummary"
+                      value={formIncident.assistanceSummary || ""}
+                      onChange={handleService}
+                      variant="outlined"
+                      style={{
+                        width: "100%",
+                        borderRadius: "5px",
+                        padding: "0px 5px",
+                        resize: "none",
+                      }}
+                      required
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status === "Vendor Close Issue"
+                      }
+                    />
+                     )} 
+                  </div> */}
+                  <div className="col-md-3 mb-4">
+                    <Typography
+                      id="simple-select-label"
+                      variant="h6"
+                      gutterBottom
+                    >
+                      Assistance Summary<span className="text-danger">*</span>
+                    </Typography>
+                    <TextareaAutosize
+                      placeholder="Assistance Summary"
+                      minRows="3"
+                      type="text"
+                      name="assistanceSummary"
+                      value={formIncident.assistanceSummary || ""}
+                      onChange={handleService}
+                      variant="outlined"
+                      style={{
+                        width: "100%",
+                        borderRadius: "5px",
+                        padding: "0px 5px",
+                        resize: "none",
+                        backgroundColor:
                           fetcdataListItems?.rsaStatus === "Case Completed" ||
                           fetcdataListItems?.srN_Status === "Vendor Close Issue"
-                        }
-                      />
-                    )}
+                            ? "#f5f5f5"
+                            : "white",
+                      }}
+                      required
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
+                    />
                   </div>
                   <div className="col-md-3 mb-4" style={{ display: "none" }}>
                     <Typography
@@ -1013,7 +1053,7 @@ const Requestdetails = () => {
                       }}
                     />
                   </div>
-                  <div className="col-md-3 mb-4">
+                  {/* <div className="col-md-3 mb-4">
                     <Typography
                       id="simple-select-label"
                       variant="h6"
@@ -1040,15 +1080,16 @@ const Requestdetails = () => {
                           resize: "none",
                           backgroundColor: "#f5f5f5",
                         }}
-                        disabled
+                        
                       />
                     ) : (
                       <TextareaAutosize
                         placeholder=""
                         minRows={3}
                         type="text"
-                        name="externalAssistanceSummaryHistroy"
-                        value={fetcdataListItems?.externalAssistanceSummary}
+                        name="externalAssistanceSummary"
+                        // value={fetcdataListItems?.externalAssistanceSummary}
+                        onChange={handleService}
                         variant="outlined"
                         style={{
                           width: "100%",
@@ -1060,7 +1101,42 @@ const Requestdetails = () => {
                         }}
                       />
                     )}
+                  </div> */}
+
+                  <div className="col-md-3 mb-4">
+                    <Typography
+                      id="simple-select-label"
+                      variant="h6"
+                      gutterBottom
+                    >
+                      External Assistance Summary
+                    </Typography>
+
+                    <TextareaAutosize
+                      placeholder="External assistance Summary"
+                      minRows={3}
+                      name="externalAssistanceSummary"
+                      value={formIncident.externalAssistanceSummary || ""}
+                      onChange={handleService}
+                      style={{
+                        width: "100%",
+                        borderRadius: "5px",
+                        padding: "5px",
+                        resize: "none",
+                        backgroundColor: "#fff", // Make editable look
+                        fontSize: "16px",
+                      }}
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
+                    />
                   </div>
+
                   <div className="col-md-3 mb-4" style={{ display: "none" }}>
                     <Typography
                       id="simple-select-label"
@@ -1073,7 +1149,7 @@ const Requestdetails = () => {
                       placeholder=""
                       minRows={3}
                       type="text"
-                      name="externalAssistanceSummaryHistroy"
+                      name="externalAssistanceSummary"
                       value={fetcdataListItems?.externalAssistanceSummary}
                       variant="outlined"
                       style={{
@@ -1084,7 +1160,6 @@ const Requestdetails = () => {
                         backgroundColor: "#f5f5f5",
                         fontSize: "16px",
                       }}
-                      disabled
                     />
                   </div>
 
@@ -1108,13 +1183,14 @@ const Requestdetails = () => {
                         return select;
                       }}
                       onChange={handleService}
-                       disabled={
-                            fetcdataListItems?.rsaStatus === "Case Completed" ||
-                      fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case Completed" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="" disabled>
                         Select
@@ -1256,9 +1332,9 @@ const Requestdetails = () => {
                       </div>
                     </div>
                   </div>
-                   <div className="col-md-3 d-flex align-items-end mb-4  ms-auto">
+                  <div className="col-md-3 d-flex align-items-end mb-4  ms-auto">
                     <button
-                     type="button"
+                      type="button"
                       className="btn text-white w-100"
                       style={{
                         backgroundColor: "#7E00D1",
@@ -1272,7 +1348,7 @@ const Requestdetails = () => {
               </Grid>
             </Container>
           </AccordionDetails>
-           <AccordionDetails>
+          <AccordionDetails>
             <Container maxWidth="lg">
               <Grid>
                 <div className="row my-3 gx-5">
@@ -1293,13 +1369,14 @@ const Requestdetails = () => {
                       renderValue={(selected) =>
                         selected ? selected : "Select"
                       }
-                       disabled={
-                          fetcdataListItems?.rsaStatus === "Case leleted" ||
-                        fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                      disabled={
+                        fetcdataListItems?.rsaStatus === "Case leleted" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       <MenuItem value="Complete-Enquiry">
@@ -1334,19 +1411,19 @@ const Requestdetails = () => {
                       renderValue={(selected) =>
                         selected ? selected : "Select"
                       }
-                       disabled={
-                        !formIncident.caseType||
-                          fetcdataListItems?.rsaStatus === "Case leleted" ||
-                        fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                      disabled={
+                        !formIncident.caseType ||
+                        fetcdataListItems?.rsaStatus === "Case leleted" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="">Select</MenuItem>
 
-                      
-                     {Array.isArray(
+                      {Array.isArray(
                         subCategoryOptions[formIncident.caseType]
                       ) &&
                         subCategoryOptions[formIncident.caseType].map(
@@ -1380,12 +1457,13 @@ const Requestdetails = () => {
                         return select;
                       }}
                       disabled={
-                          fetcdataListItems?.rsaStatus === "Case leleted" ||
-                        fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
-                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                          fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
-                        }
+                        fetcdataListItems?.rsaStatus === "Case leleted" ||
+                        fetcdataListItems?.srN_Status ===
+                          "Vendor Close Issue" ||
+                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                        fetcdataListItems?.caseType === "Case Denied" ||
+                        fetcdataListItems?.caseType === "Case Cancelled"
+                      }
                     >
                       <MenuItem value="">Select</MenuItem>
                       <MenuItem value="Planned">Planned</MenuItem>
@@ -1543,7 +1621,7 @@ const Requestdetails = () => {
             ""
           )}
 
-         <AccordionDetails>
+          <AccordionDetails>
             <Container maxWidth="lg">
               <Grid>
                 {loadingTest === true ? (
@@ -1579,7 +1657,11 @@ const Requestdetails = () => {
                           width: "220px",
                           height: "35px",
                         }}
-                        disabled={fetcdataListItems?.caseType=== "Complete-Enquiry" ||fetcdataListItems?.caseType==="Case Denied" || fetcdataListItems?.caseType ==="Case Cancelled"}
+                        disabled={
+                          fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                          fetcdataListItems?.caseType === "Case Denied" ||
+                          fetcdataListItems?.caseType === "Case Cancelled"
+                        }
                       >
                         Submit
                       </button>
