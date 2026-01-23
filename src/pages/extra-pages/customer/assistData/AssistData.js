@@ -275,7 +275,7 @@ const AssistData = () => {
                 {/* Make Dropdown */}
                 <div className="col-md-3 mb-4">
                   <Typography id="simple-Make-label" variant="h6" gutterBottom>
-                    Car Segment<span className="text-danger">*</span>
+                    Vehicle Segment<span className="text-danger">*</span>
                   </Typography>
 
                   <Select

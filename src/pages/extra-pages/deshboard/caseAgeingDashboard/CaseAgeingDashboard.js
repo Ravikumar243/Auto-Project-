@@ -6,6 +6,7 @@ import { CardContent, Typography } from "@mui/material";
 
 import CaseAgeingTable from "./CaseAgeingTable";
 import CaseAgeingFilter from "./CaseAgeingFilter";
+import ClientCaseAgeingTable from "./ClientCaseAgeingTable";
 // import VendorPerformanceTable from "./VendorPerformanceTable";
 
 const CaseAgeingDashboard = () => {
@@ -71,15 +72,14 @@ const CaseAgeingDashboard = () => {
                     zIndex: 1,
                   }}
                 >
-                <svg
-    viewBox="0 0 1440 200"
-    width="100%"
-    height="100%"
-    preserveAspectRatio="none"
-  >
-    
-    <path
-      d="
+                  <svg
+                    viewBox="0 0 1440 200"
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="
         M600 200
         C760 160, 860 120, 980 120
         C1100 120, 1180 80, 1260 70
@@ -87,9 +87,9 @@ const CaseAgeingDashboard = () => {
         L1440 200
         Z
       "
-      fill="rgba(255,255,255,0.35)"
-    />
-  </svg>
+                      fill="rgba(255,255,255,0.35)"
+                    />
+                  </svg>
                 </Box>
               </Card>
             </Grid>
@@ -99,7 +99,11 @@ const CaseAgeingDashboard = () => {
       <CaseAgeingFilter />
 
       <Box mt={3}>
-        <CaseAgeingTable />
+        {userRole === "client" ? (
+          <ClientCaseAgeingTable />
+        ) : (
+          <CaseAgeingTable />
+        )}
       </Box>
     </Box>
   );

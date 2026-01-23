@@ -7,6 +7,10 @@ import {
   Typography,
   Container,
   Checkbox,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -27,6 +31,7 @@ import baseURL from "../../../../api/autoApi";
 import { FiMapPin } from "react-icons/fi";
 import axios from "axios";
 import { modalStyle } from "../Style";
+// import InputLabel from "themes/overrides/InputLabel";
 // import CreateCustomerHooks from "pages/extra-pages/searchDetails/CreateCustomerHooks";
 
 const VendorSearch = () => {
@@ -72,6 +77,17 @@ const VendorSearch = () => {
     venderModal,
     service,
     vendorApiFulfilled,
+
+    showViewMore,
+    setShowViewMore,
+    vmSelectedState,
+    setVmSelectedState,
+    vmSelectedCity,
+    setVmSelectedCity,
+    vmStateList,
+    vmCitiesList,
+    vmStateCitiesList,
+    getVmCitiesByState,
   } = useContext(CustomerContext);
 
   console.log(vendorSerachLoading, "vendorSerachLoadingjjh");
@@ -136,6 +152,25 @@ const VendorSearch = () => {
                     BaseRatePrice = 0;
                   }
 
+                  let ratePerKm = 0;
+
+                  if (storedServiceType === "RSR") {
+                    ratePerKm = row.rsR_Day_per_km;
+                  } else if (storedServiceType === "Underlift") {
+                    ratePerKm = row.underlift_per_km;
+                  } else if (storedServiceType === "4W-Flatbed") {
+                    ratePerKm = row.fourW_FBT_per_km;
+                  } else if (storedServiceType === "2W-Flatbed") {
+                    ratePerKm = row.twoW_FBT_per_km;
+                  } else if (storedServiceType === "Mini Truck") {
+                    ratePerKm = row.miniTruck_per_km;
+                  } else if (storedServiceType === "Zero-Degree") {
+                    ratePerKm = row.fourW_ZERODEGREE_per_km;
+                  } else {
+                    ratePerKm = 0;
+                  }
+
+                  console.log(ratePerKm, "ratePerKmks");
                   handleVendorDetailsFetch(
                     row.vendorName,
                     row.contacT_NUMBER,
@@ -145,7 +180,8 @@ const VendorSearch = () => {
                     row.durationText,
                     row.distanceValue,
                     BaseRatePrice,
-                    index
+                    index, // ✅ index first
+                    ratePerKm // ✅ then ratePerKm
                   );
                   setSelectedVendorId(row.vendorID);
                   setStatusrej(row.vendorID);
@@ -647,7 +683,6 @@ const VendorSearch = () => {
                   </div>
                 )}
 
-                
                 {vendorApiFulfilled && vendorFetchList.length > 0 && (
                   <DataTable
                     columns={VendorSearchcolumns}
@@ -657,18 +692,64 @@ const VendorSearch = () => {
                     defaultSortAsc={true}
                   />
                 )}
-                {console.log(vendorApiFulfilled,"vendorApiFulfilled",  vendorFetchList.length)}
+
                 {vendorApiFulfilled && vendorFetchList.length === 0 && (
                   <div className="text-center text-muted mt-3">
                     No nearby vendors found
                   </div>
                 )}
 
-                {/* {!vendorApiFulfilled && vendorFetchList.length === 0 && (
-                  <div className="text-center text-muted mt-3">
-                    No nearby vendors found
+                <div className="text-center mt-3">
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => setShowViewMore(true)}
+                  >
+                    View More
+                  </button>
+                </div>
+                {showViewMore && (
+                  <div className="row mt-3">
+                    <div className="col-md-4">
+                      <FormControl fullWidth>
+                        <InputLabel>Select State</InputLabel>
+                        <Select
+                          value={vmSelectedState}
+                          label="Select State"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setVmSelectedState(value);
+                            getVmCitiesByState(value);
+                          }}
+                        >
+                          <MenuItem value="">Select State</MenuItem>
+                          {vmStateList.map((state, index) => (
+                            <MenuItem key={index} value={state}>
+                              {state}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+
+                    <div className="col-md-4">
+                      <FormControl fullWidth>
+                        <InputLabel>Select City</InputLabel>
+                        <Select
+                          value={vmSelectedCity}
+                          label="Select City"
+                          onChange={(e) => setVmSelectedCity(e.target.value)}
+                        >
+                          <MenuItem value="">Select City</MenuItem>
+                          {vmCitiesList.map((city, index) => (
+                            <MenuItem key={index} value={city}>
+                              {city}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
                   </div>
-                )} */}
+                )}
               </>
             )}
           </AccordionDetails>
@@ -1193,7 +1274,10 @@ const VendorSearch = () => {
                       name="gtoG_KM"
                       value={
                         storedServiceType === "RSR"
-                          ? formAssignVendorsDetails.vtoL_KM
+                          ? (
+                              (parseFloat(formAssignVendorsDetails.vtoL_KM) ||
+                                0) * 2
+                            ).toFixed(2) + " KM"
                           : formAssignVendorsDetails.gtoG_KM || ""
                       }
                       InputProps={{ readOnly: true }}

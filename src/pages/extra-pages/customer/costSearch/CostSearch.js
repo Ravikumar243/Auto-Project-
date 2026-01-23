@@ -39,14 +39,13 @@ const CostSearch = () => {
   } = useContext(CustomerContext);
 
   console.log(
-  formUploadAssist.customerPaidAmount ,"formUploadAssist.customerPaidAmount "
+    formUploadAssist.customerPaidAmount,
+    "formUploadAssist.customerPaidAmount "
   );
   const hasApiProduct = Boolean(fetcdataListItems?.product);
   const hasApiPaymentType = Boolean(fetcdataListItems?.paymentType);
 
-
   const vehicleType = [
-    "Vehicle Dispatch Type",
     "Flatbed",
     "4 Wheeler FBT",
     "3 Wheeler FBT",
@@ -56,6 +55,15 @@ const CostSearch = () => {
     "Zero Degree",
     "RSR",
   ];
+
+  const APPROVAL_MATRIX_OPTIONS = [
+  "Manager",
+  "Team Leader",
+  "Supervisor",
+  "Admin",
+  "Operations",
+];
+
   const PaymentType = [
     // "Payment Type",
     "Customer Reimbursement",
@@ -392,7 +400,7 @@ const CostSearch = () => {
                     />
                   </div>
                   <div className="col-md-3 mb-3">
-                    <Typography varient="h6">Border & Other Charges</Typography>
+                    <Typography varient="h6">Border/Local Authority Charges</Typography>
                     <TextField
                       fullWidth
                       type="text"
@@ -431,9 +439,7 @@ const CostSearch = () => {
                       onChange={handleCostVendor}
                       placeholder="Additional Kilometer"
                       variant="outlined"
-                      InputProps={{
-                        readOnly: true,
-                      }}
+                     
                     />
                   </div>
                   <div className="col-md-3 mb-3">
@@ -548,7 +554,6 @@ const CostSearch = () => {
                       fullWidth
                       type="text"
                       name="finalAmountWithGST"
-                     
                       value={formUploadAssist?.finalAmountWithGST}
                       onChange={handleCostVendor}
                       variant="outlined"
@@ -564,13 +569,11 @@ const CostSearch = () => {
                       fullWidth
                       type="text"
                       name="customerPaidAmount"
-                      value={
-                        formUploadAssist.customerPaidAmount 
-                      }
-                      
+                      value={formUploadAssist.customerPaidAmount}
                       onChange={handleCostVendor}
                       placeholder="Customer paid Amount "
                       variant="outlined"
+                      required
                     />
                   </div>
                   <div className="col-md-3 mb-3">
@@ -624,70 +627,53 @@ const CostSearch = () => {
                       variant="outlined"
                     />
                   </div>
-                  {/* <div className="col-md-3 mb-3">
+                  <div className="col-md-3 mb-3">
                     <Typography varient="h6">Vehicle Type</Typography>
                     <Select
                       fullWidth
-                      name="product"
-                      value={formUploadAssist.product || fetcdataListItems.product}
+                      name="vendorVehicleType"
+                      value={formUploadAssist.vendorVehicleType || ""}
                       onChange={handleCostVendor}
                       variant="outlined"
                       displayEmpty
-                      renderValue={(select) => {
-                        if (!select) {
-                          return "Select";
-                        }
-                        return select;
-                      }}
+                      renderValue={(selected) => selected || "Select"}
                       required
                     >
                       <MenuItem value="" disabled>
                         Select
                       </MenuItem>
+
                       {vehicleType.map((item, index) => (
                         <MenuItem key={index} value={item}>
                           {item}
                         </MenuItem>
                       ))}
                     </Select>
-                  </div> */}
-                  <div className="col-md-3 mb-3">
-                    <Typography variant="h6">Vehicle Type</Typography>
-
-                    {hasApiProduct ? (
-                      // ✅ READ-ONLY INPUT (API VALUE)
-                      <TextField
-                        fullWidth
-                        value={fetcdataListItems.product}
-                        variant="outlined"
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      />
-                    ) : (
-                      // ✅ SELECT DROPDOWN (USER INPUT)
-                      <Select
-                        fullWidth
-                        name="product"
-                        value={formUploadAssist.product || ""}
-                        onChange={handleCostVendor}
-                        variant="outlined"
-                        displayEmpty
-                        renderValue={(selected) => selected || "Select"}
-                        required
-                      >
-                        <MenuItem value="" disabled>
-                          Select
-                        </MenuItem>
-
-                        {vehicleType.map((item, index) => (
-                          <MenuItem key={index} value={item}>
-                            {item}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )}
                   </div>
+                  {/* <div className="col-md-3 mb-3">
+                    <Typography variant="h6">Approval Matrix</Typography>
+
+                    <Select
+                      fullWidth
+                      name="approvalMatrix"
+                      value={formUploadAssist.approvalMatrix || ""}
+                      onChange={handleCostVendor}
+                      variant="outlined"
+                      displayEmpty
+                      renderValue={(selected) => selected || "Select"}
+                      required
+                    >
+                      <MenuItem value="" disabled>
+                        Select
+                      </MenuItem>
+
+                      {APPROVAL_MATRIX_OPTIONS.map((item, index) => (
+                        <MenuItem key={index} value={item}>
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div> */}
 
                   <div className="col-md-3 mb-3">
                     <Typography variant="h6">Payment Type</Typography>

@@ -40,6 +40,8 @@ export const CustomerProvider = ({ children }) => {
 
   console.log(calculationData, "cal");
 
+  const [initialBaseKm, setInitialBaseKm] = useState(0);
+
   const storedServiceType = localStorage.getItem("serviceType");
   // const [generated_SRNo, setGenerated_SRNo] = useState('');
   const [incidentStatus, setIncidentStatus] = useState(false);
@@ -129,6 +131,14 @@ export const CustomerProvider = ({ children }) => {
     message: "",
     srN_Number: "",
   });
+
+  // for change state city from vendor list
+    const [showViewMore, setShowViewMore] = useState(false);
+    const [vmSelectedState, setVmSelectedState] = useState("");
+    const [vmSelectedCity, setVmSelectedCity] = useState("");
+    const [vmStateList, setVmStateList] = useState([]);
+  const [vmCitiesList, setVmCitiesList] = useState([]);
+    const [vmStateCitiesList, setVmStateCitiesList] = useState([]);
 
   const storedVendorID = localStorage.getItem("statusrej_vendorID");
 
@@ -472,6 +482,8 @@ export const CustomerProvider = ({ children }) => {
     paymentUpdatedTime: "",
     additionalKMs: "",
     borderAndOtherCharges: "",
+    vendorVehicleType: "",
+    approvalMatrix: "",
   });
 
   console.log(
@@ -1398,31 +1410,79 @@ export const CustomerProvider = ({ children }) => {
     }));
   };
 
+  const BaseRate = fetcdataListItems?.perKM_Charges || 10;
+
+  const totalKmCharge =
+    Number(formUploadAssist?.additionalKMs || 0) * Number(BaseRate);
+
   const calculatedTotalAmount = (
     Number(formUploadAssist?.waitingHoursCharge || 0) +
     Number(formUploadAssist?.vehicleCustodyHoursCharge || 0) +
     Number(formUploadAssist?.otherCharges || 0) +
     Number(formUploadAssist?.totalCharges || 0) +
-    Number(calculatedAmount?.totalAmount || 0)
+    Number(calculatedAmount?.totalAmount || 0) +
+    Number(totalKmCharge || 0)
   ).toFixed(2);
 
-  const calculatedTotalAmountWithGst = (
-    Number(calculatedTotalAmount || 0) * 1.18
-  ).toFixed(2);
+  // const calculatedTotalAmountWithGst = (
+  //   Number(calculatedTotalAmount || 0) * 1.18
+  // ).toFixed(2);
+
+  // useEffect(() => {
+  //   setFormUploadAssist((prev) => ({
+  //     ...prev,
+  //     totalKilometersCharges: Number(calculatedAmount?.totalAmount) || 0,
+  //     totalAmount: Number(calculatedTotalAmount) || 0,
+  //     finalAmountWithGST: Number(calculatedTotalAmountWithGst) || 0,
+  //   }));
+  // }, [
+  //   formUploadAssist.waitingHoursCharge,
+  //   formUploadAssist.vehicleCustodyHoursCharge,
+  //   formUploadAssist.otherCharges,
+  //   formUploadAssist.totalCharges,
+  //   formUploadAssist?.borderAndOtherCharges,
+  //   calculatedAmount?.totalAmount,
+
+  // ]);
 
   useEffect(() => {
+    const additionalKm = Number(formUploadAssist?.additionalKMs || 0);
+    const baseKm = parseFloat(fetcdataListItems?.gtoG_KM) || 0;
+
+    console.log(baseKm, "baseKmklkds");
+    const kmCharge = additionalKm * Number(BaseRate || 0);
+    const baseKmCharge = Number(calculatedAmount?.totalAmount || 0);
+
+    const finalKmCharge = baseKmCharge + kmCharge;
+
+    const total = (
+      Number(formUploadAssist?.waitingHoursCharge || 0) +
+      Number(formUploadAssist?.vehicleCustodyHoursCharge || 0) +
+      Number(formUploadAssist?.otherCharges || 0) +
+      Number(formUploadAssist?.totalCharges || 0) +
+      // Number(formUploadAssist?.borderAndOtherCharges || 0) +
+      finalKmCharge
+    ).toFixed(2);
+
+    const totalWithGst = (Number(total) * 1.18).toFixed(2);
+
     setFormUploadAssist((prev) => ({
       ...prev,
-      totalKilometersCharges: Number(calculatedAmount?.totalAmount) || 0,
-      totalAmount: Number(calculatedTotalAmount) || 0,
-      finalAmountWithGST: Number(calculatedTotalAmountWithGst) || 0,
+      totalKilometers: baseKm + additionalKm, // ✅ KM added correctly
+      totalKilometersCharges: finalKmCharge, // ✅ Charge added
+      totalAmount: Number(total),
+      finalAmountWithGST: Number(totalWithGst),
     }));
   }, [
     formUploadAssist.waitingHoursCharge,
     formUploadAssist.vehicleCustodyHoursCharge,
     formUploadAssist.otherCharges,
     formUploadAssist.totalCharges,
+    // formUploadAssist.borderAndOtherCharges,
+    formUploadAssist.additionalKMs,
+    BaseRate,
     calculatedAmount?.totalAmount,
+    fetcdataListItems?.totalKilometers, // ✅ important
   ]);
 
   const handleswitch = (e) => {
@@ -1597,17 +1657,6 @@ export const CustomerProvider = ({ children }) => {
     }));
   }, [fetcdataListItems]);
 
-  // useEffect(() => {
-  //   setFormIncident((prev) => ({
-  //     ...prev,
-  //     assistanceSummary: fetcdataListItems?.externalAssistanceSummary || "",
-  //     externalAssistanceSummary:
-  //       fetcdataListItems?.externalAssistanceSummary_Drop ||
-  //       fetcdataListItems?.externalAssistanceSummary ||
-  //       "",
-  //   }));
-  // }, [fetcdataListItems]);
-
   useEffect(() => {
     setServiceType(fetcdataListItems?.serviceDrop_IncidentType);
     setVendorDistance((prev) => ({
@@ -1700,10 +1749,12 @@ export const CustomerProvider = ({ children }) => {
       const allCities = stateList.dataItem.flatMap((item) => item);
 
       setStateCitiesList(allCities);
+      setVmStateCitiesList(allCities)
       const sortedCities = [
         ...new Set(allStates.map((city) => city.toLowerCase())),
       ].sort();
       setStateList(sortedCities);
+       setVmStateList(sortedCities);
     } catch (error) {
       console.log("error message", error.message);
     }
@@ -1722,6 +1773,19 @@ export const CustomerProvider = ({ children }) => {
     const cities = [...new Set(filtered.map((item) => item.city))].sort();
     console.log(cities, "cities found for", stateName);
     setCitiesList(cities);
+  }
+
+    function getVmCitiesByState(stateName) {
+    if (!stateName) return;
+
+    const normalizedState = stateName.trim().toLowerCase();
+
+    const filtered = vmStateCitiesList.filter(
+      (item) => item.state?.trim().toLowerCase() === normalizedState
+    );
+
+    const cities = [...new Set(filtered.map((item) => item.city))].sort();
+    setVmCitiesList(cities);
   }
 
   const handleSubmit = async (e) => {
@@ -1819,6 +1883,8 @@ export const CustomerProvider = ({ children }) => {
 
         const fetchedData = dataItem[0];
         setFetcdataListItems(fetchedData);
+        setInitialBaseKm(Number(fetchedData?.totalKilometers || 0));
+
         setFetcdataCustomerNo(fetchedData.customerMobileNo);
         if (fetchedData.incident_City === "New+Delhi") {
           setVendorCity(fetchedData.incident_City.split("+")[-1]);
@@ -2110,8 +2176,8 @@ export const CustomerProvider = ({ children }) => {
       const data = await response.json();
       console.log("data response", data);
       setService(data?.service);
-      const { savedVendors } = data;
-      setVendorFetchList(savedVendors.slice(0, 8));
+      const { savedVendors } = data || {};
+      setVendorFetchList(savedVendors || []);
     } catch (error) {
       console.log("Error message", error);
     } finally {
@@ -2120,12 +2186,62 @@ export const CustomerProvider = ({ children }) => {
       setVendorApiFulfilled(true);
     }
   };
+
   useEffect(() => {
     if (vendorDistance.ServiceType) {
       console.log(vendorDistance.ServiceType, "vendor distance");
       fetchVendorList();
     }
   }, [vendorDistance.ServiceType]);
+
+  const fetchVendorListWithNewLocation = async () => {
+    const { Latitude, Longitude } = vendorDistance;
+
+    const storedServiceType = localStorage.getItem("serviceType");
+    const finalServiceType =
+      serviceTypeFromGetSrnData && serviceTypeFromGetSrnData.trim() !== ""
+        ? serviceTypeFromGetSrnData
+        : storedServiceType;
+
+    const queryParams = new URLSearchParams({
+      Latitude,
+      Longitude,
+      City: vmSelectedCity,
+      State: vmSelectedState,
+      ServiceType: finalServiceType,
+      srnNO: generatedSRN,
+    }).toString();
+
+    setVendorApiFulfilled(false);
+    setVendorSerachLoading(true);
+
+    try {
+      const response = await fetch(
+        `${baseURL}/GetVendorDistance_V1?${queryParams}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      setService(data?.service);
+      setVendorFetchList(data?.savedVendors || []);
+    } catch (error) {
+      console.log("Error", error);
+    } finally {
+      setVendorSerachLoading(false);
+      setVendorApiFulfilled(true);
+    }
+  };
+
+  useEffect(() => {
+    if (vmSelectedState && vmSelectedCity) {
+      fetchVendorListWithNewLocation();
+    }
+  }, [vmSelectedState, vmSelectedCity]);
 
   const handleAssignvendorDetails = async (e, isLocalSearch) => {
     e.preventDefault();
@@ -2349,6 +2465,7 @@ export const CustomerProvider = ({ children }) => {
 
   // handleUploadAssist
   const handleUploadAssist = async (e) => {
+    console.log("clickedddd");
     e.preventDefault();
     try {
       setLoadingTest(true);
@@ -2357,7 +2474,7 @@ export const CustomerProvider = ({ children }) => {
         ...formUploadAssist,
         totalCharges: Number(formUploadAssist.totalCharges) || 0,
         totalKilometers: formUploadAssist.totalKilometers
-          ? formUploadAssist.totalKilometers.replace(/[^0-9.]/g, "") // remove "KM" etc.
+          ? String(formUploadAssist.totalKilometers).replace(/[^0-9.]/g, "")
           : "",
         vtoL_KM: formUploadAssist.vtoL_KM
           ? formUploadAssist.vtoL_KM.replace(/[^0-9.]/g, "")
@@ -2369,7 +2486,7 @@ export const CustomerProvider = ({ children }) => {
           formUploadAssist.totalKilometersCharges || "0"
         ), // swagger expects string
       };
-
+      console.log("clicke inside");
       const responce = await fetch(`${baseURL}/UploadAssistDetails`, {
         method: "POST",
         headers: {
@@ -2547,7 +2664,12 @@ export const CustomerProvider = ({ children }) => {
     const location = extractLocation(place.description);
 
     // ✅ use LET (not const)
-    let cleanCity = city?.replace(/state/i, "").replace(/district/i, "").replace(/road/i, "").replace(/\s+/g, " ").trim();
+    let cleanCity = city
+      ?.replace(/state/i, "")
+      .replace(/district/i, "")
+      .replace(/road/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
 
     console.log(cleanCity, "cleanCity");
 
@@ -2785,8 +2907,12 @@ export const CustomerProvider = ({ children }) => {
       //     return totalKm.toFixed(2) + " KM";
       //   })(),
       itoD_KM: storedServiceType === "RSR" ? " " : incident_drop_v,
+      // gtoG_KM:
+      //   storedServiceType === "RSR" ? Vendor_incident : avg_distance + " KM",
       gtoG_KM:
-        storedServiceType === "RSR" ? Vendor_incident : avg_distance + " KM",
+        storedServiceType === "RSR"
+          ? Number(Vendor_incident) * 2 + " KM"
+          : avg_distance + " KM",
     }));
 
     setTimeout(() => setIsSelectingVendor(false), 300);
@@ -2802,10 +2928,13 @@ export const CustomerProvider = ({ children }) => {
     durvalue,
     rate,
     index,
+    ratePerKm,
     e
   ) => {
     const location = JSON.parse(localStorage.getItem("dropLat"));
     const location_ = JSON.parse(localStorage.getItem("dropLon"));
+
+    console.log(ratePerKm, "ratePerKm");
 
     const incedent_lat = pickupCoordinates.lat;
     const incedent_lon = pickupCoordinates.lon;
@@ -2888,9 +3017,11 @@ export const CustomerProvider = ({ children }) => {
         vendorETA: duration,
         kmPerHourCharges: durvalue,
         baseRate: rate.toString(),
+        perKM_Charges: ratePerKm.toString(),
       }));
     }
     if (storedServiceType === "RSR") {
+      const km = parseFloat(distanceVtoI) || 0;
       setFormAssignVendorsDetails((prev) => ({
         ...prev,
         srN_No: srn_n,
@@ -2898,11 +3029,12 @@ export const CustomerProvider = ({ children }) => {
         vtoL_KM: distanceVtoI,
         dtoV_KM: "",
         itoD_KM: "",
-        gtoG_KM: distanceVtoI,
+        gtoG_KM: (km * 2).toFixed(1) + " km",
         vendorContactNumber: mobile_n,
         vendorETA: duration,
         kmPerHourCharges: durvalue,
         baseRate: rate.toString(),
+        perKM_Charges: ratePerKm.toString(),
       }));
     }
     // Set selection index for UI indication
@@ -3026,17 +3158,13 @@ export const CustomerProvider = ({ children }) => {
 
     setFormUploadAssist((prev) => ({
       ...prev,
-      customerPaidAmount:
-        prev.customerPaidAmount ||
-        normalizeAmount(fetcdataListItems.customerPaidAmount),
-
-      customerPaidDate:
-        prev.customerPaidDate || fetcdataListItems.customerPaidDate || "",
-      paymentUpdatedTime:
-        prev.paymentUpdatedTime || fetcdataListItems.paymentUpdatedTime || "",
-      referenceNo: prev.referenceNo || fetcdataListItems.referenceNo || "",
-      product: prev.product || fetcdataListItems.product || "",
-      paymentType: prev.paymentType || fetcdataListItems.paymentType || "",
+      customerPaidAmount: normalizeAmount(fetcdataListItems.customerPaidAmount),
+      customerPaidDate: fetcdataListItems.customerPaidDate || "",
+      paymentUpdatedTime: fetcdataListItems.paymentUpdatedTime || "",
+      referenceNo: fetcdataListItems.referenceNo || "",
+      vehicleType: fetcdataListItems?.vehicleType || "",
+      // approvalMatrix: fetcdataListItems?.approvalMatrix || "",
+      paymentType: fetcdataListItems.paymentType || "",
     }));
   }, [fetcdataListItems]);
 
@@ -3201,6 +3329,17 @@ export const CustomerProvider = ({ children }) => {
         service,
         vendorSerachLoading,
         vendorApiFulfilled,
+
+        showViewMore,
+        setShowViewMore,
+        vmSelectedState,
+        setVmSelectedState,
+        vmSelectedCity,
+        setVmSelectedCity,
+        vmStateList,
+        vmCitiesList,
+        vmStateCitiesList,
+        getVmCitiesByState,
       }}
     >
       {children}

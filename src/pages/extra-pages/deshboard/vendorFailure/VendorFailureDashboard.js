@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Card } from "@mui/material";
 import ActiveCasesHook from "../ActiveCasesHook";
 import { Grid } from "@mui/material";
@@ -6,6 +6,7 @@ import { CardContent, Typography } from "@mui/material";
 
 import VendorFailureTable from "./VendorFailureTable";
 import VendorFailureFilter from "./VendorFailureFilter";
+import { VendorFailureContext } from "./VendorFailureHook";
 // import VendorPerformanceTable from "./VendorPerformanceTable";
 
 const VendorFailureDashboard = () => {
@@ -13,6 +14,8 @@ const VendorFailureDashboard = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userRole = (userInfo?.role || "Agent").toLowerCase();
 
+  const { VendorFailureData } = useContext(VendorFailureContext);
+  console.log(VendorFailureData, "VendorFailureData");
   const allCards = [
     {
       title: "Vendor Failure Report",
@@ -71,15 +74,14 @@ const VendorFailureDashboard = () => {
                     zIndex: 1,
                   }}
                 >
-                <svg
-    viewBox="0 0 1440 200"
-    width="100%"
-    height="100%"
-    preserveAspectRatio="none"
-  >
-    
-    <path
-      d="
+                  <svg
+                    viewBox="0 0 1440 200"
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="
         M600 200
         C760 160, 860 120, 980 120
         C1100 120, 1180 80, 1260 70
@@ -87,9 +89,9 @@ const VendorFailureDashboard = () => {
         L1440 200
         Z
       "
-      fill="rgba(255,255,255,0.35)"
-    />
-  </svg>
+                      fill="rgba(255,255,255,0.35)"
+                    />
+                  </svg>
                 </Box>
               </Card>
             </Grid>

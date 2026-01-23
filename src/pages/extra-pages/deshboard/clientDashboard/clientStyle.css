@@ -1,0 +1,15 @@
+.grouped-header-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -12px;
+}
+
+.grouped-header-title {
+  width: 940px; /* 5 columns ka approx total */
+  text-align: center;
+  font-weight: 600;
+  background: linear-gradient(135deg, #5932ea, #5932ea);
+  color: #fff;
+  padding: 8px 0;
+  border-radius: 6px 6px 0 0;
+}

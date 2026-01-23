@@ -51,7 +51,7 @@ const VendorDeatils = () => {
   const remarks = [
     "Enquiry",
     "Case Cancelled",
-    "Case Completed",
+    // "Case Completed",
     "Service Recalled",
   ];
   const status = ["OnGoing", "Vendor Close Issue"];
@@ -70,7 +70,7 @@ const VendorDeatils = () => {
     "Due to High Price",
     "Other Enquiry",
   ];
-  const rsaCompleted = ["Case Completed"];
+  // const rsaCompleted = ["Case Completed"];
   const rsaCaseDenied = [
     "Vehicle Started",
     "Customer Arranged Alternative Service",
@@ -840,12 +840,12 @@ const VendorDeatils = () => {
                           </MenuItem>
                         ))}
 
-                      {formSrnStatus.srN_Remark === "Case Completed" &&
+                      {/* {formSrnStatus.srN_Remark === "Case Completed" &&
                         rsaCompleted.map((item, index) => (
                           <MenuItem key={index} value={item}>
                             {item}
                           </MenuItem>
-                        ))}
+                        ))} */}
 
                       {formSrnStatus.srN_Remark === "Case Denied" &&
                         rsaCaseDenied.map((item, index) => (
@@ -935,6 +935,9 @@ const VendorDeatils = () => {
                   )}
 
                   {(selectedRsaStatus === "Reached at Incident location" ||
+                  selectedRsaStatus === "On the way to drop" ||
+                    fetcdataListItems?.rsaStatus ==="On the way to drop"||
+                    fetcdataListItems?.rsaStatus ==="Drop Completed"||
                     fetcdataListItems?.rsaStatus === "Case Completed" ||
                     fetcdataListItems?.srN_Status === "Vendor Close Issue") && (
                     <div className="col-md-3 mb-4">
@@ -1036,6 +1039,7 @@ const VendorDeatils = () => {
 
                   {fetcdataListItems?.serviceDrop_IncidentType !== "RSR" &&
                     (selectedRsaStatus === "Drop Completed" ||
+                      selectedRsaStatus === "Case Completed" ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status ===
                         "Vendor Close Issue") && (

@@ -1,17 +1,140 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import React, { useContext, useEffect, useMemo } from "react";
+import { Box, Typography, Button, Paper } from "@mui/material";
+import DataTable from "react-data-table-component";
+import { VendorFailureContext } from "../vendorFailure/VendorFailureHook";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const VendorPerformanceTable = () => {
+  const {
+    fetchVendorPerformanceFiltered,
+    vendorPerformanceData,
+    vendorPerformanceLoading,
+    vendorPerformanceFilters,
+  } = useContext(VendorFailureContext);
+
+  useEffect(() => {
+    fetchVendorPerformanceFiltered();
+  }, [vendorPerformanceFilters]);
+
+  const filteredData = useMemo(() => {
+    if (!vendorPerformanceFilters.search) return vendorPerformanceData || [];
+
+    return (vendorPerformanceData || []).filter((row) =>
+      row?.vendorName
+        ?.toLowerCase()
+        .includes(vendorPerformanceFilters.search.toLowerCase())
+    );
+  }, [vendorPerformanceData, vendorPerformanceFilters.search]);
+
+
+   const handleExportExcel = () => {
+    if (!filteredData.length) return;
+
+    const formattedData = filteredData.map((row) => ({
+      "Vendor Name": row.vendorName || "-",
+      State: row.stateName || "-",
+      City: row.cityName || "-",
+      Accepted: row.accepted || 0,
+      Rejected: row.rejected || 0,
+      "Vendor Cases": row.vendorCases || 0,
+      "Acceptance Rate": row.acceptanceRate || "0%",
+      "Rejected Rate": row.rejectedRate || "0%",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Vendor Performance");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, "Vendor_Performance_Report.xlsx");
+  };
+
+
+  const columns = useMemo(
+    () => [
+      {
+        name: "Vendor Name",
+        selector: (row) => row.vendorName || "-",
+        center: true,
+      },
+      {
+        name: "State",
+        selector: (row) => row.stateName || "-",
+        center: true,
+      },
+      {
+        name: "City",
+        selector: (row) => row.cityName || "-",
+        center: true,
+      },
+      {
+        name: "Accepted",
+        selector: (row) => row.acceptedCases || 0,
+        center: true,
+      },
+      {
+        name: "Rejected",
+        selector: (row) => row.rejectedCases || 0,
+        center: true,
+      },
+      {
+        name: "Vendor Cases",
+        selector: (row) => row.vendorCases || 0,
+        center: true,
+      },
+      {
+        name: "Acceptance Rate",
+        selector: (row) => row.acceptedRate +"%" || "0%",
+        center: true,
+      },
+      {
+        name: "Rejected Rate",
+        selector: (row) => row.rejectedRate+ "%" || "0%",
+        center: true,
+      },
+    ],
+    []
+  );
+
+  
+  const customStyles = {
+    headCells: {
+      style: {
+        background: "linear-gradient(135deg, #5932ea, #5932ea)",
+        color: "#fff",
+        fontWeight: 600,
+        fontSize: "13px",
+        justifyContent: "center",
+        borderRight: "1px solid #fff",
+        borderBottom: "1px solid #fff",
+      },
+    },
+    cells: {
+      style: {
+        fontSize: "13px",
+        justifyContent: "center",
+        borderRight: "1px solid #f2f2f2ff",
+        borderBottom: "1px solid #f2f2f2ff",
+      },
+    },
+    rows: {
+      style: {
+        minHeight: "42px",
+      },
+    },
+  };
+
   return (
     <Paper
       sx={{
@@ -29,10 +152,13 @@ const VendorPerformanceTable = () => {
           mb: 3,
         }}
       >
-        <Typography sx={{ fontWeight: 600, fontSize:"24px" }}>Vendor Performance</Typography>
+        <Typography sx={{ fontWeight: 600, fontSize: "24px" }}>
+          Vendor Performance
+        </Typography>
 
         <Button
           variant="contained"
+          onClick={handleExportExcel}
           sx={{
             textTransform: "none",
             borderRadius: 2,
@@ -43,61 +169,19 @@ const VendorPerformanceTable = () => {
         </Button>
       </Box>
 
-      {/* TABLE */}
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
-            <TableRow
-              sx={{
-                background: "linear-gradient(135deg, #5932ea, #5932ea)",
-              }}
-            >
-              {[
-                "Vendor Name",
-                "State",
-                "City",
-                "Accepted",
-                "Rejected",
-                "Vendor Cases",
-                "Acceptance Rate",
-                "Rejected Rate",
-              ].map((head) => (
-                <TableCell
-                  key={head}
-                  sx={{
-                    color: "#fff",
-                    fontWeight: 600,
-                    fontSize: "13px",
-                    borderRight: "1px solid #fff",
-                    borderBottom: "1px solid #fff",
-                    textAlign: "center",
-                  }}
-                >
-                  {head}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {[...Array(8)].map((_, index) => (
-              <TableRow key={index}>
-                {[...Array(8)].map((_, i) => (
-                  <TableCell
-                    key={i}
-                    sx={{
-                      borderRight: "1px solid #f2f2f2ff",
-                      borderBottom: "1px solid #f2f2f2ff",
-                    }}
-                  >
-                    &nbsp;
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* DATA TABLE */}
+      <DataTable
+        columns={columns}
+        data={filteredData || []}
+        progressPending={vendorPerformanceLoading}
+        pagination
+        paginationPerPage={10}
+        paginationRowsPerPageOptions={[10, 20, 30]}
+        customStyles={customStyles}
+        highlightOnHover
+        persistTableHead
+        noDataComponent="No data available"
+      />
     </Paper>
   );
 };

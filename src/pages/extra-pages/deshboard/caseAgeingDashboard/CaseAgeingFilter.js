@@ -1,103 +1,291 @@
-import React from 'react'
-import { Box, Grid, TextField, MenuItem, InputAdornment } from "@mui/material";
+import React, { useContext, useEffect } from "react";
+import {
+  Box,
+  Grid,
+  TextField,
+  MenuItem,
+  InputAdornment,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import {
+  AgentContext,
+  RSA_INCIDENT_LIST,
+  STATUS_LIST,
+  SUB_STATUS_LIST,
+} from "../agentDashboard/AgentDashboardHook";
+
+const CLIENT_TYPE_LIST = ["Corporate", "Retail", "OEM", "Insurance"];
 
 const CaseAgeingFilter = () => {
+  const {
+    clientFilters,
+    caseAgeingFilters,
+    setCaseAgeingFilters,
+    fetchCaseAgeingData,
+    fetchClientList,
+    clientList,
+    updateIncidentTypes,
+
+    userRole,
+    loggedInClientName,
+  } = useContext(AgentContext);
+
+  useEffect(() => {
+    fetchClientList();
+  }, []);
+
+  useEffect(() => {
+    if (!userRole) return;
+    fetchCaseAgeingData();
+  }, [caseAgeingFilters, userRole, loggedInClientName]);
+
+  const handleChange = (key, value) => {
+    setCaseAgeingFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
   return (
-    <div>
-       <Box
-      sx={{
-        marginTop: "20px",
-        padding: "16px",
-        borderRadius: 2,
-      }}
-    >
+    <Box sx={{ marginTop: "20px", padding: "16px", borderRadius: 2 }}>
       <Grid container alignItems="center" spacing={2}>
-        {/* LEFT FILTERS */}
         <Grid item xs={12} md={9}>
           <Grid container spacing={2}>
+            {/* FROM DATE */}
             <Grid item xs={12} sm={6} md={2}>
+              <TextField
+                type="date"
+                fullWidth
+                size="small"
+                label="From Date"
+                InputLabelProps={{ shrink: true }}
+                value={caseAgeingFilters.fromDate}
+                onChange={(e) => handleChange("fromDate", e.target.value)}
+              />
+            </Grid>
+
+            {/* TO DATE */}
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField
+                type="date"
+                fullWidth
+                size="small"
+                label="To Date"
+                InputLabelProps={{ shrink: true }}
+                value={caseAgeingFilters.toDate}
+                onChange={(e) => handleChange("toDate", e.target.value)}
+              />
+            </Grid>
+
+            {/* <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
                 size="small"
-                label="Select Duration"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
+                label="Select Status"
+                SelectProps={{
+                  multiple: true,
+                  value: caseAgeingFilters.status || [],
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    const allValues = STATUS_LIST.map((i) => i.value);
+
+                    if (value.includes("ALL")) {
+                      if (
+                        (caseAgeingFilters.status || []).length ===
+                        allValues.length
+                      ) {
+                        handleChange("status", []);
+                      } else {
+                        handleChange("status", allValues);
+                      }
+                    } else {
+                      handleChange("status", value);
+                    }
                   },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
+
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
                 }}
               >
-                <MenuItem value="">Select Duration</MenuItem>
-                <MenuItem value="today">Today</MenuItem>
-                <MenuItem value="7">Last 7 Days</MenuItem>
-                <MenuItem value="30">Last 30 Days</MenuItem>
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      (caseAgeingFilters.status || []).length ===
+                      STATUS_LIST.length
+                    }
+                    indeterminate={
+                      (caseAgeingFilters.status || []).length > 0 &&
+                      (caseAgeingFilters.status || []).length <
+                        STATUS_LIST.length
+                    }
+                  />
+                  <ListItemText primary="Select All" />
+                </MenuItem>
+
+                {STATUS_LIST.map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    <Checkbox
+                      checked={(caseAgeingFilters.status || []).includes(
+                        item.value
+                      )}
+                    />
+                    <ListItemText primary={item.label} />
+                  </MenuItem>
+                ))}
               </TextField>
-            </Grid>
+            </Grid> */}
+
+            {/* <Grid item xs={12} sm={6} md={2}>
+              <TextField
+                select
+                fullWidth
+                size="small"
+                label="Select Sub Status"
+                SelectProps={{
+                  multiple: true,
+                  value: caseAgeingFilters.subStatus || [],
+                  onChange: (e) => {
+                    const value = e.target.value;
+                    const allValues = SUB_STATUS_LIST.map((i) => i.value);
+
+                    if (value.includes("ALL")) {
+                      if (
+                        (caseAgeingFilters.subStatus || []).length ===
+                        allValues.length
+                      ) {
+                        handleChange("subStatus", []);
+                      } else {
+                        handleChange("subStatus", allValues);
+                      }
+                    } else {
+                      handleChange("subStatus", value);
+                    }
+                  },
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
+                }}
+              >
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      (caseAgeingFilters.subStatus || []).length ===
+                      SUB_STATUS_LIST.length
+                    }
+                    indeterminate={
+                      (caseAgeingFilters.subStatus || []).length > 0 &&
+                      (caseAgeingFilters.subStatus || []).length <
+                        SUB_STATUS_LIST.length
+                    }
+                  />
+                  <ListItemText primary="Select All" />
+                </MenuItem>
+
+                {SUB_STATUS_LIST.map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    <Checkbox
+                      checked={(caseAgeingFilters.subStatus || []).includes(
+                        item.value
+                      )}
+                    />
+                    <ListItemText primary={item.label} />
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid> */}
+
+            {userRole !== "client" && (
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  select
+                  fullWidth
+                  size="small"
+                  label="Select Client"
+                  SelectProps={{
+                    multiple: true,
+                    value: caseAgeingFilters.clientNames,
+                    onChange: (e) => {
+                      const value = e.target.value;
+
+                      if (value.includes("ALL")) {
+                        if (
+                          caseAgeingFilters.clientNames.length ===
+                          clientList.length
+                        ) {
+                          handleChange("clientNames", []);
+                        } else {
+                          handleChange(
+                            "clientNames",
+                            clientList.map((c) => c.companyName),
+                          );
+                        }
+                      } else {
+                        handleChange("clientNames", value);
+                      }
+                    },
+                    renderValue: (selected) => selected.join(", "),
+                  }}
+                >
+                  <MenuItem value="ALL">
+                    <Checkbox
+                      checked={
+                        clientList.length > 0 &&
+                        caseAgeingFilters.clientNames.length ===
+                          clientList.length
+                      }
+                      indeterminate={
+                        caseAgeingFilters.clientNames.length > 0 &&
+                        caseAgeingFilters.clientNames.length < clientList.length
+                      }
+                    />
+                    <ListItemText primary="Select All" />
+                  </MenuItem>
+
+                  {clientList.map((client) => (
+                    <MenuItem
+                      key={client.companyName}
+                      value={client.companyName}
+                    >
+                      <Checkbox
+                        checked={caseAgeingFilters.clientNames.includes(
+                          client.companyName,
+                        )}
+                      />
+                      <ListItemText primary={client.companyName} />
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
 
             <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
                 size="small"
-                label="Select Incident"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
-                }}
+                label="Service Type"
+                value={caseAgeingFilters.serviceType || ""}
+                onChange={(e) => handleChange("serviceType", e.target.value)}
               >
-                <MenuItem value="">Select State</MenuItem>
-                <MenuItem value="up">Uttar Pradesh</MenuItem>
-                <MenuItem value="mh">Maharashtra</MenuItem>
+                {/* <MenuItem value="">Select</MenuItem> */}
+                <MenuItem value="Towing">Towing</MenuItem>
+                <MenuItem value="RSR">RSR</MenuItem>
+                <MenuItem value="NO_SERVICE">No Service Type</MenuItem>
               </TextField>
             </Grid>
-
-            <Grid item xs={12} sm={6} md={2}>
-              <TextField
-                select
-                fullWidth
-                size="small"
-                label="Select Client"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
-                }}
-              >
-                <MenuItem value="">Select City</MenuItem>
-                <MenuItem value="noida">Noida</MenuItem>
-                <MenuItem value="pune">Pune</MenuItem>
-              </TextField>
-            </Grid>
-
-            
           </Grid>
         </Grid>
 
-        {/* RIGHT SEARCH */}
-        <Grid item xs={12} md={3}>
+        {/* SEARCH */}
+        <Grid item xs={12} md={2}>
           <TextField
             fullWidth
             size="small"
             placeholder="Search Report"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-              },
-              "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
-            }}
+            value={caseAgeingFilters.search}
+            onChange={(e) => handleChange("search", e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -109,8 +297,7 @@ const CaseAgeingFilter = () => {
         </Grid>
       </Grid>
     </Box>
-    </div>
-  )
-}
+  );
+};
 
-export default CaseAgeingFilter
+export default CaseAgeingFilter;

@@ -16,15 +16,20 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import SpeedIcon from "@mui/icons-material/Speed";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
+import BusinessIcon from "@mui/icons-material/Business";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import InsightsIcon from "@mui/icons-material/Insights";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 
 const NavItem = ({ level, drawerOpen }) => {
   const { pathname } = useLocation();
-  const [selectedVal, setSelectedVal] = useState("dashboard");
+  // const [selectedVal, setSelectedVal] = useState("dashboard");
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userRole = userInfo?.role || "Agent";
 
-  const itemHandler = (id) => setSelectedVal(id);
+  // const itemHandler = (id) => setSelectedVal(id);
 
   const menuItems = [
     {
@@ -32,42 +37,105 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "Dashboard",
       icon: <DirectionsCarIcon />,
       url: "/dashboarddetails",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+       
+      ],
     },
     {
       id: "vendorDashboard",
       label: "Vendor Dashboard",
-      icon: <DirectionsCarIcon />,
+      icon: <BusinessIcon />,
       url: "/vendor-dashboard",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+      ],
     },
     {
       id: "clientDashboard",
-      label: "client Dashboard",
-      icon: <DirectionsCarIcon />,
+      label: "Client Dashboard",
+      icon: <BarChartIcon />,
       url: "/client-dashboard",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+        "Client",
+      ],
     },
     {
       id: "agentDashboard",
-      label: "agent Dashboard",
-      icon: <DirectionsCarIcon />,
+      label: "Agent Dashboard",
+      icon: <InsightsIcon />,
       url: "/agent-dashboard",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+      ],
     },
     {
       id: "caseAgeingDashboard",
       label: "Case Ageing",
-      icon: <DirectionsCarIcon />,
+      icon: <ApartmentIcon />,
       url: "/case-ageing-dashboard",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+        "Client",
+      ],
     },
     {
       id: "vendorFailureDashboard",
       label: "Vendor Failure",
-      icon: <DirectionsCarIcon />,
+      icon: <HourglassBottomIcon />,
       url: "/venodr-failure-dashboard",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "QA", "SME", "TL", "Vendor"],
+      roles: [
+        "Admin",
+        "Agent",
+        "Advisor",
+        "AM",
+        "HeadAC",
+        "QA",
+        "SME",
+        "TL",
+        "Vendor",
+      ],
     },
     {
       id: "searchdashboard",
@@ -172,21 +240,27 @@ const NavItem = ({ level, drawerOpen }) => {
         .map((menu) => (
           <ListItemButton
             key={menu.id}
-            component = {Link}
-            to = {menu.url}
+            component={Link}
+            to={menu.url}
             // component={menu.id === "createSupport" ? "a" : Link}
             // href={menu.id === "createSupport" ? menu.url : undefined}
             // to={menu.id !== "createSupport" ? menu.url : undefined}
-            selected={selectedVal === menu.id}
-            onClick={() => itemHandler(menu.id)}
+            // selected={selectedVal === menu.id}
+            selected={pathname === menu.url}
+            onClick={() => {
+              // itemHandler(menu.id);
+              if (menu.id === "createSupport") {
+                window.location.href = menu.url;
+              }
+            }}
             sx={{
               pl: drawerOpen ? `${level * 28}px` : 1.5,
               py: 1,
               "&.Mui-selected": {
-                backgroundColor: "rgb(126,0,209)",
+                backgroundColor: "#5932ea",
                 color: "#ffffffff",
                 "&:hover": {
-                  backgroundColor: "rgb(126,0,209)",
+                  backgroundColor: "#5932ea",
                   color: "#ffffffff",
                 },
               },
@@ -200,7 +274,7 @@ const NavItem = ({ level, drawerOpen }) => {
             }}
           >
             <ListItemIcon
-              sx={{ color: selectedVal === menu.id ? "white" : "#282828" }}
+              sx={{ color: pathname === menu.url ? "white" : "#282828" }}
             >
               {menu.icon}
             </ListItemIcon>

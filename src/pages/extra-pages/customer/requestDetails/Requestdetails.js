@@ -150,6 +150,8 @@ const Requestdetails = () => {
     handleDownloadHistory,
   } = useContext(CustomerContext);
 
+  const isCompleteEnquiry = formIncident.caseType === "Complete-Enquiry";
+  
   useEffect(() => {
     localStorage.setItem("incident_lats", fetcdataListItems?.user_Latitude);
     localStorage.setItem("incident_lons", fetcdataListItems?.uSer_Longitude);
@@ -250,7 +252,7 @@ const Requestdetails = () => {
                     <Select
                       name="vehicleType"
                       fullWidth
-                      required
+                      required={!isCompleteEnquiry}
                       value={formIncident?.vehicleType || ""}
                       displayEmpty
                       renderValue={(select) => {
@@ -298,7 +300,7 @@ const Requestdetails = () => {
                           }
                           return select;
                         }}
-                        required
+                        required={!isCompleteEnquiry}
                         input={<OutlinedInput readOnly />}
                       >
                         <MenuItem value="" disabled>
@@ -328,7 +330,7 @@ const Requestdetails = () => {
                         onChange={handleService}
                         displayEmpty
                         renderValue={(select) => (select ? select : "Select")}
-                        required
+                        required={!isCompleteEnquiry}
                       >
                         <MenuItem value="" disabled>
                           Select
@@ -378,7 +380,7 @@ const Requestdetails = () => {
                           return select;
                         }}
                         onChange={handleService}
-                        required
+                        required={!isCompleteEnquiry}
                         input={<OutlinedInput readOnly />}
                       >
                         <MenuItem value="" disabled>
@@ -414,7 +416,7 @@ const Requestdetails = () => {
                                 return select;
                               }}
                               onChange={handleService}
-                              required
+                              required={!isCompleteEnquiry}
                             >
                               <MenuItem value="" disabled>
                                 Select
@@ -466,7 +468,7 @@ const Requestdetails = () => {
                                 return select;
                               }}
                               onChange={handleService}
-                              required
+                              required={!isCompleteEnquiry}
                             >
                               <MenuItem value="" disabled>
                                 Select
@@ -530,7 +532,7 @@ const Requestdetails = () => {
                           return select;
                         }}
                         onChange={handleService}
-                        required
+                        required={!isCompleteEnquiry}
                         input={<OutlinedInput readOnly />}
                       >
                         <MenuItem value="" disabled>
@@ -559,7 +561,7 @@ const Requestdetails = () => {
                                 return select;
                               }}
                               onChange={handleService}
-                              required
+                              required={!isCompleteEnquiry}
                             >
                               <MenuItem value="" disabled>
                                 Select
@@ -666,7 +668,7 @@ const Requestdetails = () => {
                                 return select;
                               }}
                               onChange={handleService}
-                              required
+                              required={!isCompleteEnquiry}
                             >
                               <MenuItem value="" disabled>
                                 Select
@@ -1016,7 +1018,7 @@ const Requestdetails = () => {
                             ? "#f5f5f5"
                             : "white",
                       }}
-                      required
+                      required={!isCompleteEnquiry}
                       disabled={
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===

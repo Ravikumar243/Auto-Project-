@@ -944,9 +944,9 @@ const CreateCustomerTicket = () => {
                             !fetcdataListItems?.callTime
                           ) {
                             toast.error(
-                              "Please fill Call Time before continuing."
+                              "Please fill Call Time before continuing.",
                             );
-                            return; 
+                            return;
                           }
                           setExpanded(expanded === "open1" ? false : "open1");
                           setStepscount(1);
@@ -998,14 +998,14 @@ const CreateCustomerTicket = () => {
                         type="Submit"
                         className="btn btn-light btn-md"
                         onClick={() => {
-                           if (
+                          if (
                             !formData?.callTime &&
                             !fetcdataListItems?.callTime
                           ) {
                             toast.error(
-                              "Please fill Call Time before continuing."
+                              "Please fill Call Time before continuing.",
                             );
-                            return; 
+                            return;
                           }
                           setExpanded(expanded === "open1" ? false : "open1");
                           setStepscount(1);
@@ -1351,7 +1351,7 @@ const CreateCustomerTicket = () => {
                   onChange={handleChange}
                   variant="outlined" required />
               </div> */}
-               <div className="col-md-3 mb-4">
+                  <div className="col-md-3 mb-4">
                     <Typography
                       id="simple-select-label"
                       variant="h6"
@@ -1432,16 +1432,15 @@ const CreateCustomerTicket = () => {
                         type="submit"
                         className="btn btn-light btn-md"
                         onClick={(e) => {
-                          
                           e.preventDefault();
-                            if (
+                          if (
                             !formData?.callTime &&
                             !fetcdataListItems?.callTime
                           ) {
                             toast.error(
-                              "Please fill Call Time before continuing."
+                              "Please fill Call Time before continuing.",
                             );
-                            return; 
+                            return;
                           }
 
                           const missingFields = [];
@@ -1456,7 +1455,7 @@ const CreateCustomerTicket = () => {
                           } else {
                             console.log(
                               "All required fields available:",
-                              formData
+                              formData,
                             );
                             setExpanded(expanded === "open1" ? false : "open1");
                             setStepscount(1);
@@ -1480,14 +1479,14 @@ const CreateCustomerTicket = () => {
                         className="btn btn-light btn-md"
                         onClick={(e) => {
                           e.preventDefault();
-                            if (
+                          if (
                             !formData?.callTime &&
                             !fetcdataListItems?.callTime
                           ) {
                             toast.error(
-                              "Please fill Call Time before continuing."
+                              "Please fill Call Time before continuing.",
                             );
-                            return; 
+                            return;
                           }
 
                           const missingFields = [];
@@ -1505,7 +1504,7 @@ const CreateCustomerTicket = () => {
                           }
                           console.log(
                             "All required fields available:",
-                            formData
+                            formData,
                           );
                         }}
                         style={{

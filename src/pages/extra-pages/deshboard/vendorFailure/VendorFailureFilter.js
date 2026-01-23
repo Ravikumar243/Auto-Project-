@@ -1,11 +1,37 @@
-import React from 'react'
-import { Box, Grid, TextField, MenuItem, InputAdornment } from "@mui/material";
+import React, { useContext, useEffect } from "react";
+import {
+  Box,
+  Grid,
+  TextField,
+  MenuItem,
+  InputAdornment,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
+import { VendorFailureContext } from "./VendorFailureHook";
+
 const VendorFailureFilter = () => {
-   return (
-    <div>
-       <Box
+  const {
+    fetchVendors,
+    vendors,
+    vendorLoading,
+    states,
+    cities,
+    filters,
+    setFilters,
+    stateCityLoading,
+  } = useContext(VendorFailureContext);
+
+
+
+  useEffect(() => {
+    fetchVendors();
+  }, []);
+
+  return (
+    <Box
       sx={{
         marginTop: "20px",
         padding: "16px",
@@ -13,70 +39,109 @@ const VendorFailureFilter = () => {
       }}
     >
       <Grid container alignItems="center" spacing={2}>
-        {/* LEFT FILTERS */}
+   
         <Grid item xs={12} md={9}>
           <Grid container spacing={2}>
+            {/* DURATION */}
             <Grid item xs={12} sm={6} md={2}>
               <TextField
-                select
+                type="date"
                 fullWidth
                 size="small"
-                label="Select Duration"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
-                }}
-              >
-                <MenuItem value="">Select Duration</MenuItem>
-                <MenuItem value="today">Today</MenuItem>
-                <MenuItem value="7">Last 7 Days</MenuItem>
-                <MenuItem value="30">Last 30 Days</MenuItem>
-              </TextField>
+                label="From Date"
+                InputLabelProps={{ shrink: true }}
+                value={filters.fromDate || ""}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    fromDate: e.target.value || null,
+                  }))
+                }
+              />
             </Grid>
 
+            {/* TO DATE */}
+            <Grid item xs={12} sm={6} md={2}>
+              <TextField
+                type="date"
+                fullWidth
+                size="small"
+                label="To Date"
+                InputLabelProps={{ shrink: true }}
+                value={filters.toDate || ""}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    toDate: e.target.value || null,
+                  }))
+                }
+              />
+            </Grid>
+
+            {/* STATE MULTI SELECT */}
             <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
                 size="small"
                 label="Select State"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
+                value={filters.stateNames}
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => selected.join(", "),
                 }}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    stateNames: e.target.value,
+                    cityNames: [], // reset cities when state changes (best practice)
+                  }))
+                }
               >
-                <MenuItem value="">Select State</MenuItem>
-                <MenuItem value="up">Uttar Pradesh</MenuItem>
-                <MenuItem value="mh">Maharashtra</MenuItem>
+                {stateCityLoading ? (
+                  <MenuItem disabled>Loading states...</MenuItem>
+                ) : (
+                  states.map((state) => (
+                    <MenuItem key={state} value={state}>
+                      <Checkbox checked={filters.stateNames.includes(state)} />
+                      <ListItemText primary={state} />
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 
+            {/* CITY MULTI SELECT */}
             <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
                 size="small"
                 label="Select City"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
+                value={filters.cityNames}
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => selected.join(", "),
                 }}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    cityNames: e.target.value,
+                  }))
+                }
               >
-                <MenuItem value="">Select City</MenuItem>
-                <MenuItem value="noida">Noida</MenuItem>
-                <MenuItem value="pune">Pune</MenuItem>
+                {stateCityLoading ? (
+                  <MenuItem disabled>Loading cities...</MenuItem>
+                ) : cities.length === 0 ? (
+                  <MenuItem disabled>Select state first</MenuItem>
+                ) : (
+                  cities.map((city) => (
+                    <MenuItem key={city} value={city}>
+                      <Checkbox checked={filters.cityNames.includes(city)} />
+                      <ListItemText primary={city} />
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
 
@@ -86,18 +151,34 @@ const VendorFailureFilter = () => {
                 fullWidth
                 size="small"
                 label="Select Vendor"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
-                  },
-                  "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
+                value={filters.vendorIds}
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) =>
+                    vendors
+                      .filter((v) => selected.includes(v.vendorId))
+                      .map((v) => v.vendoR_NAME)
+                      .join(", "),
                 }}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    vendorIds: e.target.value, 
+                  }))
+                }
               >
-                <MenuItem value="">Select Vendor</MenuItem>
-                <MenuItem value="v1">Vendor 1</MenuItem>
-                <MenuItem value="v2">Vendor 2</MenuItem>
+                {vendorLoading ? (
+                  <MenuItem disabled>Loading vendors...</MenuItem>
+                ) : (
+                  vendors.map((vendor) => (
+                    <MenuItem key={vendor.vendorId} value={vendor.vendorId}>
+                      <Checkbox
+                        checked={filters.vendorIds.includes(vendor.vendorId)}
+                      />
+                      <ListItemText primary={vendor.vendoR_NAME} />
+                    </MenuItem>
+                  ))
+                )}
               </TextField>
             </Grid>
           </Grid>
@@ -108,15 +189,14 @@ const VendorFailureFilter = () => {
           <TextField
             fullWidth
             size="small"
-            placeholder="Search Report"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-              },
-              "& fieldset": {
-                    border:'1.5px solid #afafb1ff'
-                  },
-            }}
+            placeholder="Search by SRN Number"
+            value={filters.search}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                search: e.target.value,
+              }))
+            }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -128,8 +208,7 @@ const VendorFailureFilter = () => {
         </Grid>
       </Grid>
     </Box>
-    </div>
-  )
-}
+  );
+};
 
-export default VendorFailureFilter
+export default VendorFailureFilter;

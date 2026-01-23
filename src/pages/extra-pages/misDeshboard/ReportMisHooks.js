@@ -27,6 +27,25 @@ const ReportMisHooks = () => {
   const isFilterApplied = search || from || to || company;
 
 
+  // 🔹 helper (put at top of hook file)
+const parseAnyDate = (value) => {
+  if (!value) return null;
+
+  return moment(
+    value,
+    [
+      "DD-MM-YYYY HH:mm:ss",
+      "DD-MM-YYYY",
+      "M/D/YYYY h:mm:ss A",
+      "YYYY-MM-DD",
+      "YYYY-MM-DDTHH:mm"
+    ],
+    true
+  );
+};
+
+
+
   // Fetch all data
   const fetchDataAPI = async () => {
     try {
@@ -161,54 +180,67 @@ const ReportMisHooks = () => {
 
  
 
-  useEffect(() => {
-    if (!Array.isArray(listData) || listData.length === 0) {
-      console.error("No records to display");
-      setFiltercase([]);
-      return;
-    }
+useEffect(() => {
+  if (!Array.isArray(listData) || listData.length === 0) {
+    setFiltercase([]);
+    return;
+  }
 
-    let baseData = [...listData];
+  let baseData = [...listData];
 
-    // 🔹 AGENT → Only show last 3 days
-    if (userRole === "Agent" || userRole === "Advisor" || userRole==="TL") {
-      baseData = baseData.filter((row) => {
-        const dateStr = row.completeInformationTime?.split(" ")[0];
-        const caseDate = moment(dateStr, "DD-MM-YYYY");
-        const today = moment();
-        const diff = today.diff(caseDate, "days");
-        return diff <= 2; // 3 days = today + 2 days previous
-      });
-    }
+  // 🔹 AGENT / ADVISOR / TL → last 3 days only
+  if (userRole === "Agent" || userRole === "Advisor" || userRole === "TL") {
+    baseData = baseData.filter((row) => {
+      const caseDate =
+        parseAnyDate(row.completeInformationTime) ||
+        parseAnyDate(row.callTime) ||
+        parseAnyDate(row.reportedDate);
 
-    // 🟦 SEARCH Filter
-    const result = baseData.filter((row) => {
-      const referenceMatch = row.reference_No
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
+      if (!caseDate || !caseDate.isValid()) return false;
 
-      const contactMatch = row.contactNo
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
-
-      let dateMatch = true;
-
-      // 🟦 DATE FILTER (Admin only because API filters data for Admin)
-      if (from && to) {
-        const dateStr = row.completeInformationTime?.split(" ")[0];
-        const caseDate = moment(dateStr, "DD-MM-YYYY");
-        const fromDate = moment(from, "YYYY-MM-DD");
-        const toDate = moment(to, "YYYY-MM-DD");
-
-        dateMatch =
-          caseDate.isSameOrAfter(fromDate) && caseDate.isSameOrBefore(toDate);
-      }
-
-      return dateMatch && (referenceMatch || contactMatch || !search);
+      const today = moment().endOf("day");
+      const diff = today.diff(caseDate, "days");
+      return diff <= 2;
     });
+  }
 
-    setFiltercase(result);
-  }, [listData, search, from, to, userRole]);
+  const result = baseData.filter((row) => {
+    // 🔍 Search
+    const referenceMatch = row.reference_No
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+
+    const contactMatch = row.contactNo
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+
+    let dateMatch = true;
+
+    // 📅 Date filter
+    if (from || to) {
+      const caseDate =
+        parseAnyDate(row.completeInformationTime) ||
+        parseAnyDate(row.callTime) ||
+        parseAnyDate(row.reportedDate);
+
+      if (!caseDate || !caseDate.isValid()) return false;
+
+      const fromDate = from ? moment(from).startOf("day") : null;
+      const toDate   = to ? moment(to).endOf("day") : null;
+
+      if (fromDate && toDate) {
+        dateMatch = caseDate.isBetween(fromDate, toDate, null, "[]");
+      } else if (fromDate) {
+        dateMatch = caseDate.isSameOrAfter(fromDate);
+      }
+    }
+
+    return dateMatch && (referenceMatch || contactMatch || !search);
+  });
+
+  setFiltercase(result);
+}, [listData, search, from, to, userRole]);
+
 
   return {
     listData,
