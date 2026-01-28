@@ -10,7 +10,7 @@ import {
   FormControl,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -133,12 +133,19 @@ const VendorSearch = () => {
             onChange={(e) => {
               if (!statusid.includes(row.vendorID)) {
                 if (e.target.checked) {
-                  const storedServiceType = localStorage.getItem("serviceType");
+                  // const storedServiceType = localStorage.getItem("serviceType");
                   let BaseRatePrice = "";
 
                   if (storedServiceType === "RSR") {
                     BaseRatePrice = row.rsR_Day_upto20kms;
-                  } else if (storedServiceType === "4W-Flatbed") {
+                  }
+                  //  else if (storedServiceType === "4W-Flatbed") {
+                  //   BaseRatePrice = row.fourW_FBT_upto40kms;
+                  // }
+                  else if (
+                    storedServiceType === "4W-Flatbed" ||
+                    storedServiceType === "3W-Flatbed"
+                  ) {
                     BaseRatePrice = row.fourW_FBT_upto40kms;
                   } else if (storedServiceType === "2W-Flatbed") {
                     BaseRatePrice = row.twoW_FBT_upto40kms;
@@ -158,7 +165,14 @@ const VendorSearch = () => {
                     ratePerKm = row.rsR_Day_per_km;
                   } else if (storedServiceType === "Underlift") {
                     ratePerKm = row.underlift_per_km;
-                  } else if (storedServiceType === "4W-Flatbed") {
+                  }
+                  // else if (storedServiceType === "4W-Flatbed") {
+                  //   ratePerKm = row.fourW_FBT_per_km;
+                  // }
+                  else if (
+                    storedServiceType === "4W-Flatbed" ||
+                    storedServiceType === "3W-Flatbed"
+                  ) {
                     ratePerKm = row.fourW_FBT_per_km;
                   } else if (storedServiceType === "2W-Flatbed") {
                     ratePerKm = row.twoW_FBT_per_km;
@@ -181,7 +195,7 @@ const VendorSearch = () => {
                     row.distanceValue,
                     BaseRatePrice,
                     index, // ✅ index first
-                    ratePerKm // ✅ then ratePerKm
+                    ratePerKm, // ✅ then ratePerKm
                   );
                   setSelectedVendorId(row.vendorID);
                   setStatusrej(row.vendorID);
@@ -293,7 +307,7 @@ const VendorSearch = () => {
                 if (result.isConfirmed) {
                   // ✅ If user clicks OK
                   setStatusid((prev) =>
-                    prev.filter((id) => id !== row.vendorID)
+                    prev.filter((id) => id !== row.vendorID),
                   );
                   setStatusrej(null);
 
@@ -360,7 +374,7 @@ const VendorSearch = () => {
                     fetcdataListItems.srN_No,
                     fetcdataListItems.serviceDrop_IncidentType,
                     row.contacT_NUMBER,
-                    row.vendorID
+                    row.vendorID,
                   );
                 }
               });
@@ -411,7 +425,7 @@ const VendorSearch = () => {
                 row.latitudes,
                 row.longitudes,
                 pickupCoordinates.lat,
-                pickupCoordinates.lon
+                pickupCoordinates.lon,
               )
             }
             style={{
@@ -490,7 +504,7 @@ const VendorSearch = () => {
     };
     try {
       const message = await navigator.clipboard.writeText(
-        JSON.stringify(copycontent)
+        JSON.stringify(copycontent),
       );
       console.log("message", message);
     } catch (error) {
@@ -505,7 +519,7 @@ const VendorSearch = () => {
     mobileNo,
     srn,
     type_,
-    setChecked
+    setChecked,
   ) => {
     setChecked(isChecked);
     if (mobileNo.length < 1) {
@@ -585,7 +599,7 @@ const VendorSearch = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          }
+          },
         );
 
         if (response.ok) {
@@ -977,7 +991,7 @@ const VendorSearch = () => {
                             formAssignVendorsDetails?.driverMobileNo,
                             fetcdataListItems?.srN_No,
                             "driver",
-                            setDriverChecked
+                            setDriverChecked,
                           )
                         }
                       />
@@ -1330,7 +1344,7 @@ const VendorSearch = () => {
                             fetcdataListItems?.customerMobileNo,
                             fetcdataListItems?.srN_No,
                             "customer",
-                            setCustomerChecked
+                            setCustomerChecked,
                           )
                         }
                       />

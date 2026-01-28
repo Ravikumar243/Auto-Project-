@@ -169,7 +169,7 @@ export const CustomerProvider = ({ children }) => {
       serviceType === "RSR" ||
       serviceType === "2W-Flatbed" ||
       serviceType === "4W-Flatbed" ||
-      serviceType === "3W-Flat Bed" ||
+      serviceType === "3W-Flatbed" ||
       serviceType === "Underlift" ||
       serviceType === "Zero-Degree" ||
       serviceType === "Mini Truck" ||
@@ -207,7 +207,7 @@ export const CustomerProvider = ({ children }) => {
     if (
       serviceType === "2W-Flatbed" ||
       serviceType === "4W-Flatbed" ||
-      serviceType === "3W-Flat Bed" ||
+      serviceType === "3W-Flatbed" ||
       serviceType === "Underlift" ||
       serviceType === "Zero-Degree" ||
       serviceType === "Mini Truck" ||
@@ -2472,6 +2472,7 @@ export const CustomerProvider = ({ children }) => {
 
       const cleanedPayload = {
         ...formUploadAssist,
+        customerPaidAmount: formUploadAssist.customerPaidAmount || 0,
         totalCharges: Number(formUploadAssist.totalCharges) || 0,
         totalKilometers: formUploadAssist.totalKilometers
           ? String(formUploadAssist.totalKilometers).replace(/[^0-9.]/g, "")
@@ -2957,7 +2958,7 @@ export const CustomerProvider = ({ children }) => {
     if (
       storedServiceType === "2W-Flatbed" ||
       storedServiceType === "4W-Flatbed" ||
-      storedServiceType === "3W-Flat Bed" ||
+      storedServiceType === "3W-Flatbed" ||
       storedServiceType === "Underlift" ||
       storedServiceType === "Zero-Degree" ||
       storedServiceType === "Mini Truck" ||
@@ -2998,7 +2999,7 @@ export const CustomerProvider = ({ children }) => {
     if (
       storedServiceType === "2W-Flatbed" ||
       storedServiceType === "4W-Flatbed" ||
-      storedServiceType === "3W-Flat Bed" ||
+      storedServiceType === "3W-Flatbed" ||
       storedServiceType === "Underlift" ||
       storedServiceType === "Zero-Degree" ||
       storedServiceType === "Mini Truck" ||

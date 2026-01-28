@@ -26,7 +26,7 @@ import { toast } from "react-toastify";
 const incidetails = [
   "Car to Car",
   "2W-Flat Bed",
-  "3W-Flat Bed",
+  "3W-Flatbed",
   "Hydra",
   "0 Degree",
   "4W-Flat Bed",
@@ -65,7 +65,7 @@ const rsric = [
 const towingic = [
   "4W-Flatbed",
   "2W-Flatbed",
-  "3W-Flat Bed",
+  "3W-Flatbed",
   "Underlift",
   "Zero-Degree",
   "Mini Truck",
@@ -601,7 +601,7 @@ const Requestdetails = () => {
                               {[
                                 "4W-Flatbed",
                                 "2W-Flatbed",
-                                "3W-Flat Bed",
+                                "3W-Flatbed",
                                 "Underlift",
                                 "Zero-Degree",
                                 "Mini Truck",

@@ -89,7 +89,7 @@ const OldMisHook = () => {
         setRows(data ? [data] : []);
         if (!data) toast.info("No record found!");
       } catch (err) {
-        toast.error("Error while searching SRN");
+        toast.error("No Data Found for this SRN");
       } finally {
         setLoading(false);
       }

@@ -573,7 +573,7 @@ const CostSearch = () => {
                       onChange={handleCostVendor}
                       placeholder="Customer paid Amount "
                       variant="outlined"
-                      required
+                      
                     />
                   </div>
                   <div className="col-md-3 mb-3">

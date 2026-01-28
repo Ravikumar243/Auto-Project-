@@ -1279,17 +1279,17 @@ const CreateCustomerTicket = () => {
                       placeholder="Charger No"
                       type="Text"
                       name="ChargerNo"
-                      value={formData.charger_no || ""}
+                      value={formData.ChargerNo || ""}
                       onChange={handleChange}
                       variant="outlined"
-                      disabled={
-                        fetcdataListItems?.rsaStatus === "Case Completed" ||
-                        fetcdataListItems?.srN_Status ===
-                          "Vendor Close Issue" ||
-                        fetcdataListItems?.caseType === "Complete-Enquiry" ||
-                        fetcdataListItems?.caseType === "Case Denied" ||
-                        fetcdataListItems?.caseType === "Case Cancelled"
-                      }
+                      // disabled={
+                      //   fetcdataListItems?.rsaStatus === "Case Completed" ||
+                      //   fetcdataListItems?.srN_Status ===
+                      //     "Vendor Close Issue" ||
+                      //   fetcdataListItems?.caseType === "Complete-Enquiry" ||
+                      //   fetcdataListItems?.caseType === "Case Denied" ||
+                      //   fetcdataListItems?.caseType === "Case Cancelled"
+                      // }
                     />
                   </div>
                   <div className="col-md-3 mb-4">
