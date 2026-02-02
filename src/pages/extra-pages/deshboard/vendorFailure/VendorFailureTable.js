@@ -18,8 +18,14 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
 const VendorFailureTable = () => {
-  const { vendorFailureLoading, vendorFailureData, filters } =
-    useContext(VendorFailureContext);
+  const {
+    vendorFailureLoading,
+    vendorFailureData,
+    filters,
+
+  } = useContext(VendorFailureContext);
+
+
 
   const filteredData = useMemo(() => {
     if (!filters.search) return vendorFailureData || [];
@@ -28,7 +34,7 @@ const VendorFailureTable = () => {
       item?.srnNumber
         ?.toString()
         .toLowerCase()
-        .includes(filters.search.toLowerCase())
+        .includes(filters.search.toLowerCase()),
     );
   }, [filters.search, vendorFailureData]);
 
@@ -60,6 +66,9 @@ const VendorFailureTable = () => {
 
     saveAs(fileData, `Vendor_Failure_Report_${Date.now()}.xlsx`);
   };
+
+
+
   const columns = [
     {
       name: "SRN Number",

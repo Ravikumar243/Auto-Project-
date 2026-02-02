@@ -93,6 +93,8 @@ export const AgentProvider = ({ children }) => {
   const [caseAgeingLoading, setCaseAgeingLoading] = useState(false);
 
   const [filteredTotals, setFilteredTotals] = useState(null);
+
+
   const [agentFilteredTotal, setAgentFilteredTotal] = useState({
     totalCases: 0,
     completedCases: 0,
@@ -346,6 +348,7 @@ export const AgentProvider = ({ children }) => {
     try {
       const res = await fetch(`${baseURL}/GetOperationsList`);
       const data = await res.json();
+      console.log(data?.operationsUser,"data")
 
       const autoUsers =
         data?.operationsUser

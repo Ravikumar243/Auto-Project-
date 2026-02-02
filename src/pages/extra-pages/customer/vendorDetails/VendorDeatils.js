@@ -90,6 +90,28 @@ const VendorDeatils = () => {
     "Service Not Dispatched",
     "Network Failure",
   ];
+
+  const rsaStageOrder = [
+    "On the way to Incident",
+    "Reached at Incident location",
+    "On the way to drop",
+    "Drop Completed",
+    "Case Completed",
+  ];
+
+  // const getLastCompletedStageIndex = (options) => {
+  //   let lastIndex = -1;
+
+  //   options.forEach((stage, index) => {
+  //     const key = `${statusMap[stage]}_RSATimeLineStatus`;
+  //     if (historySrn?.[key]) {
+  //       lastIndex = index;
+  //     }
+  //   });
+
+  //   return lastIndex;
+  // };
+
   const { handleDownload } = VendorDetailsHooks();
   // const storedServiceType = localStorage.getItem("serviceType");
   const serviceTypefromSrnData =
@@ -771,7 +793,7 @@ const VendorDeatils = () => {
                       }}
                     >
                       {/* Vendor Assigned case */}
-                      {formSrnStatus.srN_Remark === "Vendor Assigned" &&
+                      {/* {formSrnStatus.srN_Remark === "Vendor Assigned" &&
                         (() => {
                           const rsaOptions =
                             serviceTypefromSrnData === "RSR"
@@ -809,9 +831,121 @@ const VendorDeatils = () => {
                               {item}
                             </MenuItem>
                           ));
+                        })()} */}
+                      {/* {formSrnStatus.srN_Remark === "Vendor Assigned" &&
+                        (() => {
+                          const rsaStageOrder = [
+                            "On the way to Incident",
+                            "Reached at Incident location",
+                            "On the way to drop",
+                            "Drop Completed",
+                            "Case Completed",
+                          ];
+
+                          const statusMap = {
+                            "On the way to Incident": "otwI",
+                            "Reached at Incident location": "riL",
+                            "On the way to drop": "otwD",
+                            "Drop Completed": "dC",
+                            "Case Completed": "cC",
+                          };
+
+                          // 🔹 RSR ke liye drop stages remove
+                          const rsaOptions =
+                            serviceTypefromSrnData === "RSR"
+                              ? rsaStageOrder.filter(
+                                  (s) =>
+                                    s !== "On the way to drop" &&
+                                    s !== "Drop Completed",
+                                )
+                              : rsaStageOrder;
+
+                          // 🔹 1️⃣ Count completed stages from HISTORY
+                          let completedCount = 0;
+                          rsaOptions.forEach((stage) => {
+                            const key = `${statusMap[stage]}_RSATimeLineStatus`;
+                            if (historySrn?.[key]) {
+                              completedCount++;
+                            }
+                          });
+
+                          // 🔹 2️⃣ If user has selected a stage (but history not updated yet)
+                          if (
+                            formSrnStatus.rsaTimeLineStatus &&
+                            !historySrn?.[
+                              `${statusMap[formSrnStatus.rsaTimeLineStatus]}_RSATimeLineStatus`
+                            ]
+                          ) {
+                            completedCount += 1;
+                          }
+
+                          return rsaOptions.map((item, index) => {
+                            const isNextStage = index === completedCount;
+                            const isLocked = index < completedCount;
+
+                            return (
+                              <MenuItem
+                                key={item}
+                                value={item}
+                                disabled={!isNextStage} // ✅ ONLY NEXT ENABLED
+                              >
+                                {item}
+                              </MenuItem>
+                            );
+                          });
+                        })()} */}
+                      {formSrnStatus.srN_Remark === "Vendor Assigned" &&
+                        (() => {
+                          const rsaStageOrder = [
+                            "On the way to Incident",
+                            "Reached at Incident location",
+                            "On the way to drop",
+                            "Drop Completed",
+                            "Case Completed",
+                          ];
+
+                          const statusMap = {
+                            "On the way to Incident": "otwI",
+                            "Reached at Incident location": "riL",
+                            "On the way to drop": "otwD",
+                            "Drop Completed": "dC",
+                            "Case Completed": "cC",
+                          };
+
+                          // 🔹 RSR logic
+                          const rsaOptions =
+                            serviceTypefromSrnData === "RSR"
+                              ? rsaStageOrder.filter(
+                                  (s) =>
+                                    s !== "On the way to drop" &&
+                                    s !== "Drop Completed",
+                                )
+                              : rsaStageOrder;
+
+                          // 🔹 Count ONLY completed stages from HISTORY
+                          let completedCount = 0;
+                          rsaOptions.forEach((stage) => {
+                            const key = `${statusMap[stage]}_RSATimeLineStatus`;
+                            if (historySrn?.[key]) {
+                              completedCount++;
+                            }
+                          });
+
+                          return rsaOptions.map((item, index) => {
+                            const isNextStage = index === completedCount;
+
+                            return (
+                              <MenuItem
+                                key={item}
+                                value={item}
+                                disabled={!isNextStage} // ✅ sirf next hi enabled
+                              >
+                                {item}
+                              </MenuItem>
+                            );
+                          });
                         })()}
 
-                      {/* Other remark-based dropdowns */}
                       {formSrnStatus.srN_Remark === "Customer Not Responding" &&
                         c1.map((item, index) => (
                           <MenuItem key={index} value={item}>
@@ -935,9 +1069,9 @@ const VendorDeatils = () => {
                   )}
 
                   {(selectedRsaStatus === "Reached at Incident location" ||
-                  selectedRsaStatus === "On the way to drop" ||
-                    fetcdataListItems?.rsaStatus ==="On the way to drop"||
-                    fetcdataListItems?.rsaStatus ==="Drop Completed"||
+                    selectedRsaStatus === "On the way to drop" ||
+                    fetcdataListItems?.rsaStatus === "On the way to drop" ||
+                    fetcdataListItems?.rsaStatus === "Drop Completed" ||
                     fetcdataListItems?.rsaStatus === "Case Completed" ||
                     fetcdataListItems?.srN_Status === "Vendor Close Issue") && (
                     <div className="col-md-3 mb-4">
@@ -962,7 +1096,7 @@ const VendorDeatils = () => {
 
                           if (!followUpString) {
                             toast.warning(
-                              "Please select Follow-up Date & Time first."
+                              "Please select Follow-up Date & Time first.",
                             );
                             return;
                           }
@@ -977,7 +1111,7 @@ const VendorDeatils = () => {
                             fM - 1,
                             fD,
                             fH,
-                            fMin
+                            fMin,
                           );
                           const reachTime = new Date(value);
                           const now = new Date();
@@ -988,7 +1122,7 @@ const VendorDeatils = () => {
                             reachTime.getMonth(),
                             reachTime.getDate(),
                             reachTime.getHours(),
-                            reachTime.getMinutes()
+                            reachTime.getMinutes(),
                           );
 
                           const followTrimmed = new Date(
@@ -996,7 +1130,7 @@ const VendorDeatils = () => {
                             followUpDateTime.getMonth(),
                             followUpDateTime.getDate(),
                             followUpDateTime.getHours(),
-                            followUpDateTime.getMinutes()
+                            followUpDateTime.getMinutes(),
                           );
 
                           const nowTrimmed = new Date(
@@ -1004,7 +1138,7 @@ const VendorDeatils = () => {
                             now.getMonth(),
                             now.getDate(),
                             now.getHours(),
-                            now.getMinutes()
+                            now.getMinutes(),
                           );
 
                           // ❌ Rule 1: Reach time must be > follow-up time
@@ -1012,7 +1146,7 @@ const VendorDeatils = () => {
                             reachTrimmed.getTime() < followTrimmed.getTime()
                           ) {
                             toast.error(
-                              "Vendor Reach Time must be greater than or equal to Follow-up Date & Time."
+                              "Vendor Reach Time must be greater than or equal to Follow-up Date & Time.",
                             );
                             return;
                           }
@@ -1020,7 +1154,7 @@ const VendorDeatils = () => {
                           // ❌ Rule 2: Cannot be future — current time is allowed
                           if (reachTrimmed.getTime() > nowTrimmed.getTime()) {
                             toast.error(
-                              "Vendor Reach Time cannot be in the future."
+                              "Vendor Reach Time cannot be in the future.",
                             );
                             return;
                           }
@@ -1065,7 +1199,7 @@ const VendorDeatils = () => {
 
                             if (!followUpString) {
                               toast.warning(
-                                "Please enter Follow-up Date & Time first."
+                                "Please enter Follow-up Date & Time first.",
                               );
                               return;
                             }
@@ -1079,7 +1213,7 @@ const VendorDeatils = () => {
                               followDT.getMonth(),
                               followDT.getDate(),
                               followDT.getHours(),
-                              followDT.getMinutes()
+                              followDT.getMinutes(),
                             );
 
                             // -----------------------------
@@ -1091,7 +1225,7 @@ const VendorDeatils = () => {
                               dropDT.getMonth(),
                               dropDT.getDate(),
                               dropDT.getHours(),
-                              dropDT.getMinutes()
+                              dropDT.getMinutes(),
                             );
 
                             // -----------------------------
@@ -1103,7 +1237,7 @@ const VendorDeatils = () => {
                               now.getMonth(),
                               now.getDate(),
                               now.getHours(),
-                              now.getMinutes()
+                              now.getMinutes(),
                             );
 
                             // --------------------------------------------------------
@@ -1113,7 +1247,7 @@ const VendorDeatils = () => {
                               dropTrimmed.getTime() < followTrimmed.getTime()
                             ) {
                               toast.error(
-                                "Vendor Drop Time must be greater than or equal to Follow-up Date & Time."
+                                "Vendor Drop Time must be greater than or equal to Follow-up Date & Time.",
                               );
                               return;
                             }
@@ -1123,7 +1257,7 @@ const VendorDeatils = () => {
                             // --------------------------------------------------------
                             if (dropTrimmed.getTime() > nowTrimmed.getTime()) {
                               toast.error(
-                                "Vendor Drop Time cannot be in the future."
+                                "Vendor Drop Time cannot be in the future.",
                               );
                               return;
                             }

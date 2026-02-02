@@ -47,7 +47,6 @@ const NavItem = ({ level, drawerOpen }) => {
         "SME",
         "TL",
         "Vendor",
-       
       ],
     },
     {
@@ -82,9 +81,10 @@ const NavItem = ({ level, drawerOpen }) => {
         "SME",
         "TL",
         "Vendor",
-        "Client",
+        // "Client",
       ],
     },
+   
     {
       id: "agentDashboard",
       label: "Agent Dashboard",
@@ -117,8 +117,15 @@ const NavItem = ({ level, drawerOpen }) => {
         "SME",
         "TL",
         "Vendor",
-        "Client",
+        // "Client",
       ],
+    },
+     {
+      id: "caseAgeingClient",
+      label: "Case Ageing Client",
+      icon: <UploadFileIcon />,
+      url: "/caseAgeingClient",
+      roles: ["Admin","Client"],
     },
     {
       id: "vendorFailureDashboard",
@@ -159,6 +166,14 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "Upload Details",
       icon: <UploadFileIcon />,
       url: "/UploadDetails",
+      roles: ["Admin"],
+    },
+
+    {
+      id: "clientDataUpload",
+      label: "Client Data Upload",
+      icon: <UploadFileIcon />,
+      url: "/clientDataUpload",
       roles: ["Admin"],
     },
     {

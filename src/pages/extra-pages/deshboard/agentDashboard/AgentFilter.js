@@ -111,7 +111,7 @@ const AgentFilter = () => {
                 
               </TextField>
             </Grid> */}
-            {/* <Grid item xs={12} sm={6} md={2}>
+            <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
@@ -159,10 +159,10 @@ const AgentFilter = () => {
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid> */}
+            </Grid>
 
             {/* SUB STATUS */}
-            {/* <Grid item xs={12} sm={6} md={2}>
+            <Grid item xs={12} sm={6} md={2}>
               <TextField
                 select
                 fullWidth
@@ -214,7 +214,7 @@ const AgentFilter = () => {
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid> */}
+            </Grid>
 
             {/* AGENTS */}
             <Grid item xs={12} sm={6} md={2}>

@@ -64,6 +64,7 @@ const AgentTable = () => {
       (acc, row) => {
         const cancelled = row.cancelled || 0;
         const denied = row.caseDenied || 0;
+        const recalled = row.serviceRecalled || 0;
         const completed = row.caseCompleted || 0;
         const enquiry = row.completeEnquiry || 0;
 
@@ -77,7 +78,7 @@ const AgentTable = () => {
 
         // merged values
         acc.completedCases += completed + enquiry;
-        acc.cancelledCases += cancelled + denied;
+        acc.cancelledCases += cancelled + denied + recalled;
 
         // pure values
         acc.onlyCaseCompleted += completed;
@@ -85,6 +86,7 @@ const AgentTable = () => {
 
         acc.completeEnquiry += enquiry;
         acc.caseDenied += denied;
+        acc.serviceRecalled += recalled
 
         // open breakdown
         acc.caseInitiated += initiated;
@@ -111,6 +113,7 @@ const AgentTable = () => {
 
         onlyCaseCompleted: 0,
         onlyCancelled: 0,
+        serviceRecalled:0,
 
         completeEnquiry: 0,
         caseDenied: 0,

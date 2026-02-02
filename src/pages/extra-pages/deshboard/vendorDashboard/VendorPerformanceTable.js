@@ -11,6 +11,8 @@ const VendorPerformanceTable = () => {
     vendorPerformanceData,
     vendorPerformanceLoading,
     vendorPerformanceFilters,
+    vendorFilteredTotal,
+    setVendorFilteredTotal,
   } = useContext(VendorFailureContext);
 
   useEffect(() => {
@@ -23,12 +25,11 @@ const VendorPerformanceTable = () => {
     return (vendorPerformanceData || []).filter((row) =>
       row?.vendorName
         ?.toLowerCase()
-        .includes(vendorPerformanceFilters.search.toLowerCase())
+        .includes(vendorPerformanceFilters.search.toLowerCase()),
     );
   }, [vendorPerformanceData, vendorPerformanceFilters.search]);
 
-
-   const handleExportExcel = () => {
+  const handleExportExcel = () => {
     if (!filteredData.length) return;
 
     const formattedData = filteredData.map((row) => ({
@@ -53,13 +54,41 @@ const VendorPerformanceTable = () => {
     });
 
     const blob = new Blob([excelBuffer], {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
     saveAs(blob, "Vendor_Performance_Report.xlsx");
   };
 
+  const totals = useMemo(() => {
+    const accepted = filteredData.reduce(
+      (sum, row) => sum + (Number(row.acceptedCases) || 0),
+      0,
+    );
+
+    const rejected = filteredData.reduce(
+      (sum, row) => sum + (Number(row.rejectedCases) || 0),
+      0,
+    );
+
+    const total = accepted + rejected;
+
+    const acceptedRate = total ? ((accepted / total) * 100).toFixed(2) : "0.00";
+
+    const rejectedRate = total ? ((rejected / total) * 100).toFixed(2) : "0.00";
+
+    return {
+      accepted,
+      rejected,
+      total,
+      acceptedRate,
+      rejectedRate,
+    };
+  }, [filteredData]);
+
+  useEffect(() => {
+    setVendorFilteredTotal(totals);
+  }, [totals]);
 
   const columns = useMemo(
     () => [
@@ -95,19 +124,18 @@ const VendorPerformanceTable = () => {
       },
       {
         name: "Acceptance Rate",
-        selector: (row) => row.acceptedRate +"%" || "0%",
+        selector: (row) => row.acceptedRate + "%" || "0%",
         center: true,
       },
       {
         name: "Rejected Rate",
-        selector: (row) => row.rejectedRate+ "%" || "0%",
+        selector: (row) => row.rejectedRate + "%" || "0%",
         center: true,
       },
     ],
-    []
+    [],
   );
 
-  
   const customStyles = {
     headCells: {
       style: {

@@ -70,6 +70,7 @@ const ClientTable = () => {
       (acc, row) => {
         const cancelled = row.cancelled || 0;
         const denied = row.caseDenied || 0;
+        const recalled = row.serviceRecalled || 0;
         const completed = row.caseCompleted || 0;
         const enquiry = row.completeEnquiry || 0;
 
@@ -85,13 +86,14 @@ const ClientTable = () => {
         acc.completedCases += completed + enquiry;
 
         // ✅ Merge cancelled + denied
-        acc.cancelledCases += cancelled + denied;
+        acc.cancelledCases += cancelled + denied + recalled;
 
         acc.onlyCaseCompleted += completed;
-      acc.onlyCancelled += cancelled;
+        acc.onlyCancelled += cancelled;
 
         acc.caseDenied += denied;
         acc.completeEnquiry += enquiry;
+        acc.serviceRecalled += recalled;
 
         acc.caseInitiated += initiated;
         acc.enRoute += enRoute;
@@ -118,7 +120,8 @@ const ClientTable = () => {
         completeEnquiry: 0,
 
         onlyCaseCompleted: 0,
-      onlyCancelled: 0,
+        onlyCancelled: 0,
+        serviceRecalled:0,
 
         caseInitiated: 0,
         enRoute: 0,
@@ -129,6 +132,7 @@ const ClientTable = () => {
     );
   }, [filteredClientData]);
 
+  console.log(totals, "totals");
   useEffect(() => {
     setFilteredTotals(totals);
   }, [totals]);

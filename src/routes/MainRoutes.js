@@ -1,10 +1,9 @@
-
 // project import
-import MainLayout from 'layout/MainLayout';
+import MainLayout from "layout/MainLayout";
 // import Login from 'pages/authentication/Login';
-import DashboardDetails from 'pages/extra-pages/deshboard/DashboardDetails'
-import CreateCustomerTicket from 'pages/extra-pages/customer/Index'
-import UploadDetails from 'pages/extra-pages/upload-details/UploadDetails'
+import DashboardDetails from "pages/extra-pages/deshboard/DashboardDetails";
+import CreateCustomerTicket from "pages/extra-pages/customer/Index";
+import UploadDetails from "pages/extra-pages/upload-details/UploadDetails";
 // import SearchCustomerTickets from 'pages/extra-pages/searchDetails/index'
 //import RSAdetail from 'pages/extra-pages/RSA/RSAdetail';
 // import AssignRole from 'pages/extra-pages/subAgent/AssignRole';
@@ -15,29 +14,32 @@ import UploadDetails from 'pages/extra-pages/upload-details/UploadDetails'
 // import ClaimDetailpage from 'pages/extra-pages/travel/claimdetailpage';
 // import Traveldetail from 'pages/extra-pages/travel/Traveldetail';
 // import { element } from 'prop-types';
-import ReportMis from '../pages/extra-pages/misDeshboard/ReportMis'
-import Index from '../pages/extra-pages/searchDetails/Index'
-import SlnDeshboard from '../pages/extra-pages/slnDeshboard/SlnDeshboard';
-import Networkdetails from './../pages/extra-pages/networkdetails/networkdetails'
-import VcrfRecord from '../pages/extra-pages/Vcrf/VcrfRecord';
-import FeedbackRecord from '../pages/extra-pages/Vcrf/FeedbackRecord';
-import UploadCItys from 'pages/extra-pages/upload-city/Upload-Citys';
-import UploadMakes from 'pages/extra-pages/upload-Make/UploadMakes';
-import UploadCItysHooks from 'pages/extra-pages/upload-city/UploadCItysHooks';
-import CreateUser from 'pages/extra-pages/create-user/CreateUser';
-import SpinneyData from 'pages/extra-pages/Vcrf/SpinneyData';
-import { element } from 'prop-types';
-import { OldMisUpload } from 'pages/extra-pages/misDeshboard/OldMisUpload';
-import ViewPage from 'pages/extra-pages/Viewpage/ViewPage';
-import VendorDashboard from 'pages/extra-pages/deshboard/vendorDashboard/VendorDashboard';
-import ClientDashboard from 'pages/extra-pages/deshboard/clientDashboard/ClientDashboard';
-import AgentDashboard from 'pages/extra-pages/deshboard/agentDashboard/AgentDashboard';
-import CaseAgeingDashboard from 'pages/extra-pages/deshboard/caseAgeingDashboard/CaseAgeingDashboard';
-import VendorFailureDashboard from 'pages/extra-pages/deshboard/vendorFailure/VendorFailureDashboard';
+import ReportMis from "../pages/extra-pages/misDeshboard/ReportMis";
+import Index from "../pages/extra-pages/searchDetails/Index";
+import SlnDeshboard from "../pages/extra-pages/slnDeshboard/SlnDeshboard";
+import Networkdetails from "./../pages/extra-pages/networkdetails/networkdetails";
+import VcrfRecord from "../pages/extra-pages/Vcrf/VcrfRecord";
+import FeedbackRecord from "../pages/extra-pages/Vcrf/FeedbackRecord";
+import UploadCItys from "pages/extra-pages/upload-city/Upload-Citys";
+import UploadMakes from "pages/extra-pages/upload-Make/UploadMakes";
+import UploadCItysHooks from "pages/extra-pages/upload-city/UploadCItysHooks";
+import CreateUser from "pages/extra-pages/create-user/CreateUser";
+import SpinneyData from "pages/extra-pages/Vcrf/SpinneyData";
+import { element } from "prop-types";
+import { OldMisUpload } from "pages/extra-pages/misDeshboard/OldMisUpload";
+import ViewPage from "pages/extra-pages/Viewpage/ViewPage";
+import VendorDashboard from "pages/extra-pages/deshboard/vendorDashboard/VendorDashboard";
+import ClientDashboard from "pages/extra-pages/deshboard/clientDashboard/ClientDashboard";
+import AgentDashboard from "pages/extra-pages/deshboard/agentDashboard/AgentDashboard";
+import CaseAgeingDashboard from "pages/extra-pages/deshboard/caseAgeingDashboard/CaseAgeingDashboard";
+import VendorFailureDashboard from "pages/extra-pages/deshboard/vendorFailure/VendorFailureDashboard";
+import ClientDataUpload from "pages/extra-pages/deshboard/clientDashboard/ClientDataUpload";
+import ClientParticular from "pages/extra-pages/deshboard/clientDashboard/ClientParticular";
+import CaseAgeingClient from "pages/extra-pages/deshboard/caseAgeingDashboard/CaseAgeingClient";
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
-  path: '/',
+  path: "/",
   element: <MainLayout />,
   children: [
     // {
@@ -45,108 +47,115 @@ const MainRoutes = {
     //   element: <Login />
     // },
     {
-      path: 'dashboarddetails',
-      element: <DashboardDetails />
+      path: "dashboarddetails",
+      element: <DashboardDetails />,
     },
     {
       path: "vendor-dashboard",
-      element : <VendorDashboard/>
+      element: <VendorDashboard />,
     },
     {
       path: "client-dashboard",
-      element : <ClientDashboard/>
+      element: <ClientDashboard />,
     },
     {
       path: "agent-dashboard",
-      element : <AgentDashboard/>
+      element: <AgentDashboard />,
     },
     {
       path: "case-ageing-dashboard",
-      element : <CaseAgeingDashboard/>
+      element: <CaseAgeingDashboard />,
     },
     {
       path: "venodr-failure-dashboard",
-      element : <VendorFailureDashboard/>
+      element: <VendorFailureDashboard />,
     },
     {
-      path: 'createTickets',
-      element: <CreateCustomerTicket />
+      path: "createTickets",
+      element: <CreateCustomerTicket />,
     },
     {
-      path: 'createTickets/:srnId',
-      element: <CreateCustomerTicket />
+      path: "createTickets/:srnId",
+      element: <CreateCustomerTicket />,
     },
     {
-      path: 'UploadDetails',
-      element: <UploadDetails />
+      path: "UploadDetails",
+      element: <UploadDetails />,
     },
+    { path: "caseAgeingClient", 
+      element: <CaseAgeingClient /> },
     {
-      path: 'Index',
-      element: <Index />
+      path: "clientDataUpload",
+      element: <ClientDataUpload />,
+    },
+
+    {
+      path: "Index",
+      element: <Index />,
     },
     // {
     //   path: 'searchTickets',
     //   element: <SearchCustomerTickets />
     // },
     {
-      path: 'account',
-      element: '',
+      path: "account",
+      element: "",
     },
     // {
     //   path: 'RSA',
     //   element: <RSAdetail />
     // },
     {
-      path: 'mobile',
-      element: '',
+      path: "mobile",
+      element: "",
     },
 
     {
-      path: 'wellness',
-      element: '',
+      path: "wellness",
+      element: "",
     },
     {
-      path: 'misreport',
+      path: "misreport",
       element: <ReportMis />,
     },
     {
-      path: 'slnDeshboard',
+      path: "slnDeshboard",
       element: <SlnDeshboard />,
     },
     {
-      path: 'netwokDetails',
+      path: "netwokDetails",
       element: <Networkdetails />,
     },
     {
-      path: 'create-user',
+      path: "create-user",
       element: <CreateUser />,
     },
     {
-      path: 'vcrf-record',
+      path: "vcrf-record",
       element: <VcrfRecord />,
     },
     {
-      path: 'old-mis-upload',
-      element : <OldMisUpload/>
+      path: "old-mis-upload",
+      element: <OldMisUpload />,
     },
     {
       path: "view-page",
-      element: <ViewPage/>
+      element: <ViewPage />,
     },
     {
-      path: 'Feedback',
+      path: "Feedback",
       element: <FeedbackRecord />,
     },
     {
-      path: 'spinny-data',
+      path: "spinny-data",
       element: <SpinneyData />,
     },
     {
-      path: 'uploderstatecity',
+      path: "uploderstatecity",
       element: <UploadCItys />,
     },
-     {
-      path: 'uploderMakemodels',
+    {
+      path: "uploderMakemodels",
       element: <UploadMakes />,
     },
     // {
@@ -190,7 +199,7 @@ const MainRoutes = {
     //   path: 'claimList',
     //   element: <Claimdetail />
     // },
-  ]
+  ],
 };
 
 export default MainRoutes;

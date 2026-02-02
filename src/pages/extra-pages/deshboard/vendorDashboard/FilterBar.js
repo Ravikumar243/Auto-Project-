@@ -23,9 +23,25 @@ const FilterBar = () => {
     fetchVendors,
   } = useContext(VendorFailureContext);
 
-  useEffect(() => {
-    fetchVendors();
-  }, []);
+ useEffect(() => {
+  fetchVendors({
+    stateNames: vendorPerformanceFilters.stateNames,
+    cityNames: vendorPerformanceFilters.cityNames,
+  });
+}, [
+  vendorPerformanceFilters.stateNames,
+  vendorPerformanceFilters.cityNames,
+]);
+
+useEffect(() => {
+  setVendorPerformanceFilters((prev) => ({
+    ...prev,
+    vendorIds: [],
+  }));
+}, [
+  vendorPerformanceFilters.stateNames,
+  vendorPerformanceFilters.cityNames,
+]);
 
 
   return (
@@ -82,33 +98,56 @@ const FilterBar = () => {
                 fullWidth
                 size="small"
                 label="Select State"
-                value={vendorPerformanceFilters.stateNames}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => selected.join(", "),
+                  value: vendorPerformanceFilters.stateNames || [],
+                  onChange: (e) => {
+                    let selected = e.target.value;
+                    const allValues = states;
+
+                    if (selected.includes("ALL")) {
+                      const isAllSelected = allValues.every((val) =>
+                        vendorPerformanceFilters.stateNames?.includes(val),
+                      );
+                      selected = isAllSelected ? [] : allValues;
+                    }
+
+                    setVendorPerformanceFilters((prev) => ({
+                      ...prev,
+                      stateNames: selected,
+                      cityNames: [], // reset cities
+                    }));
+                  },
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
                 }}
-                onChange={(e) =>
-                  setVendorPerformanceFilters((prev) => ({
-                    ...prev,
-                    stateNames: e.target.value,
-                    cityNames: [], // reset cities when state changes (best practice)
-                  }))
-                }
               >
-                {stateCityLoading ? (
-                  <MenuItem disabled>Loading states...</MenuItem>
-                ) : (
-                  states.map((state) => (
-                    <MenuItem key={state} value={state}>
-                      <Checkbox
-                        checked={vendorPerformanceFilters.stateNames.includes(
-                          state
-                        )}
-                      />
-                      <ListItemText primary={state} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      states.length > 0 &&
+                      vendorPerformanceFilters.stateNames?.length ===
+                        states.length
+                    }
+                    indeterminate={
+                      vendorPerformanceFilters.stateNames?.length > 0 &&
+                      vendorPerformanceFilters.stateNames?.length <
+                        states.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {states.map((state) => (
+                  <MenuItem key={state} value={state}>
+                    <Checkbox
+                      checked={(
+                        vendorPerformanceFilters.stateNames || []
+                      ).includes(state)}
+                    />
+                    <ListItemText primary={state} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
@@ -119,34 +158,54 @@ const FilterBar = () => {
                 fullWidth
                 size="small"
                 label="Select City"
-                value={vendorPerformanceFilters.cityNames}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => selected.join(", "),
+                  value: vendorPerformanceFilters.cityNames || [],
+                  onChange: (e) => {
+                    let selected = e.target.value;
+                    const allValues = cities;
+
+                    if (selected.includes("ALL")) {
+                      const isAllSelected = allValues.every((val) =>
+                        vendorPerformanceFilters.cityNames?.includes(val),
+                      );
+                      selected = isAllSelected ? [] : allValues;
+                    }
+
+                    setVendorPerformanceFilters((prev) => ({
+                      ...prev,
+                      cityNames: selected,
+                    }));
+                  },
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
                 }}
-                onChange={(e) =>
-                  setVendorPerformanceFilters((prev) => ({
-                    ...prev,
-                    cityNames: e.target.value,
-                  }))
-                }
               >
-                {stateCityLoading ? (
-                  <MenuItem disabled>Loading cities...</MenuItem>
-                ) : cities.length === 0 ? (
-                  <MenuItem disabled>Select state first</MenuItem>
-                ) : (
-                  cities.map((city) => (
-                    <MenuItem key={city} value={city}>
-                      <Checkbox
-                        checked={vendorPerformanceFilters.cityNames.includes(
-                          city
-                        )}
-                      />
-                      <ListItemText primary={city} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      cities.length > 0 &&
+                      vendorPerformanceFilters.cityNames?.length ===
+                        cities.length
+                    }
+                    indeterminate={
+                      vendorPerformanceFilters.cityNames?.length > 0 &&
+                      vendorPerformanceFilters.cityNames?.length < cities.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {cities.map((city) => (
+                  <MenuItem key={city} value={city}>
+                    <Checkbox
+                      checked={(
+                        vendorPerformanceFilters.cityNames || []
+                      ).includes(city)}
+                    />
+                    <ListItemText primary={city} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
@@ -156,36 +215,58 @@ const FilterBar = () => {
                 fullWidth
                 size="small"
                 label="Select Vendor"
-                value={vendorPerformanceFilters.vendorIds}
                 SelectProps={{
                   multiple: true,
+                  value: vendorPerformanceFilters.vendorIds || [],
+                  onChange: (e) => {
+                    let selected = e.target.value;
+                    const allValues = vendors.map((v) => v.vendorId);
+
+                    if (selected.includes("ALL")) {
+                      const isAllSelected = allValues.every((val) =>
+                        vendorPerformanceFilters.vendorIds?.includes(val),
+                      );
+                      selected = isAllSelected ? [] : allValues;
+                    }
+
+                    setVendorPerformanceFilters((prev) => ({
+                      ...prev,
+                      vendorIds: selected,
+                    }));
+                  },
                   renderValue: (selected) =>
                     vendors
                       .filter((v) => selected.includes(v.vendorId))
                       .map((v) => v.vendoR_NAME)
                       .join(", "),
                 }}
-                onChange={(e) =>
-                  setVendorPerformanceFilters((prev) => ({
-                    ...prev,
-                    vendorIds: e.target.value,
-                  }))
-                }
               >
-                {vendorLoading ? (
-                  <MenuItem disabled>Loading vendors...</MenuItem>
-                ) : (
-                  vendors.map((vendor) => (
-                    <MenuItem key={vendor.vendorId} value={vendor.vendorId}>
-                      <Checkbox
-                        checked={vendorPerformanceFilters.vendorIds.includes(
-                          vendor.vendorId
-                        )}
-                      />
-                      <ListItemText primary={vendor.vendoR_NAME} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      vendors.length > 0 &&
+                      vendorPerformanceFilters.vendorIds?.length ===
+                        vendors.length
+                    }
+                    indeterminate={
+                      vendorPerformanceFilters.vendorIds?.length > 0 &&
+                      vendorPerformanceFilters.vendorIds?.length <
+                        vendors.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {vendors.map((vendor) => (
+                  <MenuItem key={vendor.vendorId} value={vendor.vendorId}>
+                    <Checkbox
+                      checked={(
+                        vendorPerformanceFilters.vendorIds || []
+                      ).includes(vendor.vendorId)}
+                    />
+                    <ListItemText primary={vendor.vendoR_NAME} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
           </Grid>

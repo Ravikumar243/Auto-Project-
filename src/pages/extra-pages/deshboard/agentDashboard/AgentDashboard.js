@@ -276,6 +276,12 @@ const AgentDashboard = () => {
               bg: "linear-gradient(135deg, #EF9A9A 0%, #FFEBEE 100%)",
               titleColor: "#C62828",
             },
+             {
+              title: "Service Recalled",
+              value: agentFilteredTotal?.serviceRecalled || 0,
+              bg: "linear-gradient(135deg, #A5D6A7 0%, #E8F5E9 100%)",
+              titleColor: "#2E7D32",
+            },
           ].map((item, i) => (
             <Card key={i} sx={{ borderRadius: 3, boxShadow: 2 }}>
               <CardContent

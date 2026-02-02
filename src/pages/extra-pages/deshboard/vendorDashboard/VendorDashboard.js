@@ -10,7 +10,7 @@ import FilterBar from "./FilterBar";
 import { VendorFailureContext } from "../vendorFailure/VendorFailureHook";
 
 const VendorDashboard = () => {
-  const {vendorTotalData, fetchVendorTotalData}  = useContext(VendorFailureContext)
+  const {vendorTotalData, fetchVendorTotalData, vendorFilteredTotal }  = useContext(VendorFailureContext)
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const userRole = (userInfo?.role || "Agent").toLowerCase();
 
@@ -25,35 +25,35 @@ const VendorDashboard = () => {
   const allCards = [
     {
       title: "Accepted Cases",
-      value: vendorTotalData?.acceptedCases,
+     value: vendorFilteredTotal.accepted,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
       roles: ["admin", "vendor"],
     },
     {
       title: "Rejected Cases",
-      value: vendorTotalData?.rejectedCases,
+      value: vendorFilteredTotal.rejected,
       bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
       titleColor: "#0E8F7A",
       roles: ["admin", "vendor"],
     },
     {
       title: "Vendor Cases",
-      value: vendorTotalData.vendorCases,
+      value: vendorFilteredTotal.total,
       bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
       titleColor: "#D28A00",
       roles: ["admin", "vendor"],
     },
     {
       title: "Accepted Rate",
-      value: vendorTotalData?.acceptedRate,
+      value: vendorFilteredTotal.acceptedRate,
       bg: "linear-gradient(135deg, #9C8CFF 0%, #D6CFFF 100%)",
       titleColor: "#6A5BFF",
       roles: ["admin", "vendor"],
     },
     {
       title: "Rejected Rate",
-      value: vendorTotalData?.rejectedRate,
+      value: vendorFilteredTotal.rejectedRate,
       bg: "linear-gradient(135deg, #C7D1E2 0%, #E6ECF5 100%)",
       titleColor: "#7A869A",
 

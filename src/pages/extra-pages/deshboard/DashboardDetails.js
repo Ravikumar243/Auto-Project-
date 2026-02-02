@@ -23,21 +23,21 @@ const DashboardDetails = () => {
       value: activeCases.length,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
-      roles: ["admin", "vendor"],
+      roles: ["admin","advisor", "vendor"],
     },
     {
       title: "My Cases",
       value: mycases.length,
       bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
       titleColor: "#0E8F7A",
-      roles: ["admin", "vendor"],
+      roles: ["admin","advisor", "vendor"],
     },
     {
       title: "Escalated",
       value: escalated.length,
       bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
       titleColor: "#D28A00",
-      roles: ["admin", "vendor"],
+      roles: ["admin","advisor", "vendor"],
     },
     {
       title: "Closed Cases",
@@ -74,100 +74,102 @@ const DashboardDetails = () => {
           </Grid>
 
           {/* <div className="d-flex gap-5"> */}
-            <Grid
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                  lg: "repeat(3, 1fr)",
-                },
-                gap: 2,
-              }}
-            >
-              {visibleCards.map((card, index) => (
-                <Card
+          <Grid
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(3, 1fr)",
+                lg: "repeat(3, 1fr)",
+              },
+              gap: 2,
+            }}
+          >
+            {visibleCards.map((card, index) => (
+              <Card
+                sx={{
+                  width: "100%",
+                  borderRadius: 3,
+                  boxShadow: 2,
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {/* CARD CONTENT */}
+                <CardContent
                   sx={{
-                    width: "100%",
-                    borderRadius: 3,
-                    boxShadow: 2,
-                    position: "relative",
-                    overflow: "hidden",
+                    background: card.bg,
+                    height: 120,
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "16px 20px",
                   }}
                 >
-                  {/* CARD CONTENT */}
-                  <CardContent
-                    sx={{
-                      background: card.bg,
-                      height: 120,
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "16px 20px",
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        sx={{
-                          color: card.titleColor,
-                          fontWeight: 600,
-                          fontSize: "20px",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {card.title}
-                      </Typography>
-
-                      <Typography
-                        sx={{
-                          color: "#fff",
-                          fontWeight: 700,
-                          fontSize: "40px",
-                          marginTop: "10px",
-                          lineHeight: 1,
-                        }}
-                      >
-                        {card.value}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-
-                  {/* 🔥 RIGHT-MIDDLE → BOTTOM-MIDDLE WAVE */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      right: 0,
-                      bottom: 0,
-                      width: "75%",
-                      height: "80%",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    <svg
-                      viewBox="0 0 300 300"
-                      width="100%"
-                      height="100%"
-                      preserveAspectRatio="none"
+                  <Box>
+                    <Typography
+                      sx={{
+                        color: card.titleColor,
+                        fontWeight: 600,
+                        fontSize: "20px",
+                        lineHeight: 1.2,
+                      }}
                     >
-                      <path
-                        d="
+                      {card.title}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: "40px",
+                        marginTop: "10px",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {card.value}
+                    </Typography>
+                  </Box>
+                </CardContent>
+
+                {/* 🔥 RIGHT-MIDDLE → BOTTOM-MIDDLE WAVE */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    width: "75%",
+                    height: "80%",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 300 300"
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="
             M300 120
             C240 100, 220 180, 170 190
             C120 200, 90 250, 150 300
             L300 300 Z
           "
-                        fill="rgba(255,255,255,0.35)"
-                      />
-                    </svg>
-                  </Box>
-                </Card>
-              ))}
-            </Grid>
+                      fill="rgba(255,255,255,0.35)"
+                    />
+                  </svg>
+                </Box>
+              </Card>
+            ))}
+          </Grid>
           {/* </div> */}
 
-          {userRole === "admin" && <ActiveCses />}
+          <ActiveCses />
+          {/* {userRole === "admin" && } */}
+          <VendorDashboard />
 
-          {userRole === "vendor" && <VendorDashboard />}
+          {/* {userRole === "vendor" && } */}
         </Grid>
       </MainCard>
     </>

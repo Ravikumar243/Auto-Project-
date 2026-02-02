@@ -107,6 +107,9 @@ const VendorSearch = () => {
   let [color, setColor] = useState("#282860");
   const [statusid, setStatusid] = useState([]);
   const [statusrej, setStatusrej] = useState("");
+  const [reasonLockedVendors, setReasonLockedVendors] = useState([]);
+
+  console.log(reasonLockedVendors,"reasonLockedVendors")
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -268,7 +271,8 @@ const VendorSearch = () => {
           <button
             type="button"
             key={row.vendorID}
-            disabled={statusrej === row.vendorID}
+            // disabled={statusrej === row.vendorID}
+            disabled={statusid.includes(row.vendorID)}
             onClick={() => {
               setStatusid((prev) => [...prev, row.vendorID]);
               setSelected(null);
@@ -357,29 +361,29 @@ const VendorSearch = () => {
       name: "Reject Reason",
       selector: (row) => (
         <select
-          onChange={(e) => {
-            const selectedValue = e.target.value;
+          // onChange={(e) => {
+          //   const selectedValue = e.target.value;
 
-            if (selectedValue) {
-              Swal.fire({
-                title: "Reject Reason Selected",
-                text: `You selected: ${selectedValue}`,
-                icon: "info",
-                confirmButtonText: "OK",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  // ✅ Call API only after clicking OK
-                  handleSubmitAgentfeedback(
-                    selectedValue,
-                    fetcdataListItems.srN_No,
-                    fetcdataListItems.serviceDrop_IncidentType,
-                    row.contacT_NUMBER,
-                    row.vendorID,
-                  );
-                }
-              });
-            }
-          }}
+          //   if (selectedValue) {
+          //     Swal.fire({
+          //       title: "Reject Reason Selected",
+          //       text: `You selected: ${selectedValue}`,
+          //       icon: "info",
+          //       confirmButtonText: "OK",
+          //     }).then((result) => {
+          //       if (result.isConfirmed) {
+
+          //         handleSubmitAgentfeedback(
+          //           selectedValue,
+          //           fetcdataListItems.srN_No,
+          //           fetcdataListItems.serviceDrop_IncidentType,
+          //           row.contacT_NUMBER,
+          //           row.vendorID,
+          //         );
+          //       }
+          //     });
+          //   }
+          // }}
           style={{
             padding: "8px",
             borderRadius: "8px",
@@ -392,7 +396,37 @@ const VendorSearch = () => {
             transition: "0.3s",
             width: "170px",
           }}
-          disabled={!statusid.includes(row.vendorID)}
+          // disabled={!statusid.includes(row.vendorID)}
+          onChange={(e) => {
+            const selectedValue = e.target.value;
+            console.log(selectedValue,"selectedValue")
+
+            if (!selectedValue) return;
+
+            Swal.fire({
+              title: "Reject Reason Selected",
+              text: `You selected: ${selectedValue}`,
+              icon: "info",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                handleSubmitAgentfeedback(
+                  selectedValue,
+                  fetcdataListItems.srN_No,
+                  fetcdataListItems.serviceDrop_IncidentType,
+                  row.contacT_NUMBER,
+                  row.vendorID,
+                );
+
+                // 🔒 LOCK dropdown for this vendor
+                setReasonLockedVendors((prev) => [...prev, row.vendorID]);
+              }
+            });
+          }}
+          disabled={
+            !statusid.includes(row.vendorID) ||
+            reasonLockedVendors.includes(row.vendorID)
+          }
         >
           <option value="">Select</option>
           <option value="Vendor Not Responding">Vendor Not Responding</option>

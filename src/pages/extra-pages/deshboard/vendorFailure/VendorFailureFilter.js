@@ -24,11 +24,20 @@ const VendorFailureFilter = () => {
     stateCityLoading,
   } = useContext(VendorFailureContext);
 
+ useEffect(() => {
+  fetchVendors({
+    stateNames: filters.stateNames,
+    cityNames: filters.cityNames,
+  });
+}, [filters.stateNames, filters.cityNames]);
 
+useEffect(() => {
+  setFilters((prev) => ({
+    ...prev,
+    vendorIds: [],
+  }));
+}, [filters.stateNames, filters.cityNames]);
 
-  useEffect(() => {
-    fetchVendors();
-  }, []);
 
   return (
     <Box
@@ -39,7 +48,6 @@ const VendorFailureFilter = () => {
       }}
     >
       <Grid container alignItems="center" spacing={2}>
-   
         <Grid item xs={12} md={9}>
           <Grid container spacing={2}>
             {/* DURATION */}
@@ -85,29 +93,48 @@ const VendorFailureFilter = () => {
                 fullWidth
                 size="small"
                 label="Select State"
-                value={filters.stateNames}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => selected.join(", "),
+                  value: filters.stateNames || [],
+                  onChange: (e) => {
+                    let selected = e.target.value.filter((v) => v !== "ALL");
+                    const allValues = states;
+
+                    if (e.target.value.includes("ALL")) {
+                      selected =
+                        selected.length === allValues.length ? [] : allValues;
+                    }
+
+                    setFilters((prev) => ({
+                      ...prev,
+                      stateNames: selected,
+                      cityNames: [],
+                    }));
+                  },
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
                 }}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    stateNames: e.target.value,
-                    cityNames: [], // reset cities when state changes (best practice)
-                  }))
-                }
               >
-                {stateCityLoading ? (
-                  <MenuItem disabled>Loading states...</MenuItem>
-                ) : (
-                  states.map((state) => (
-                    <MenuItem key={state} value={state}>
-                      <Checkbox checked={filters.stateNames.includes(state)} />
-                      <ListItemText primary={state} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      states.length > 0 &&
+                      filters.stateNames?.length === states.length
+                    }
+                    indeterminate={
+                      filters.stateNames?.length > 0 &&
+                      filters.stateNames?.length < states.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {states.map((state) => (
+                  <MenuItem key={state} value={state}>
+                    <Checkbox checked={filters.stateNames.includes(state)} />
+                    <ListItemText primary={state} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
@@ -118,30 +145,47 @@ const VendorFailureFilter = () => {
                 fullWidth
                 size="small"
                 label="Select City"
-                value={filters.cityNames}
                 SelectProps={{
                   multiple: true,
-                  renderValue: (selected) => selected.join(", "),
+                  value: filters.cityNames || [],
+                  onChange: (e) => {
+                    let selected = e.target.value.filter((v) => v !== "ALL");
+                    const allValues = cities;
+
+                    if (e.target.value.includes("ALL")) {
+                      selected =
+                        selected.length === allValues.length ? [] : allValues;
+                    }
+
+                    setFilters((prev) => ({
+                      ...prev,
+                      cityNames: selected,
+                    }));
+                  },
+                  renderValue: (selected) =>
+                    Array.isArray(selected) ? selected.join(", ") : "",
                 }}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    cityNames: e.target.value,
-                  }))
-                }
               >
-                {stateCityLoading ? (
-                  <MenuItem disabled>Loading cities...</MenuItem>
-                ) : cities.length === 0 ? (
-                  <MenuItem disabled>Select state first</MenuItem>
-                ) : (
-                  cities.map((city) => (
-                    <MenuItem key={city} value={city}>
-                      <Checkbox checked={filters.cityNames.includes(city)} />
-                      <ListItemText primary={city} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      cities.length > 0 &&
+                      filters.cityNames?.length === cities.length
+                    }
+                    indeterminate={
+                      filters.cityNames?.length > 0 &&
+                      filters.cityNames?.length < cities.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {cities.map((city) => (
+                  <MenuItem key={city} value={city}>
+                    <Checkbox checked={filters.cityNames.includes(city)} />
+                    <ListItemText primary={city} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
@@ -151,34 +195,52 @@ const VendorFailureFilter = () => {
                 fullWidth
                 size="small"
                 label="Select Vendor"
-                value={filters.vendorIds}
                 SelectProps={{
                   multiple: true,
+                  value: filters.vendorIds || [],
+                  onChange: (e) => {
+                    let selected = e.target.value.filter((v) => v !== "ALL");
+                    const allValues = vendors.map((v) => v.vendorId);
+
+                    if (e.target.value.includes("ALL")) {
+                      selected =
+                        selected.length === allValues.length ? [] : allValues;
+                    }
+
+                    setFilters((prev) => ({
+                      ...prev,
+                      vendorIds: selected,
+                    }));
+                  },
                   renderValue: (selected) =>
                     vendors
                       .filter((v) => selected.includes(v.vendorId))
                       .map((v) => v.vendoR_NAME)
                       .join(", "),
                 }}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    vendorIds: e.target.value, 
-                  }))
-                }
               >
-                {vendorLoading ? (
-                  <MenuItem disabled>Loading vendors...</MenuItem>
-                ) : (
-                  vendors.map((vendor) => (
-                    <MenuItem key={vendor.vendorId} value={vendor.vendorId}>
-                      <Checkbox
-                        checked={filters.vendorIds.includes(vendor.vendorId)}
-                      />
-                      <ListItemText primary={vendor.vendoR_NAME} />
-                    </MenuItem>
-                  ))
-                )}
+                <MenuItem value="ALL">
+                  <Checkbox
+                    checked={
+                      vendors.length > 0 &&
+                      filters.vendorIds?.length === vendors.length
+                    }
+                    indeterminate={
+                      filters.vendorIds?.length > 0 &&
+                      filters.vendorIds?.length < vendors.length
+                    }
+                  />
+                  <ListItemText primary="All" />
+                </MenuItem>
+
+                {vendors.map((vendor) => (
+                  <MenuItem key={vendor.vendorId} value={vendor.vendorId}>
+                    <Checkbox
+                      checked={filters.vendorIds.includes(vendor.vendorId)}
+                    />
+                    <ListItemText primary={vendor.vendoR_NAME} />
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
           </Grid>

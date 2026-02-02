@@ -22,6 +22,15 @@ export const VendorFailureProvider = ({ children }) => {
     search:""
   });
 
+  const [vendorFilteredTotal, setVendorFilteredTotal] = useState({
+  accepted: 0,
+  rejected: 0,
+  total: 0,
+  acceptedRate: "0.00",
+  rejectedRate: "0.00",
+});
+
+
   const [vendors, setVendors] = useState([]);
   const [vendorLoading, setVendorLoading] = useState(false);
 
@@ -40,19 +49,60 @@ export const VendorFailureProvider = ({ children }) => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
-  const fetchVendors = async () => {
-    try {
-      setVendorLoading(true);
-      const res = await fetch(`${baseURL}/GetVendors`);
-      const result = await res.json();
-      setVendors(result?.data || []);
-    } catch (error) {
-      console.error("Vendor API error", error);
-      setVendors([]);
-    } finally {
-      setVendorLoading(false);
+  // const fetchVendors = async () => {
+  //   try {
+  //     setVendorLoading(true);
+  //     const res = await fetch(`${baseURL}/GetVendors`);
+  //     const result = await res.json();
+  //     setVendors(result?.data || []);
+  //   } catch (error) {
+  //     console.error("Vendor API error", error);
+  //     setVendors([]);
+  //   } finally {
+  //     setVendorLoading(false);
+  //   }
+  // };
+
+const fetchVendors = async ({
+  stateNames = [],
+  cityNames = [],
+} = {}) => {
+  try {
+    setVendorLoading(true);
+
+    let url = `${baseURL}/GetVendors`;
+    const params = new URLSearchParams();
+
+    if (stateNames.length > 0) {
+      params.append("State", stateNames.join(","));
     }
-  };
+
+    if (cityNames.length > 0) {
+      params.append("City", cityNames.join(","));
+    }
+
+    // attach query only when needed
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const res = await fetch(url, { method: "GET" });
+    const result = await res.json();
+
+    setVendors(result?.data || []);
+  } catch (error) {
+    console.error("Vendor API error", error);
+    setVendors([]);
+  } finally {
+    setVendorLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchVendors(); // no params
+}, []);
+
+
 
   const fetchVendorTotalData = async () => {
     try {
@@ -241,6 +291,9 @@ export const VendorFailureProvider = ({ children }) => {
 
         fetchVendorTotalData,
         vendorTotalData,
+
+        vendorFilteredTotal,
+  setVendorFilteredTotal,
       }}
     >
       {children}
