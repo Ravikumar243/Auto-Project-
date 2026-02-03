@@ -16,7 +16,7 @@ const ReportMisHooks = () => {
   const [search, setSearch] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [policyLoading, setPolicyLoading] = useState(false)
+  const [policyLoading, setPolicyLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState(userEmail);
@@ -26,25 +26,22 @@ const ReportMisHooks = () => {
 
   const isFilterApplied = search || from || to || company;
 
-
   // 🔹 helper (put at top of hook file)
-const parseAnyDate = (value) => {
-  if (!value) return null;
+  const parseAnyDate = (value) => {
+    if (!value) return null;
 
-  return moment(
-    value,
-    [
-      "DD-MM-YYYY HH:mm:ss",
-      "DD-MM-YYYY",
-      "M/D/YYYY h:mm:ss A",
-      "YYYY-MM-DD",
-      "YYYY-MM-DDTHH:mm"
-    ],
-    true
-  );
-};
-
-
+    return moment(
+      value,
+      [
+        "DD-MM-YYYY HH:mm:ss",
+        "DD-MM-YYYY",
+        "M/D/YYYY h:mm:ss A",
+        "YYYY-MM-DD",
+        "YYYY-MM-DDTHH:mm",
+      ],
+      true,
+    );
+  };
 
   // Fetch all data
   const fetchDataAPI = async () => {
@@ -55,7 +52,7 @@ const parseAnyDate = (value) => {
       if (company) params.append("companyName", company);
 
       const URL = `${baseURL}/GetPolicyCRMData?${params.toString()}`;
-      setPolicyLoading(true)
+      setPolicyLoading(true);
       const request = await fetch(URL);
       const data = await request.json();
       setListData(data.dataItems);
@@ -103,7 +100,7 @@ const parseAnyDate = (value) => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
 
       const data = await res.json();
@@ -134,7 +131,7 @@ const parseAnyDate = (value) => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       const data = await res.json();
 
@@ -143,25 +140,25 @@ const parseAnyDate = (value) => {
 
         // ⬇️ ROLE BASED DOWNLOAD LOGIC
 
-        if (userRole === "Admin" || userRole === "AM" || userRole==="HeadAC") {
+        if (
+          userRole === "Admin" ||
+          userRole === "AM" ||
+          userRole === "HeadAC"
+        ) {
           // ADMIN → DOWNLOAD ALL DATA
           handleDowloadExcel(filtercase);
-        } else if (userRole === "Agent" || userRole === "Advisor" ||  userRole==="TL")  {
-          // AGENT → ONLY LAST 3 DAYS
-          const last3DaysData = filtercase.filter((row) => {
-            const dateStr = row.completeInformationTime?.split(" ")[0];
-            const caseDate = moment(dateStr, "DD-MM-YYYY");
-            const today = moment();
-            const diff = today.diff(caseDate, "days");
-            return diff <= 3;
-          });
-
-          if (last3DaysData.length === 0) {
-            toast.error("No data available for the last 3 days.");
+        } else if (
+          userRole === "Agent" ||
+          userRole === "Advisor" ||
+          userRole === "SME"
+        ) {
+          if (filtercase.length === 0) {
+            toast.error("No data available to download");
             return;
           }
 
-          handleDowloadExcel(last3DaysData);
+          // 🔐 Agent → download exactly what is visible
+          handleDowloadExcel(filtercase, "MIS_Last_3_Days.xlsx");
         }
 
         setStep(1);
@@ -178,69 +175,66 @@ const parseAnyDate = (value) => {
     }
   };
 
- 
-
-useEffect(() => {
-  if (!Array.isArray(listData) || listData.length === 0) {
-    setFiltercase([]);
-    return;
-  }
-
-  let baseData = [...listData];
-
-  // 🔹 AGENT / ADVISOR / TL → last 3 days only
-  if (userRole === "Agent" || userRole === "Advisor" || userRole === "TL") {
-    baseData = baseData.filter((row) => {
-      const caseDate =
-        parseAnyDate(row.completeInformationTime) ||
-        parseAnyDate(row.callTime) ||
-        parseAnyDate(row.reportedDate);
-
-      if (!caseDate || !caseDate.isValid()) return false;
-
-      const today = moment().endOf("day");
-      const diff = today.diff(caseDate, "days");
-      return diff <= 2;
-    });
-  }
-
-  const result = baseData.filter((row) => {
-    // 🔍 Search
-    const referenceMatch = row.reference_No
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
-
-    const contactMatch = row.contactNo
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
-
-    let dateMatch = true;
-
-    // 📅 Date filter
-    if (from || to) {
-      const caseDate =
-        parseAnyDate(row.completeInformationTime) ||
-        parseAnyDate(row.callTime) ||
-        parseAnyDate(row.reportedDate);
-
-      if (!caseDate || !caseDate.isValid()) return false;
-
-      const fromDate = from ? moment(from).startOf("day") : null;
-      const toDate   = to ? moment(to).endOf("day") : null;
-
-      if (fromDate && toDate) {
-        dateMatch = caseDate.isBetween(fromDate, toDate, null, "[]");
-      } else if (fromDate) {
-        dateMatch = caseDate.isSameOrAfter(fromDate);
-      }
+  useEffect(() => {
+    if (!Array.isArray(listData) || listData.length === 0) {
+      setFiltercase([]);
+      return;
     }
 
-    return dateMatch && (referenceMatch || contactMatch || !search);
-  });
+    let baseData = [...listData];
 
-  setFiltercase(result);
-}, [listData, search, from, to, userRole]);
+    // 🔹 AGENT / ADVISOR / TL → last 3 days only
+    if (userRole === "Agent" || userRole === "Advisor" || userRole === "SME") {
+      baseData = baseData.filter((row) => {
+        const caseDate =
+          parseAnyDate(row.completeInformationTime) ||
+          parseAnyDate(row.callTime) ||
+          parseAnyDate(row.reportedDate);
 
+        if (!caseDate || !caseDate.isValid()) return false;
+
+        const today = moment().endOf("day");
+        const diff = today.diff(caseDate, "days");
+        return diff <= 3;
+      });
+    }
+
+    const result = baseData.filter((row) => {
+      // 🔍 Search
+      const referenceMatch = row.reference_No
+        ?.toLowerCase()
+        .includes(search.toLowerCase());
+
+      const contactMatch = row.contactNo
+        ?.toLowerCase()
+        .includes(search.toLowerCase());
+
+      let dateMatch = true;
+
+      // 📅 Date filter
+      if (from || to) {
+        const caseDate =
+          parseAnyDate(row.completeInformationTime) ||
+          parseAnyDate(row.callTime) ||
+          parseAnyDate(row.reportedDate);
+
+        if (!caseDate || !caseDate.isValid()) return false;
+
+        const fromDate = from ? moment(from).startOf("day") : null;
+        const toDate = to ? moment(to).endOf("day") : null;
+
+        if (fromDate && toDate) {
+          dateMatch = caseDate.isBetween(fromDate, toDate, null, "[]");
+        } else if (fromDate) {
+          dateMatch = caseDate.isSameOrAfter(fromDate);
+        }
+      }
+
+      return dateMatch && (referenceMatch || contactMatch || !search);
+    });
+
+    setFiltercase(result);
+  }, [listData, search, from, to, userRole]);
 
   return {
     listData,
@@ -265,7 +259,7 @@ useEffect(() => {
     setCompany,
     company,
     policyLoading,
-    isFilterApplied
+    isFilterApplied,
   };
 };
 

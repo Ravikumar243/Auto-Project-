@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from "@mui/material/styles";
 import {
   Avatar,
   Box,
@@ -14,26 +14,41 @@ import {
   Paper,
   Popper,
   Stack,
-  Typography, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button
-} from '@mui/material';
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Button,
+} from "@mui/material";
 
 // project import
-import MainCard from 'components/MainCard';
-import Transitions from 'components/@extended/Transitions';
+import MainCard from "components/MainCard";
+import Transitions from "components/@extended/Transitions";
 
 // assets
-import avatar1 from 'assets/images/users/demo.jpg';
-import { LogoutOutlined } from '@ant-design/icons';
-import SyncLockOutlinedIcon from '@mui/icons-material/SyncLockOutlined';
+import avatar1 from "assets/images/users/demo.jpg";
+import { LogoutOutlined } from "@ant-design/icons";
+import SyncLockOutlinedIcon from "@mui/icons-material/SyncLockOutlined";
 // import { baseURLProd } from 'api/api';
 import {
-  // toast, 
-  ToastContainer
-} from 'react-toastify';
+  toast,
+  // toast,
+  ToastContainer,
+} from "react-toastify";
+import baseURL from "api/autoApi";
+
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
   return (
-    <div role="tabpanel" hidden={value !== index} id={`profile-tabpanel-${index}`} aria-labelledby={`profile-tab-${index}`} {...other}>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`profile-tabpanel-${index}`}
+      aria-labelledby={`profile-tab-${index}`}
+      {...other}
+    >
       {value === index && children}
     </div>
   );
@@ -42,9 +57,8 @@ function TabPanel({ children, value, index, ...other }) {
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
+  value: PropTypes.any.isRequired,
 };
-
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
@@ -52,60 +66,116 @@ const Profile = () => {
   const theme = useTheme();
 
   const handleLogout = async () => {
-    window.location.assign('/')
+    window.location.assign("/");
   };
-  const [passwordopen, setpasswordOpen] = useState(false)
+  const [passwordopen, setpasswordOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [uniqueCode, setUniqueCode] = useState("");
 
   const handleChangePassword = async () => {
-    // window.location.assign('/changepassword')
-    setpasswordOpen(true)
-
+    setpasswordOpen(true);
   };
 
   const handlepasswordclose = () => {
-    setpasswordOpen(false)
-  }
+    setpasswordOpen(false);
+  };
+
   const anchorRef = useRef(null);
-  const [open, setOpen] = useState(false);
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
+    setpasswordOpen(false);
     setOpen(false);
-    setCurrentPassword("")
-    setNewPassword("")
-
+    setCurrentPassword("");
+    setNewPassword("");
   };
- 
+
+  useEffect(() => {
+    const userDetail = localStorage.getItem("userInfo");
+    if (userDetail) {
+      const parsed = JSON.parse(userDetail);
+      setUniqueCode(parsed?.uniqueCode || "");
+    }
+  }, []);
+
   const userEmail = localStorage.getItem("userEmail");
 
+  const iconBackColorOpen = "grey.300";
 
-  const iconBackColorOpen = 'grey.300';
+  const handleSubmit = async () => {
+    if (!currentPassword) {
+      toast.error("Please fill current Password");
+      return;
+    }
+    if (!newPassword) {
+      toast.error("Please fill new Password");
+      return;
+    }
+    if (currentPassword === newPassword) {
+      toast.error("New password must be different from current password");
+      return;
+    }
+    const PasswordChangePayload = {
+      email: userEmail,
+      uniqueId: uniqueCode,
+      password: currentPassword,
+      newPassword: newPassword,
+    };
+
+    try {
+      const res = await fetch(`${baseURL}/UpdatePassword`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(PasswordChangePayload),
+      });
+
+      const data = await res.json();
+
+      if (data.status) {
+        toast.success("Password update Successfully");
+        setCurrentPassword("");
+        setNewPassword("");
+        setpasswordOpen(false);
+      } else {
+        toast.error("Current password is incorrect");
+      }
+    } catch (error) {
+      console.error("Password change error:", error);
+      throw error;
+    }
+  };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
         sx={{
           p: 0.25,
-          bgcolor: open ? iconBackColorOpen : 'transparent',
+          bgcolor: open ? iconBackColorOpen : "transparent",
           borderRadius: 1,
-          '&:hover': { bgcolor: 'secondary.lighter' }
+          "&:hover": { bgcolor: "secondary.lighter" },
         }}
         aria-label="open profile"
         ref={anchorRef}
-        aria-controls={open ? 'profile-grow' : undefined}
+        aria-controls={open ? "profile-grow" : undefined}
         aria-haspopup="true"
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
+          <Avatar
+            alt="profile user"
+            src={avatar1}
+            sx={{ width: 32, height: 32 }}
+          />
           <Typography variant="subtitle1">{userEmail} </Typography>
         </Stack>
       </ButtonBase>
@@ -119,12 +189,12 @@ const Profile = () => {
         popperOptions={{
           modifiers: [
             {
-              name: 'offset',
+              name: "offset",
               options: {
-                offset: [0, 9]
-              }
-            }
-          ]
+                offset: [0, 9],
+              },
+            },
+          ],
         }}
       >
         {({ TransitionProps }) => (
@@ -136,19 +206,31 @@ const Profile = () => {
                   width: 290,
                   minWidth: 240,
                   maxWidth: 290,
-                  [theme.breakpoints.down('md')]: {
-                    maxWidth: 250
-                  }
+                  [theme.breakpoints.down("md")]: {
+                    maxWidth: 250,
+                  },
                 }}
               >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MainCard elevation={0} border={false} content={false}>
                     <ToastContainer />
                     <CardContent sx={{ px: 2.5, pt: 3 }}>
-                      <Grid container justifyContent="space-between" alignItems="center">
+                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Grid item>
-                          <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
+                          <Stack
+                            direction="row"
+                            spacing={1.25}
+                            alignItems="center"
+                          >
+                            <Avatar
+                              alt="profile user"
+                              src={avatar1}
+                              sx={{ width: 32, height: 32 }}
+                            />
 
                             <Stack>
                               <Typography variant="h6">{userEmail}</Typography>
@@ -159,24 +241,41 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
+                          <IconButton
+                            size="large"
+                            color="secondary"
+                            onClick={handleLogout}
+                          >
                             <LogoutOutlined />
                           </IconButton>
                         </Grid>
                       </Grid>
-                      <Grid container justifyContent="space-between" alignItems="center">
+                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Grid item>
                           <Typography variant="h6">Change Password</Typography>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleChangePassword}>
+                          <IconButton
+                            size="large"
+                            color="secondary"
+                            onClick={handleChangePassword}
+                          >
                             <SyncLockOutlinedIcon />
                           </IconButton>
-                          <Dialog open={passwordopen} onClose={handlepasswordclose}>
-                            <DialogTitle className='editTitle'>Change Password</DialogTitle>
+                          <Dialog
+                            open={passwordopen}
+                            onClose={handlepasswordclose}
+                          >
+                            <DialogTitle className="editTitle">
+                              Change Password
+                            </DialogTitle>
                             <DialogContent>
-                              <Grid className='changepassinnerdiv my-4 '>
-                                <Grid item >
+                              <Grid className="changepassinnerdiv my-4 ">
+                                <Grid item>
                                   <TextField
                                     margin="dense"
                                     label="Current Password"
@@ -184,8 +283,10 @@ const Profile = () => {
                                     name="currentPassword"
                                     fullWidth
                                     value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                    className='editInputField'
+                                    onChange={(e) =>
+                                      setCurrentPassword(e.target.value)
+                                    }
+                                    className="editInputField"
                                   />
                                   <TextField
                                     margin="dense"
@@ -194,19 +295,34 @@ const Profile = () => {
                                     name="newPassword"
                                     fullWidth
                                     value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    className='editInputField'
+                                    onChange={(e) =>
+                                      setNewPassword(e.target.value)
+                                    }
+                                    className="editInputField"
                                   />
                                 </Grid>
-                              </Grid >
+                              </Grid>
                             </DialogContent>
-                            <DialogActions className='editButtonDiv'>
-                              <Button onClick={handleClose} className='btn btn-primary' style={{ backgroundColor: '#EF9848', border: '0px' }}>
+                            <DialogActions className="editButtonDiv">
+                              <Button
+                                onClick={handleClose}
+                                className="btn btn-primary"
+                                style={{
+                                  backgroundColor: "#EF9848",
+                                  border: "0px",
+                                }}
+                              >
                                 Cancel
                               </Button>
                               <Button
-                                // onClick={handleSubmit} 
-                                className='btn btn-primary' style={{ backgroundColor: '#EF9848', border: '0px' }}>
+                                // onClick={handleSubmit}
+                                className="btn btn-primary"
+                                onClick={handleSubmit}
+                                style={{
+                                  backgroundColor: "#EF9848",
+                                  border: "0px",
+                                }}
+                              >
                                 Submit
                               </Button>
                             </DialogActions>

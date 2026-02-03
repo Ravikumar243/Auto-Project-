@@ -25,14 +25,14 @@ const ClientDashboard = () => {
       value: filteredTotals?.totalCases || 0,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am'],
     },
     {
       title: "Cases Completed",
       value: filteredTotals?.completedCases || 0,
       bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
       titleColor: "#0E8F7A",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "qa", "sme",'tl', 'headac','am'],
       isCompletedCard: true,
     },
     {
@@ -40,7 +40,7 @@ const ClientDashboard = () => {
       value: filteredTotals?.openCases || 0,
       bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
       titleColor: "#D28A00",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "qa", "sme",'tl', 'headac','am'],
       isOpenCard: true,
     },
     {
@@ -48,7 +48,7 @@ const ClientDashboard = () => {
       value: filteredTotals?.cancelledCases || 0,
       bg: "linear-gradient(135deg, #C7D1E2 0%, #E6ECF5 100%)",
       titleColor: "#7A869A",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent",  "qa", "sme",'tl', 'headac','am'],
       isCancelledCard: true,
     },
   ];

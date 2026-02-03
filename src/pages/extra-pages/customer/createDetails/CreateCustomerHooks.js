@@ -2496,7 +2496,7 @@ export const CustomerProvider = ({ children }) => {
         body: JSON.stringify(cleanedPayload),
       });
       const data = await responce.json();
-      // console.log("data", data);
+     
       setExpanded(expanded === "open8" ? "open9" : "open8");
       if (data.status === true) {
         toast.success("Form Submited SuccesFully !");
@@ -2597,68 +2597,14 @@ export const CustomerProvider = ({ children }) => {
     }
   };
 
-  //------------------newwwww-----------------------------//
+
   const handleInputChange = (e) => {
     if (isSelecting) return;
     setIsTyping(true);
     setInputValue(e.target.value);
     setFormAssistance((prev) => ({ ...prev, location: e.target.value }));
   };
-  // const handleSelect = (place) => {
-  //   // console.log(place, 'placeee placee');
-  //   const state = extractState(place.description);
-  //   const city = extractCity(place.description);
-  //   const location = extractLocation(place.description);
-
-  //   const cleanCity = city?.replace(/State/i, "").trim();
-  //   console.log(cleanCity,"cleancity")
-  //   if (cleanCity?.toLowerCase().includes("chandigarh state")) {
-  //     cleanCity = cleanCity.split(" ")[0];
-  //   }
-
-  //   if (cleanCity?.toLowerCase().includes("New Delhi")) {
-  //     cleanCity = "Delhi";
-  //   }
-
-  //   const cleanStateValue = (value) => value?.replace(/\d+/g, "").trim() || "";
-
-  //   const finalState =
-  //     cleanCity?.trim().toLowerCase() === "chandigarh"
-  //       ? "Chandigarh"
-  //       : cleanStateValue(state);
-
-  //   const finalCity =
-  //     state?.trim().toLowerCase() === "delhi"
-  //       ? "Delhi"
-  //       : state?.trim().toLowerCase() === "chandigarh"
-  //         ? "Chandigarh"
-  //         : cleanCity;
-
-  //   setIsSelecting(true);
-
-  //   setFormAssistance((prev) => ({
-  //     ...prev,
-  //     location: location,
-  //     state: finalState,
-  //     city: finalCity,
-  //     pincode: "",
-  //   }));
-
-  //   // setInputValue(place.description);
-  //   setInputValue(location);
-  //   setSuggestions([]);
-  //   setIsTyping(false);
-  //   //Update formArea
-  //   setFormArea((prev) => ({
-  //     ...prev,
-  //     area: place.description,
-  //     srN_No: generatedSRN,
-  //   }));
-  //   // Call API with selected area immediately
-  //   handleCoordinatesAPI(place.description, "pickup");
-  //   setTimeout(() => setIsSelecting(false), 300);
-  // };
-
+ 
   const handleSelect = (place) => {
     const state = extractState(place.description);
     const city = extractCity(place.description);

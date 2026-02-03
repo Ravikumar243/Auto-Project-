@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import * as XLSX from "xlsx";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 export const OldMisUpload = () => {
   const fileInputRef = useRef(null);
@@ -36,9 +37,26 @@ export const OldMisUpload = () => {
     defaultLoading,
     defaultMessage,
     companyList,
+    filterOnlyLast3Days,
   } = OldMisHook();
 
-  console.log(companyList, "dkajdlkfskdjf");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userRole = userInfo?.role;
+
+  const ADMIN_ROLES = ["Admin", "AM", "HeadAC"];
+  const AGENT_ROLES = ["Agent", "Advisor", "SME"];
+
+  const isAdmin = ADMIN_ROLES.includes(userRole);
+  const isAgent = AGENT_ROLES.includes(userRole);
+
+  const today = moment().startOf("day");
+  const lastAllowedDate = moment().subtract(2, "days").startOf("day");
+
+  const formatDisplayDate = (value) => {
+    if (!value) return "";
+    return moment(value).format("DD/MM/YYYY");
+  };
+
   const onUpload = async () => {
     const success = await handleUpload();
 
@@ -59,11 +77,30 @@ export const OldMisUpload = () => {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(defaultRows);
+    let downloadData = [];
+
+    // 🔓 Admin → full data
+    if (isAdmin) {
+      downloadData = defaultRows;
+    }
+
+    // 🔐 Agent → only last 3 days
+    if (isAgent) {
+      downloadData = filterOnlyLast3Days(defaultRows);
+
+      if (downloadData.length === 0) {
+        toast.error("You can download only last 3 days data");
+        return;
+      }
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(downloadData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "MIS Data");
 
-    XLSX.writeFile(workbook, "MIS_Default_Data.xlsx");
+    const fileName = isAdmin ? "MIS_Full_Data.xlsx" : "MIS_Last_3_Days.xlsx";
+
+    XLSX.writeFile(workbook, fileName);
   };
 
   const defaultColumns = [
@@ -199,7 +236,7 @@ export const OldMisUpload = () => {
         width: "180px",
       },
     ],
-    []
+    [],
   );
 
   const customStyle = {
@@ -321,9 +358,6 @@ export const OldMisUpload = () => {
         </Stack>
 
         <Stack direction="row" spacing={2} alignItems="center" className="mt-5">
-          
-         
-
           <FormControl sx={{ width: "220px" }}>
             <InputLabel>Select Company</InputLabel>
             <Select
@@ -340,23 +374,119 @@ export const OldMisUpload = () => {
           </FormControl>
 
           {/* From Date */}
-          <TextField
+
+          {/* <TextField
             type="date"
             label="From Date"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            inputProps={
+              isAgent
+                ? {
+                    min: new Date(Date.now() - 2 * 86400000)
+                      .toISOString()
+                      .split("T")[0],
+                    max: new Date().toISOString().split("T")[0],
+                  }
+                : {}
+            }
             sx={{ width: "160px" }}
+          /> */}
+
+          <TextField
+            type={fromDate ? "date" : "text"}
+            label="From Date"
+            value={
+              moment(fromDate, "YYYY-MM-DD", true).isValid()
+                ? document.activeElement?.type === "date"
+                  ? fromDate
+                  : formatDisplayDate(fromDate)
+                : ""
+            }
+            placeholder="dd/mm/yyyy"
+            onFocus={(e) => {
+              e.target.type = "date";
+              e.target.value = fromDate;
+            }}
+            onBlur={(e) => {
+              e.target.type = "text";
+              e.target.value = formatDisplayDate(fromDate);
+            }}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (isAgent) {
+                const selected = moment(value, "YYYY-MM-DD", true);
+
+                if (selected.isBefore(lastAllowedDate)) {
+                  toast.info("You can select only last 3 days");
+                  setFromDate("");
+                  return;
+                }
+              }
+
+              setFromDate(value);
+            }}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: "160px" }}
+            inputProps={{
+              max: new Date().toISOString().split("T")[0],
+            }}
           />
 
           {/* To Date */}
-          <TextField
+
+          {/* <TextField
             type="date"
             label="To Date"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            inputProps={
+              isAgent ? { max: new Date().toISOString().split("T")[0] } : {}
+            }
             sx={{ width: "160px" }}
+          /> */}
+          <TextField
+            type={toDate ? "date" : "text"}
+            label="To Date"
+            value={
+              moment(toDate, "YYYY-MM-DD", true).isValid()
+                ? document.activeElement?.type === "date"
+                  ? toDate
+                  : formatDisplayDate(toDate)
+                : ""
+            }
+            placeholder="dd/mm/yyyy"
+            onFocus={(e) => {
+              e.target.type = "date";
+              e.target.value = toDate;
+            }}
+            onBlur={(e) => {
+              e.target.type = "text";
+              e.target.value = formatDisplayDate(toDate);
+            }}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (isAgent) {
+                const selected = moment(value, "YYYY-MM-DD", true);
+
+                if (selected.isBefore(lastAllowedDate)) {
+                  toast.info("You can select only last 3 days");
+                  setToDate("");
+                  return;
+                }
+              }
+
+              setToDate(value);
+            }}
+            InputLabelProps={{ shrink: true }}
+            sx={{ width: "160px" }}
+            inputProps={{
+              max: new Date().toISOString().split("T")[0],
+            }}
           />
 
           {/* Search Button */}

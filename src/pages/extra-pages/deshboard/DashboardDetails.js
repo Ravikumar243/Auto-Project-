@@ -23,21 +23,21 @@ const DashboardDetails = () => {
       value: activeCases.length,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
-      roles: ["admin","advisor", "vendor"],
+      roles: ["admin", "agent", "vendor", "qa", "sme",'tl', 'headac',"am"],
     },
     {
       title: "My Cases",
       value: mycases.length,
       bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
       titleColor: "#0E8F7A",
-      roles: ["admin","advisor", "vendor"],
+      roles: ["admin", "agent", "vendor", "qa", "sme",'tl','headac','am'],
     },
     {
       title: "Escalated",
       value: escalated.length,
       bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
       titleColor: "#D28A00",
-      roles: ["admin","advisor", "vendor"],
+      roles: ["admin", "agent", "vendor", "qa", "sme",'tl', 'headac','am'],
     },
     {
       title: "Closed Cases",
@@ -165,11 +165,11 @@ const DashboardDetails = () => {
           </Grid>
           {/* </div> */}
 
-          <ActiveCses />
-          {/* {userRole === "admin" && } */}
-          <VendorDashboard />
+          {["admin", "agent", "vendor", "qa", "sme",'tl', 'headac','am'].includes(userRole) && (
+            <ActiveCses />
+          )}
 
-          {/* {userRole === "vendor" && } */}
+          {userRole === "vendor" && <VendorDashboard />}
         </Grid>
       </MainCard>
     </>

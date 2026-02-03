@@ -1,5 +1,3 @@
-
-
 import baseURL from "api/autoApi";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -12,24 +10,70 @@ const OldMisHook = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  const [defaultRows, setDefaultRows] = useState([]); 
-  const [defaultLoading, setDefaultLoading]  = useState(false);
+  const [defaultRows, setDefaultRows] = useState([]);
+  const [defaultLoading, setDefaultLoading] = useState(false);
   const [defaultMessage, setDefaultMessage] = useState("");
-  const [rows, setRows] = useState([]); 
+  const [rows, setRows] = useState([]);
   const [companyList, setCompanyList] = useState([]);
 
   const [searchText, setSearchText] = useState("");
-  const [isSRNSearch, setIsSRNSearch] = useState(false); 
+  const [isSRNSearch, setIsSRNSearch] = useState(false);
+
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userRole = userInfo?.role;
+
+  const AGENT_ROLES = ["Agent", "Advisor", "SME"];
+  const isAgent = AGENT_ROLES.includes(userRole);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
 
     const [year, month, day] = dateStr.split("-");
 
-    const shortYear = year.slice(-2); 
+    const shortYear = year.slice(-2);
 
     return `${day}/${month}/${shortYear}`;
   };
+
+  const parseDateSafe = (dateStr) => {
+  if (!dateStr) return null;
+
+  // extract only date part
+  const clean = dateStr.split(" ")[0].replace(/\//g, "-");
+  const parts = clean.split("-");
+
+  if (parts.length !== 3) return null;
+
+  // DD-MM-YYYY
+  const [dd, mm, yyyy] = parts;
+
+  if (!dd || !mm || !yyyy) return null;
+
+  const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  return isNaN(date.getTime()) ? null : date;
+};
+
+ const filterOnlyLast3Days = (data = []) => {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+
+  const startDate = new Date();
+  startDate.setDate(today.getDate() - 2);
+  startDate.setHours(0, 0, 0, 0);
+
+  return data.filter((row) => {
+    const rowDate = parseDateSafe(row.reportedDate);
+    if (!rowDate) return false;
+
+    // ❌ future block
+    if (rowDate > today) return false;
+
+    // ❌ past block
+    if (rowDate < startDate) return false;
+
+    return true;
+  });
+};
 
   const loadDefaultMIS = async () => {
     setDefaultLoading(true);
@@ -47,7 +91,14 @@ const OldMisHook = () => {
 
       setDefaultMessage(data.message || "");
 
-      setDefaultRows(data?.dataItems || []);
+      // setDefaultRows(data?.dataItems || []);
+      let items = data?.dataItems || [];
+
+      if (isAgent) {
+        items = filterOnlyLast3Days(items);
+      }
+
+      setDefaultRows(items);
     } catch (error) {
       console.error("Error loading MIS:", error);
       toast.error("Error loading data");
@@ -56,23 +107,23 @@ const OldMisHook = () => {
     }
   };
 
-
-  const getOldCompanyList = async()=>{
+  const getOldCompanyList = async () => {
     try {
       const res = await fetch(`${baseURL}/GetOldCompanyList`);
       const data = await res.json();
-      if(data.status=== true){
-        setCompanyList(data?.dataItem)
+      if (data.status === true) {
+        setCompanyList(data?.dataItem);
       }
     } catch (error) {
-       toast.error("Error loading data");
+      toast.error("Error loading data");
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getOldCompanyList();
-  },[])
-  
+  }, []);
+
+
 
   const handleSearch = async () => {
     if (searchText.trim()) {
@@ -82,11 +133,24 @@ const OldMisHook = () => {
 
       try {
         const res = await fetch(
-          `${baseURL}/GetCaseByReferenceNo?referenceNo=${searchText}`
+          `${baseURL}/GetCaseByReferenceNo?referenceNo=${searchText}`,
         );
         const data = await res.json();
 
-        setRows(data ? [data] : []);
+        // setRows(data ? [data] : []);
+        const result = data ? [data] : [];
+
+        if (isAgent) {
+          const filtered = filterOnlyLast3Days(result);
+          setRows(filtered);
+
+          if (filtered.length === 0) {
+            toast.error("Agents can view only last 3 days data");
+          }
+        } else {
+          setRows(result);
+        }
+
         if (!data) toast.info("No record found!");
       } catch (err) {
         toast.error("No Data Found for this SRN");
@@ -99,18 +163,15 @@ const OldMisHook = () => {
     }
   };
 
- 
-
- const handleFilterSearch = async () => {
+  const handleFilterSearch = async () => {
     if (!companyName && !fromDate && !toDate) {
       toast.info("Please select company or date!");
       return;
     }
 
     setIsSRNSearch(false);
-    await loadDefaultMIS();  
+    await loadDefaultMIS();
   };
-
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -178,9 +239,10 @@ const OldMisHook = () => {
     handleUpload,
     handleSearch,
     handleFilterSearch,
-  defaultLoading,
-  defaultMessage,
-  companyList
+    defaultLoading,
+    defaultMessage,
+    companyList,
+    filterOnlyLast3Days
   };
 };
 

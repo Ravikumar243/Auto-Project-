@@ -68,78 +68,12 @@ const CompleteDeatils = () => {
     if (!remove) {
       return;
     }
-    // const getLocation = async () => {
-    //   if (user_Latitude && uSer_Longitude) {
-    //     try {
-    //       const response = await fetch(
-    //         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${user_Latitude},${uSer_Longitude}&key=AIzaSyAMiYAw5JRMFjD3H6erGvs-fXPo_WlZR4w`
-    //       );
-    //       const data = await response.json();
-
-    //       if (data.status === "OK" && data.results.length > 0) {
-    //         const addressComponents = data.results[0].address_components;
-
-    //         const allComponents = data.results.flatMap(
-    //           (r) => r.address_components
-    //         );
-
-    //         const getComponent = (types) => {
-    //           const comp = addressComponents.find((c) =>
-    //             types.every((t) => c.types.includes(t))
-    //           );
-    //           return comp ? comp.long_name : "";
-    //         };
-
-    //         const address = data.results[0].formatted_address;
-    //         const abc = extractCity(address);
-    //         function extractCity(address) {
-    //           const parts = address.split(",");
-    //           return parts.length >= 3 ? parts[parts.length - 3].trim() : "";
-    //         }
-    //         const fetchedLocation = {
-    //           address: data.results[0].formatted_address,
-    //           city:
-    //             abc ||
-    //             getComponent(["locality"]) ||
-    //             getComponent(["administrative_area_level_2"]),
-    //           state: getComponent(["administrative_area_level_1"]),
-    //           country: getComponent(["country"]),
-    //           pincode: getComponent(
-    //             ["postal_code"],
-    //             data.results.flatMap((r) => r.address_components)
-    //           ),
-    //         };
-    //         console.log(getComponent(["postal_code"]), "pincode");
-
-    //         setLocation(fetchedLocation);
-    //         console.log(fetchedLocation.pincode, "pin");
-    //         handleAssist({
-    //           target: { name: "location", value: fetchedLocation.address },
-    //         });
-    //         handleAssist({
-    //           target: { name: "city", value: fetchedLocation.city },
-    //         });
-    //         handleAssist({
-    //           target: { name: "state", value: fetchedLocation.state },
-    //         });
-    //         handleAssist({
-    //           target: { name: "pincode", value: fetchedLocation.pincode },
-    //         });
-    //       } else {
-    //         setError("Failed to fetch location: " + data.status);
-    //       }
-    //     } catch (err) {
-    //       setError("Failed to fetch location");
-    //       console.error("Error fetching location:", err);
-    //     }
-    //   }
-    // };
 
     const getLocation = async () => {
       if (user_Latitude && uSer_Longitude) {
         try {
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${user_Latitude},${uSer_Longitude}&key=AIzaSyAMiYAw5JRMFjD3H6erGvs-fXPo_WlZR4w`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${user_Latitude},${uSer_Longitude}&key=AIzaSyAMiYAw5JRMFjD3H6erGvs-fXPo_WlZR4w`,
           );
           const data = await response.json();
 
@@ -148,7 +82,7 @@ const CompleteDeatils = () => {
 
             const getComponent = (types) => {
               const comp = addressComponents.find((c) =>
-                types.every((t) => c.types.includes(t))
+                types.every((t) => c.types.includes(t)),
               );
               return comp ? comp.long_name : "";
             };
@@ -175,11 +109,11 @@ const CompleteDeatils = () => {
             handleAssist({ target: { name: "city", value: city } }, false);
             handleAssist(
               { target: { name: "pincode", value: pincode } },
-              false
+              false,
             );
             handleAssist(
               { target: { name: "location", value: address } },
-              false
+              false,
             );
           } else {
             setError("Failed to fetch location: " + data.status);

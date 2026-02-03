@@ -60,10 +60,10 @@ const NavItem = ({ level, drawerOpen }) => {
         "Advisor",
         "AM",
         "HeadAC",
-        "QA",
         "SME",
         "TL",
         "Vendor",
+        'Network'
       ],
     },
     {
@@ -77,14 +77,13 @@ const NavItem = ({ level, drawerOpen }) => {
         "Advisor",
         "AM",
         "HeadAC",
-        "QA",
         "SME",
         "TL",
         "Vendor",
         // "Client",
       ],
     },
-   
+
     {
       id: "agentDashboard",
       label: "Agent Dashboard",
@@ -100,6 +99,7 @@ const NavItem = ({ level, drawerOpen }) => {
         "SME",
         "TL",
         "Vendor",
+      
       ],
     },
     {
@@ -113,19 +113,18 @@ const NavItem = ({ level, drawerOpen }) => {
         "Advisor",
         "AM",
         "HeadAC",
-        "QA",
         "SME",
         "TL",
         "Vendor",
         // "Client",
       ],
     },
-     {
+    {
       id: "caseAgeingClient",
       label: "Case Ageing Client",
       icon: <UploadFileIcon />,
       url: "/caseAgeingClient",
-      roles: ["Admin","Client"],
+      roles: ["Admin", "Client"],
     },
     {
       id: "vendorFailureDashboard",
@@ -138,10 +137,10 @@ const NavItem = ({ level, drawerOpen }) => {
         "Advisor",
         "AM",
         "HeadAC",
-        "QA",
         "SME",
         "TL",
         "Vendor",
+        "Network"
       ],
     },
     {
@@ -195,42 +194,42 @@ const NavItem = ({ level, drawerOpen }) => {
       label: "VCRF Record",
       icon: <DescriptionOutlinedIcon />,
       url: "/vcrf-record",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "SME", "TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "SME", "TL", "Network"],
     },
     {
       id: "feedback",
       label: "Feedback Record",
       icon: <DescriptionOutlinedIcon />,
       url: "/feedback",
-      roles: ["Admin", "Agent", "AM", "HeadAC", "QA", "SME", "TL"],
+      roles: ["Admin", "HeadAC", "QA", "SME", "TL", "AM", "Network" ],
     },
     {
       id: "spinny",
       label: "Spinny Data",
       icon: <DescriptionOutlinedIcon />,
       url: "/spinny-data",
-      roles: ["Admin", "Agent"],
+      roles: ["Admin"],
     },
     {
       id: "misdetails",
       label: "MIS",
       icon: <SpeedIcon />,
       url: "/misreport",
-      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "TL"],
+      roles: ["Admin", "Agent", "Advisor", "AM", "HeadAC", "TL", "SME"],
     },
     {
       id: "oldmis",
       label: "Old MIS Upload",
       icon: <SpeedIcon />,
       url: "/old-mis-upload",
-      roles: ["Admin"],
+      roles: ["Admin","Agent", "SME", "TL", "AM", "HeadAC"],
     },
     {
       id: "slaReport",
       label: "SLA Report",
       icon: <SpeedIcon />,
       url: "/slnDeshboard",
-      roles: ["Admin", "AM", "HeadAC"],
+      roles: ["Admin", "AM", "HeadAC", "TL"],
     },
     {
       id: "uploadStatecity",

@@ -8,6 +8,7 @@ import ThemeRoutes from "routes/index";
 import { CustomerProvider } from "pages/extra-pages/customer/createDetails/CreateCustomerHooks";
 import { VendorFailureProvider } from "pages/extra-pages/deshboard/vendorFailure/VendorFailureHook";
 import { AgentProvider } from "pages/extra-pages/deshboard/agentDashboard/AgentDashboardHook";
+import { UserProvider } from "pages/extra-pages/create-user/CreateUserHook";
 // ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
 const App = () => (
@@ -16,7 +17,9 @@ const App = () => (
       <CustomerProvider>
         <VendorFailureProvider>
           <AgentProvider>
-            <ThemeRoutes />
+            <UserProvider>
+              <ThemeRoutes />
+            </UserProvider>
           </AgentProvider>
         </VendorFailureProvider>
       </CustomerProvider>

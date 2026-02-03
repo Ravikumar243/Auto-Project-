@@ -260,7 +260,7 @@ const ReportMis = () => {
                 min={
                   userRole === "Agent" ||
                   userRole === "Advisor" ||
-                  userRole === "TL"
+                  userRole === "SME"
                     ? moment().subtract(2, "days").format("YYYY-MM-DD")
                     : undefined
                 }
@@ -294,7 +294,7 @@ const ReportMis = () => {
                 min={
                   userRole === "Agent" ||
                   userRole === "Advisor" ||
-                  userRole === "TL"
+                  userRole === "SME"
                     ? from || moment().subtract(2, "days").format("YYYY-MM-DD")
                     : undefined
                 }

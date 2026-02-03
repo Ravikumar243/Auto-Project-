@@ -354,3 +354,11 @@ label[data-shrink=false]+.MuiInputBase-formControl .css-o8pmqo-MuiSelect-select-
   color: white;
   background-color: rgb(126,0,209) !important;
 } */
+
+
+
+.modal-backdrop.show {
+  background-color: rgba(16, 16, 16, 0.4); /* thoda dark */
+  backdrop-filter: blur(8px);          /* 🔥 BLUR */
+  -webkit-backdrop-filter: blur(5px);  /* Safari support */
+}

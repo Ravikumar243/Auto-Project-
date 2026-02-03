@@ -1,135 +1,84 @@
 import baseURL from "api/autoApi";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DataTable from "react-data-table-component";
+import { json } from "react-router";
+import { IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { wrap } from "lodash";
+import { UserContext } from "./CreateUserHook";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const CreateUser = () => {
-  const [userList, setUserList] = useState([]);
-  const [activeTab, setActiveTab] = useState("Admin");
-  const [loading, setLoading] = useState(false);
+  const {
+    userList,
+    activeTab,
+    setActiveTab,
+    errors,
+    loading,
+    formData,
+    editUser,
+    deleteUser,
+    handleChange,
+    handleSubmit,
+  } = useContext(UserContext);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "",
-    selectUser: "",
-  });
-  const [errors, setErrors] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const userTypeMap = {
-    Admin: "Auto",
-    Advisor: "Auto",
-    AM: "Auto",
-    HeadAC : "Auto",
-    QA: "Auto",
-    SME : "Auto",
-    TL : "Auto",
-    Client: "Auto",
+  const handleEditClick = (user) => {
+    setIsEdit(true);
+    setEditId(user.uniqueId);
 
+    // pre-fill form
+    handleChange({
+      target: { name: "name", value: user.name },
+    });
+    handleChange({
+      target: { name: "email", value: user.email },
+    });
+    handleChange({ target: { name: "password", value: user.password || "" } });
+    handleChange({
+      target: { name: "role", value: user.role },
+    });
+    handleChange({
+      target: { name: "selectUser", value: user.userType },
+    });
+
+    // open modal
+    const modal = new window.bootstrap.Modal(
+      document.getElementById("createUserModal"),
+    );
+    modal.show();
   };
 
-  useEffect(() => {
-    fetchUserList();
-  }, []);
+  const openCreateModal = () => {
+    setIsEdit(false);
+    setEditId(null);
+    setShowPassword(false);
 
-  const fetchUserList = async () => {
-    try {
-      const res = await fetch(`${baseURL}/GetOperationsList`);
-      const data = await res.json();
-      setUserList(data.operationsUser || []);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+    // clear form
+    handleChange({ target: { name: "name", value: "" } });
+    handleChange({ target: { name: "email", value: "" } });
+    handleChange({ target: { name: "password", value: "" } });
+    handleChange({ target: { name: "role", value: "" } });
+    handleChange({ target: { name: "selectUser", value: "" } });
+
+    const modalEl = document.getElementById("createUserModal");
+
+    // 🔥 Dispose old instance if exists
+    const existingModal = window.bootstrap.Modal.getInstance(modalEl);
+    if (existingModal) {
+      existingModal.dispose();
     }
-  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "role") {
-      setFormData((prev) => ({
-        ...prev,
-        role: value,
-        selectUser: userTypeMap[value] || "",
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  const validate = () => {
-    let newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-    if (!formData.role) newErrors.role = "Role is required";
-    if (!formData.selectUser) newErrors.selectUser = "User type is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(`${baseURL}/CreateOperationsList`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-          userType: formData.selectUser,
-          type: formData.type || "",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("User created successfully!");
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          role: "",
-          selectUser: "",
-        });
-        fetchUserList();
-
-        // close modal programmatically
-        const modalEl = document.getElementById("createUserModal");
-        const modal = window.bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-
-        document
-          .querySelectorAll(".modal-backdrop")
-          .forEach((el) => el.remove());
-        document.body.classList.remove("modal-open");
-        document.body.style.overflow = "auto";
-      } else {
-        toast.error(data.message || "Failed to create user");
-      }
-    } catch (error) {
-      console.error("Error creating user:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    const modal = new window.bootstrap.Modal(modalEl);
+    modal.show();
   };
 
   const columns = [
@@ -145,10 +94,44 @@ const CreateUser = () => {
       sortable: true,
       width: "120px",
     },
-    { name: "Email", selector: (row) => row.email, sortable: true },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      sortable: true,
+      width: "260px",
+      wrap: true,
+    },
+    {name:"Password", selector : (row)=> row.password},
     { name: "User Type", selector: (row) => row.userType, sortable: true },
     { name: "Status", selector: (row) => row.status, sortable: true },
     { name: "Unique ID", selector: (row) => row.uniqueId, sortable: true },
+    {
+      name: "Action",
+      cell: (row) => (
+        <>
+          {/* EDIT */}
+          <IconButton color="primary" onClick={() => handleEditClick(row)}>
+            <EditOutlinedIcon />
+          </IconButton>
+
+          {/* DELETE */}
+          <IconButton color="error" onClick={() => deleteUser(row.uniqueId)}>
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
+    },
+
+    // {
+    //   name: "Delete User",
+    //   selector: (row) => (
+    //     <div>
+    //       <IconButton color="error" onClick={() => deleteUser(row.uniqueId)}>
+    //         <DeleteIcon />
+    //       </IconButton>
+    //     </div>
+    //   ),
+    // },
   ];
 
   const customStyles = {
@@ -167,24 +150,31 @@ const CreateUser = () => {
     },
   };
 
+  console.log(userList, "userList");
   const data = userList.find((group) => group.role === activeTab)?.list || [];
 
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>User List</h3>
-        <button
-          className="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#createUserModal"
-        >
+        <button className="btn btn-primary" onClick={openCreateModal}>
           + Create User
         </button>
       </div>
 
       {/* Tabs */}
       <ul className="nav nav-tabs mb-3">
-        {["Admin", "Advisor", "AM","HeadAC","QA","SME","TL", "Client"].map((role) => (
+        {[
+          "Admin",
+          "Agent",
+          "AM",
+          "HeadAC",
+          "QA",
+          "SME",
+          "TL",
+          "Client",
+          "Network",
+        ].map((role) => (
           <li className="nav-item" key={role}>
             <button
               className={`nav-link ${activeTab === role ? "active" : ""}`}
@@ -220,7 +210,7 @@ const CreateUser = () => {
             {/* Modal Header */}
             <div className="modal-header">
               <h5 className="modal-title" id="createUserModalLabel">
-                Create User
+                {isEdit ? "Update User" : "Create User"}
               </h5>
               <button
                 type="button"
@@ -232,7 +222,38 @@ const CreateUser = () => {
 
             {/* Modal Body */}
             <div className="modal-body">
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+
+                  if (isEdit) {
+                    const success = await editUser({
+                      uniqueId: editId,
+                      name: formData.name,
+                      email: formData.email,
+                      password: formData.password,
+                      role: formData.role,
+                      userType: formData.selectUser,
+                      type: "",
+                    });
+
+                    if (success) {
+                      const modalEl =
+                        document.getElementById("createUserModal");
+                      const modal = window.bootstrap.Modal.getInstance(modalEl);
+                      modal?.hide();
+
+                      setIsEdit(false);
+                      setEditId(null);
+                    }
+                  } else {
+                    handleSubmit(e);
+                  }
+
+                  setIsEdit(false);
+                  setEditId(null);
+                }}
+              >
                 <div className="row">
                   {/* Name */}
                   <div className="col-6 mb-3">
@@ -268,13 +289,27 @@ const CreateUser = () => {
                   {/* Password */}
                   <div className="col-6 mb-3">
                     <label className="form-label">Password</label>
-                    <input
-                      type="password"
-                      name="password"
-                      className="form-control"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
+                    <div className="input-group">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        className="form-control"
+                        value={formData.password}
+                        onChange={handleChange}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </button>
+                    </div>
+
                     {errors.password && (
                       <small className="text-danger">{errors.password}</small>
                     )}
@@ -291,14 +326,14 @@ const CreateUser = () => {
                     >
                       <option value="">Select Role</option>
                       <option value="Admin">Admin</option>
-                      <option value="Advisor">Advisor</option>
+                      <option value="Agent">Agent</option>
                       <option value="AM">AM</option>
                       <option value="HeadAC">Head-AC</option>
                       <option value="QA">QA</option>
                       <option value="SME">SME</option>
                       <option value="TL">TL</option>
                       <option value="Client">Client</option>
-                      
+                      <option value="Network">Network</option>
                     </select>
                     {errors.role && (
                       <small className="text-danger">{errors.role}</small>
@@ -334,7 +369,13 @@ const CreateUser = () => {
                     className="btn btn-primary"
                     disabled={loading}
                   >
-                    {loading ? "Creating..." : "Create User"}
+                    {loading
+                      ? isEdit
+                        ? "Updating..."
+                        : "Creating..."
+                      : isEdit
+                        ? "Update User"
+                        : "Create User"}
                   </button>
                 </div>
               </form>

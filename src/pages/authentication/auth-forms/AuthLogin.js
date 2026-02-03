@@ -79,6 +79,8 @@ const AuthLogin = () => {
           navigate("/dashboarddetails");
         }else if (data.role === "Client"){
           navigate("/caseAgeingClient")
+        }else if(data.role ==="Network"){
+           navigate("/vendor-dashboard")
         }
 
         setStatus({ success: true });

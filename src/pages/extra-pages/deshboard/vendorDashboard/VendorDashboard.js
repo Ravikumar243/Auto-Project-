@@ -28,28 +28,28 @@ const VendorDashboard = () => {
      value: vendorFilteredTotal.accepted,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am','network'],
     },
     {
       title: "Rejected Cases",
       value: vendorFilteredTotal.rejected,
       bg: "linear-gradient(135deg, #6FDCC8 0%, #CFF7EF 100%)",
       titleColor: "#0E8F7A",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am', "network"],
     },
     {
       title: "Vendor Cases",
       value: vendorFilteredTotal.total,
       bg: "linear-gradient(135deg, #FFC96B 0%, #FFE3A6 100%)",
       titleColor: "#D28A00",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am','network'],
     },
     {
       title: "Accepted Rate",
       value: vendorFilteredTotal.acceptedRate,
       bg: "linear-gradient(135deg, #9C8CFF 0%, #D6CFFF 100%)",
       titleColor: "#6A5BFF",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am','network'],
     },
     {
       title: "Rejected Rate",
@@ -57,7 +57,7 @@ const VendorDashboard = () => {
       bg: "linear-gradient(135deg, #C7D1E2 0%, #E6ECF5 100%)",
       titleColor: "#7A869A",
 
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "vendor", "qa", "sme",'tl', 'headac','am','network'],
     },
   ];
 

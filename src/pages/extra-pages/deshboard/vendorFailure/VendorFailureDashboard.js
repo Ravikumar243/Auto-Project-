@@ -22,7 +22,7 @@ const VendorFailureDashboard = () => {
       //   value: activeCases.length,
       bg: "linear-gradient(135deg, #6FAEFF 0%, #CFE3FF 100%)",
       titleColor: "#1E6FFF",
-      roles: ["admin", "vendor"],
+      roles: ["admin", "vendor", "agent", "qa", "sme",'tl', 'headac','am', "network"],
     },
   ];
 
