@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { url } from "../../../api/api";
-import { Box, CircularProgress, Modal } from "../../../../node_modules/@mui/material/index";
+import {
+  Box,
+  CircularProgress,
+  Modal,
+} from "../../../../node_modules/@mui/material/index";
 import ImageViewer from "./ImageViewer";
 
 const VcrfRecord = () => {
@@ -10,10 +14,8 @@ const VcrfRecord = () => {
   const [loading, setLoading] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-  const userRole = userInfo?.role || 'Agent';
-
-
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const userRole = userInfo?.role || "Agent";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,10 +35,8 @@ const VcrfRecord = () => {
 
   // Filter by SRN No
   const filteredData = customerData.filter((customer) =>
-    customer.srnNo?.toLowerCase().includes(filterSRN.toLowerCase())
+    customer.srnNo?.toLowerCase().includes(filterSRN.toLowerCase()),
   );
-
-
 
   const handleOpen = (imgUrl) => {
     setSelectedImage(imgUrl);
@@ -47,7 +47,6 @@ const VcrfRecord = () => {
     setSelectedImage(null);
     setViewerOpen(false);
   };
-
 
   const adminColumns = [
     {
@@ -63,8 +62,12 @@ const VcrfRecord = () => {
       width: "200px",
     },
     { name: "Time", selector: (row) => row.time },
-    { name: "Date", selector: (row) =>  row.date?.split(" ")[0], width: "140px" },
-   
+    {
+      name: "Date",
+      selector: (row) => row.date?.split(" ")[0],
+      width: "140px",
+    },
+
     {
       name: "Customer Name",
       selector: (row) => row.customerName,
@@ -83,27 +86,32 @@ const VcrfRecord = () => {
     },
     { name: "State", selector: (row) => row.state },
     { name: "City", selector: (row) => row.city },
-    
+
     {
       name: "Driver Contact No",
       selector: (row) => row.driverContactNo,
       width: "160px",
     },
-    
-   {
-  name: "Pickup Photo 1",
-  cell: (row) =>
-    row.pickupPhoto1 ? (
-      <img
-        src={row.pickupPhoto1}
-        alt="Photo 1"
-        style={{ width: "100px", height: "60px", objectFit: "cover", cursor: "pointer" }}
-          onClick={() => handleOpen(row.pickupPhoto1)}       
-      />
-    ) : (
-      "N/A"
-    ),
-},
+
+    {
+      name: "Pickup Photo 1",
+      cell: (row) =>
+        row.pickupPhoto1 ? (
+          <img
+            src={row.pickupPhoto1}
+            alt="Photo 1"
+            style={{
+              width: "100px",
+              height: "60px",
+              objectFit: "cover",
+              cursor: "pointer",
+            }}
+            onClick={() => handleOpen(row.pickupPhoto1)}
+          />
+        ) : (
+          "N/A"
+        ),
+    },
     {
       name: "Pickup Photo 2",
       cell: (row) =>
@@ -288,7 +296,7 @@ const VcrfRecord = () => {
         ),
       width: "160px",
     },
-    
+
     {
       name: "Dealer Signature 2",
       cell: (row) =>
@@ -298,116 +306,209 @@ const VcrfRecord = () => {
             alt="Signature"
             style={{ width: "60px", height: "60px", objectFit: "cover" }}
             onClick={() => handleOpen(row.dealerSignature2)}
-            
           />
         ) : (
           "N/A"
         ),
       width: "160px",
     },
-   
   ];
 
-
-   const agentColumns = [
-    
-  
+  const agentColumns = [
     {
       name: "SRN No",
       selector: (row) => row.srnNo,
       sortable: true,
       width: "200px",
     },
-    { name: "Date", selector: (row) => row.date?.split(" ")[0], width: "180px" },
+    {
+      name: "Date",
+      selector: (row) => row.date?.split(" ")[0],
+      width: "180px",
+    },
     { name: "State", selector: (row) => row.state },
     { name: "City", selector: (row) => row.city },
-     { name: "Vendor Name", selector: (row) => row.technicianName, width:"160px" },
-     { name: "Time", selector: (row) => row.time },
     {
-  name: "Photo 1",
-  cell: (row) =>
-    row.photoUrl1 ? (
-      <img
-        src={row.photoUrl1}
-        alt="Photo 1"
-        style={{ width: "60px", height: "60px", objectFit: "cover", cursor: "pointer" }}
-          onClick={() => handleOpen(row.photoUrl1)}       
-      />
-    ) : (
-      "N/A"
-    ),
-},
+      name: "Vendor Name",
+      selector: (row) => row.technicianName,
+      width: "160px",
+    },
+    { name: "Time", selector: (row) => row.time },
     {
-      name: "Photo 2",
+      name: "Pickup Photo 1",
       cell: (row) =>
-        row.photoUrl2 ? (
+        row.pickupPhoto1 ? (
           <img
-            src={row.photoUrl2}
+            src={row.pickupPhoto1}
             alt="Photo 1"
-            style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            onClick={() => handleOpen(row.photoUrl2)}
+            style={{
+              width: "60px",
+              height: "60px",
+              objectFit: "cover",
+              cursor: "pointer",
+            }}
+            onClick={() => handleOpen(row.pickupPhoto1)}
           />
         ) : (
           "N/A"
         ),
     },
     {
-      name: "Photo 3",
+      name: "Pickup Photo 2",
       cell: (row) =>
-        row.photoUrl3 ? (
+        row.pickupPhoto2 ? (
           <img
-            src={row.photoUrl3}
-            alt="Photo 1"
-            style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            onClick={() => handleOpen(row.photoUrl3)}
+            src={row.pickupPhoto2}
+            alt="Photo 2"
+            style={{ width: "100px", height: "60px", objectFit: "cover" }}
+            onClick={() => handleOpen(row.pickupPhoto2)}
           />
         ) : (
           "N/A"
         ),
     },
     {
-      name: "Photo 4",
+      name: "Pickup Photo 3",
       cell: (row) =>
-        row.photoUrl4 ? (
+        row.pickupPhoto3 ? (
           <img
-            src={row.photoUrl4}
-            alt="Photo 1"
-            style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            onClick={() => handleOpen(row.photoUrl4)}
+            src={row.pickupPhoto3}
+            alt="Photo 3"
+            style={{ width: "100px", height: "60px", objectFit: "cover" }}
+            onClick={() => handleOpen(row.pickupPhoto3)}
           />
         ) : (
           "N/A"
         ),
     },
     {
-      name: "Photo 5",
+      name: "Pickup Photo 4",
       cell: (row) =>
-        row.photoUrl5 ? (
+        row.pickupPhoto4 ? (
           <img
-            src={row.photoUrl5}
-            alt="Photo 1"
-            style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            onClick={() => handleOpen(row.photoUrl5)}
+            src={row.pickupPhoto4}
+            alt="Photo 4"
+            style={{ width: "100px", height: "60px", objectFit: "cover" }}
+            onClick={() => handleOpen(row.pickupPhoto4)}
           />
         ) : (
           "N/A"
         ),
     },
     {
-      name: "Photo 6",
+      name: "Pickup Photo 5",
       cell: (row) =>
-        row.photoUrl6 ? (
+        row.pickupPhoto5 ? (
           <img
-            src={row.photoUrl6}
-            alt="Photo 1"
-            style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            onClick={() => handleOpen(row.photoUrl6)}
+            src={row.pickupPhoto5}
+            alt="Photo 5"
+            style={{ width: "100px", height: "60px", objectFit: "cover" }}
+            onClick={() => handleOpen(row.pickupPhoto5)}
           />
         ) : (
           "N/A"
         ),
     },
-    
+    {
+      name: "Pickup Photo 6",
+      cell: (row) =>
+        row.pickupPhoto6 ? (
+          <img
+            src={row.pickupPhoto6}
+            alt="Photo 6"
+            style={{ width: "100px", height: "60px", objectFit: "cover" }}
+            onClick={() => handleOpen(row.pickupPhoto6)}
+          />
+        ) : (
+          "N/A"
+        ),
+    },
+
+    // {
+    //   name: "Drop Photo 1",
+    //   cell: (row) =>
+    //     row.dropPhoto1 ? (
+    //       <img
+    //         src={row.dropPhoto1}
+    //         alt="Photo 1"
+    //         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto1)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+    // {
+    //   name: "Drop Photo 2",
+    //   cell: (row) =>
+    //     row.dropPhoto2 ? (
+    //       <img
+    //         src={row.dropPhoto2}
+    //         alt="Photo 2"
+    //         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto2)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+    // {
+    //   name: "Drop Photo 3",
+    //   cell: (row) =>
+    //     row.dropPhoto3 ? (
+    //       <img
+    //         src={row.dropPhoto3}
+    //         alt="Photo 3"
+    //         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto3)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+    // {
+    //   name: "Drop Photo 4",
+    //   cell: (row) =>
+    //     row.dropPhoto4 ? (
+    //       <img
+    //         src={row.dropPhoto4}
+    //         alt="Photo 4"
+    //         style={{ width: "80px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto4)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+    // {
+    //   name: "Drop Photo 5",
+    //   cell: (row) =>
+    //     row.dropPhoto5 ? (
+    //       <img
+    //         src={row.dropPhoto5}
+    //         alt="Photo 5"
+    //         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto5)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+    // {
+    //   name: "Drop Photo 6",
+    //   cell: (row) =>
+    //     row.dropPhoto6 ? (
+    //       <img
+    //         src={row.dropPhoto6}
+    //         alt="Photo 6"
+    //         style={{ width: "60px", height: "60px", objectFit: "cover" }}
+    //         onClick={() => handleOpen(row.dropPhoto6)}
+    //       />
+    //     ) : (
+    //       "N/A"
+    //     ),
+    // },
+
     {
       name: "Customer Signature",
       cell: (row) =>
@@ -438,7 +539,7 @@ const VcrfRecord = () => {
         ),
       width: "160px",
     },
-    
+
     {
       name: "Dealer Signature 2",
       cell: (row) =>
@@ -448,16 +549,13 @@ const VcrfRecord = () => {
             alt="Signature"
             style={{ width: "60px", height: "60px", objectFit: "cover" }}
             onClick={() => handleOpen(row.dealerSignature2)}
-            
           />
         ) : (
           "N/A"
         ),
       width: "160px",
     },
-   
   ];
-
 
   const columns = userRole === "Admin" ? adminColumns : agentColumns;
 
@@ -504,7 +602,6 @@ const VcrfRecord = () => {
             striped
             responsive
             persistTableHead
-           
           />
         )}
       </div>
