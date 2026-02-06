@@ -35,7 +35,7 @@ export const CustomerProvider = ({ children }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [service, setService] = useState("");
   const distacneTotalAmount = JSON.parse(
-    localStorage.getItem("CalculationData")
+    localStorage.getItem("CalculationData"),
   );
 
   console.log(calculationData, "cal");
@@ -133,12 +133,12 @@ export const CustomerProvider = ({ children }) => {
   });
 
   // for change state city from vendor list
-    const [showViewMore, setShowViewMore] = useState(false);
-    const [vmSelectedState, setVmSelectedState] = useState("");
-    const [vmSelectedCity, setVmSelectedCity] = useState("");
-    const [vmStateList, setVmStateList] = useState([]);
+  const [showViewMore, setShowViewMore] = useState(false);
+  const [vmSelectedState, setVmSelectedState] = useState("");
+  const [vmSelectedCity, setVmSelectedCity] = useState("");
+  const [vmStateList, setVmStateList] = useState([]);
   const [vmCitiesList, setVmCitiesList] = useState([]);
-    const [vmStateCitiesList, setVmStateCitiesList] = useState([]);
+  const [vmStateCitiesList, setVmStateCitiesList] = useState([]);
 
   const storedVendorID = localStorage.getItem("statusrej_vendorID");
 
@@ -325,7 +325,7 @@ export const CustomerProvider = ({ children }) => {
         }));
         const encodedProduct = encodeURIComponent(formData.Product);
         const res = await axios.get(
-          `${baseURL}/GetFilteredMakeModel?VehicleType=${encodedProduct}`
+          `${baseURL}/GetFilteredMakeModel?VehicleType=${encodedProduct}`,
         );
 
         if (res.data?.status) {
@@ -489,7 +489,7 @@ export const CustomerProvider = ({ children }) => {
   console.log(
     formUploadAssist,
     formUploadAssist.waitingHoursCharge,
-    "watitng hours charge"
+    "watitng hours charge",
   );
 
   const [searchCompamyData, setSearchCompamyData] = useState([]);
@@ -687,7 +687,7 @@ export const CustomerProvider = ({ children }) => {
           response.data?.vehicleType ||
           response.data?.type ||
           "",
-        Make: response.data?.car_name,
+        Make: response.data?.car_name || response.data?.make,
         Model_Variant: response.data?.model_Code || "",
         State: response.data?.state || "",
         City: response.data?.city || "",
@@ -749,7 +749,7 @@ export const CustomerProvider = ({ children }) => {
       AgentId: savedEmail,
       Product:
         selected.oeM_Model_Name || selected.vehicleType || selected.type || "",
-      Make: selected.car_name,
+      Make: selected.car_name || selected?.make,
       Model_Variant: selected.model_Code || "",
       State: selected.state || "",
       City: selected.city || "",
@@ -880,7 +880,7 @@ export const CustomerProvider = ({ children }) => {
       const selectedDate = new Date(
         selectedDateTime.getFullYear(),
         selectedDateTime.getMonth(),
-        selectedDateTime.getDate()
+        selectedDateTime.getDate(),
       );
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -899,7 +899,23 @@ export const CustomerProvider = ({ children }) => {
       }
     }
 
+    let updatedFormData = {
+      ...formData,
+      [name]: value,
+      AgentId: savedEmail,
+    };
+
+    // ⭐ Reset logic
+    if (name === "Product") {
+      updatedFormData.Make = "";
+      updatedFormData.Model_Variant = "";
+      setModelVarientList([]);
+      localStorage.removeItem("modelVariantList");
+    }
+
     if (e.target.name === "Make") {
+      updatedFormData.Model_Variant = "";
+
       try {
         const res = await axios.post(`${baseURL}/GetModelsList`, {
           make: e.target.value,
@@ -909,11 +925,11 @@ export const CustomerProvider = ({ children }) => {
         if (res.data?.dataItem?.length > 0) {
           localStorage.setItem(
             "modelVariantList",
-            JSON.stringify(res.data.dataItem)
+            JSON.stringify(res.data.dataItem),
           );
 
           const storedVariants = JSON.parse(
-            localStorage.getItem("modelVariantList")
+            localStorage.getItem("modelVariantList"),
           );
           setModelVarientList(storedVariants);
         } else {
@@ -927,11 +943,12 @@ export const CustomerProvider = ({ children }) => {
       }
     }
 
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-      AgentId: savedEmail,
-    });
+    // setFormData({
+    //   ...formData,
+    //   [e.target.name]: e.target.value,
+    //   AgentId: savedEmail,
+    // });
+    setFormData(updatedFormData);
   };
 
   const handleChangedrop = (e) => {
@@ -1015,7 +1032,7 @@ export const CustomerProvider = ({ children }) => {
 
       console.log(
         fetcdataListItems?.customerFirstName,
-        "fetckjdkfdataListItemssjdkljsfd"
+        "fetckjdkfdataListItemssjdkljsfd",
       );
 
       remarkLogsData.forEach((item) => {
@@ -1129,7 +1146,7 @@ export const CustomerProvider = ({ children }) => {
         callMonth - 1,
         callDay,
         callHour,
-        callMinute
+        callMinute,
       );
 
       const selectedInfoDateTime = new Date(value);
@@ -1138,12 +1155,12 @@ export const CustomerProvider = ({ children }) => {
       const callDate = new Date(
         callTime.getFullYear(),
         callTime.getMonth(),
-        callTime.getDate()
+        callTime.getDate(),
       );
       const selectedDate = new Date(
         selectedInfoDateTime.getFullYear(),
         selectedInfoDateTime.getMonth(),
-        selectedInfoDateTime.getDate()
+        selectedInfoDateTime.getDate(),
       );
 
       // ❌ Case 1: Date must match exactly
@@ -1170,7 +1187,7 @@ export const CustomerProvider = ({ children }) => {
         now.getMonth(),
         now.getDate(),
         now.getHours(),
-        now.getMinutes()
+        now.getMinutes(),
       );
 
       const selectedTrimmed = new Date(
@@ -1178,7 +1195,7 @@ export const CustomerProvider = ({ children }) => {
         selectedInfoDateTime.getMonth(),
         selectedInfoDateTime.getDate(),
         selectedInfoDateTime.getHours(),
-        selectedInfoDateTime.getMinutes()
+        selectedInfoDateTime.getMinutes(),
       );
 
       if (selectedTrimmed.getTime() > nowTrimmed.getTime()) {
@@ -1235,7 +1252,7 @@ export const CustomerProvider = ({ children }) => {
         followDT.getMonth(),
         followDT.getDate(),
         followDT.getHours(),
-        followDT.getMinutes()
+        followDT.getMinutes(),
       );
 
       // Current time (trim seconds)
@@ -1245,7 +1262,7 @@ export const CustomerProvider = ({ children }) => {
         now.getMonth(),
         now.getDate(),
         now.getHours(),
-        now.getMinutes()
+        now.getMinutes(),
       );
 
       // -------------------------------------------------------------------
@@ -1258,12 +1275,12 @@ export const CustomerProvider = ({ children }) => {
           vd.getMonth(),
           vd.getDate(),
           vd.getHours(),
-          vd.getMinutes()
+          vd.getMinutes(),
         );
 
         if (followTrimmed.getTime() < vdTrimmed.getTime()) {
           toast.error(
-            "Follow-up Date & Time must be greater than or equal to Vendor Drop Time."
+            "Follow-up Date & Time must be greater than or equal to Vendor Drop Time.",
           );
           return;
         }
@@ -1284,12 +1301,12 @@ export const CustomerProvider = ({ children }) => {
           vr.getMonth(),
           vr.getDate(),
           vr.getHours(),
-          vr.getMinutes()
+          vr.getMinutes(),
         );
 
         if (followTrimmed.getTime() < vrTrimmed.getTime()) {
           toast.error(
-            "Follow-up Date & Time must be greater than or equal to Vendor Reach Time."
+            "Follow-up Date & Time must be greater than or equal to Vendor Reach Time.",
           );
           return;
         }
@@ -1315,12 +1332,12 @@ export const CustomerProvider = ({ children }) => {
           infoDT.getMonth(),
           infoDT.getDate(),
           infoDT.getHours(),
-          infoDT.getMinutes()
+          infoDT.getMinutes(),
         );
 
         if (followTrimmed.getTime() < infoTrimmed.getTime()) {
           toast.error(
-            "Follow-up Date & Time must be greater than or equal to Information Date & Time."
+            "Follow-up Date & Time must be greater than or equal to Information Date & Time.",
           );
           return;
         }
@@ -1376,7 +1393,7 @@ export const CustomerProvider = ({ children }) => {
         toast.warning(
           isRSR
             ? "Please select Vendor Reach Time first."
-            : "Please select Vendor Drop Time first."
+            : "Please select Vendor Drop Time first.",
         );
         return;
       }
@@ -1390,7 +1407,7 @@ export const CustomerProvider = ({ children }) => {
         toast.error(
           isRSR
             ? "Payment Date & Time must be greater than or equal to Vendor Reach Time."
-            : "Payment Date & Time must be greater than or equal to Vendor Drop Time."
+            : "Payment Date & Time must be greater than or equal to Vendor Drop Time.",
         );
         return;
       }
@@ -1541,7 +1558,10 @@ export const CustomerProvider = ({ children }) => {
 
     localStorage.setItem(
       "pickupCoordinates",
-      JSON.stringify({ lat: pickupCoordinates.lat, lon: pickupCoordinates.lon })
+      JSON.stringify({
+        lat: pickupCoordinates.lat,
+        lon: pickupCoordinates.lon,
+      }),
     );
 
     console.log(fetcdataListItems, "fetcdataListItemskjdkjfdsdkf");
@@ -1696,7 +1716,7 @@ export const CustomerProvider = ({ children }) => {
           ...prev,
           CompanyName: litsMenu.companyName,
           Product: "",
-          Make: litsMenu.car_name,
+          Make: litsMenu.car_name || litsMenu?.make,
           Model_Variant: litsMenu.model_Description,
           CustomerFirstName: litsMenu.customer_name,
           CustomerMiddleName: "",
@@ -1749,12 +1769,12 @@ export const CustomerProvider = ({ children }) => {
       const allCities = stateList.dataItem.flatMap((item) => item);
 
       setStateCitiesList(allCities);
-      setVmStateCitiesList(allCities)
+      setVmStateCitiesList(allCities);
       const sortedCities = [
         ...new Set(allStates.map((city) => city.toLowerCase())),
       ].sort();
       setStateList(sortedCities);
-       setVmStateList(sortedCities);
+      setVmStateList(sortedCities);
     } catch (error) {
       console.log("error message", error.message);
     }
@@ -1767,7 +1787,7 @@ export const CustomerProvider = ({ children }) => {
     console.log("Normalized:", normalizedState);
 
     const filtered = stateCitiesList.filter(
-      (item) => item.state?.trim().toLowerCase() === normalizedState
+      (item) => item.state?.trim().toLowerCase() === normalizedState,
     );
 
     const cities = [...new Set(filtered.map((item) => item.city))].sort();
@@ -1775,13 +1795,13 @@ export const CustomerProvider = ({ children }) => {
     setCitiesList(cities);
   }
 
-    function getVmCitiesByState(stateName) {
+  function getVmCitiesByState(stateName) {
     if (!stateName) return;
 
     const normalizedState = stateName.trim().toLowerCase();
 
     const filtered = vmStateCitiesList.filter(
-      (item) => item.state?.trim().toLowerCase() === normalizedState
+      (item) => item.state?.trim().toLowerCase() === normalizedState,
     );
 
     const cities = [...new Set(filtered.map((item) => item.city))].sort();
@@ -1860,7 +1880,7 @@ export const CustomerProvider = ({ children }) => {
       if (data?.dataItem.length > 0) {
         localStorage.setItem(
           "CalculationData",
-          JSON.stringify(data?.dataItem || [])
+          JSON.stringify(data?.dataItem || []),
         );
       }
 
@@ -1877,7 +1897,7 @@ export const CustomerProvider = ({ children }) => {
                 dataItem.srN_Status === "OnGoing" &&
                 dataItem.rsaStatus === "Case Completed")
               ? "open6"
-              : "open6"
+              : "open6",
           );
         }
 
@@ -2058,7 +2078,7 @@ export const CustomerProvider = ({ children }) => {
     srn,
     Stype,
     contact,
-    vendorid
+    vendorid,
   ) => {
     try {
       const res = await axios.post(`${baseURL}/SaveVendorIssueDetails`, {
@@ -2107,7 +2127,7 @@ export const CustomerProvider = ({ children }) => {
           // Save drop coordinates to localStorage
           localStorage.setItem(
             "dropCoordinates",
-            JSON.stringify({ lat: data.latitude, lon: data.longitude })
+            JSON.stringify({ lat: data.latitude, lon: data.longitude }),
           );
           setDLat(data.latitude);
           setDLon(data.longitude);
@@ -2116,7 +2136,7 @@ export const CustomerProvider = ({ children }) => {
           // Save pickup coordinates to localStorage
           localStorage.setItem(
             "pickupCoordinates",
-            JSON.stringify({ lat: data.latitude, lon: data.longitude })
+            JSON.stringify({ lat: data.latitude, lon: data.longitude }),
           );
           setILat(data.latitude);
           setILon(data.longitude);
@@ -2128,7 +2148,7 @@ export const CustomerProvider = ({ children }) => {
           // Save pickup coordinates to localStorage
           localStorage.setItem(
             "localVendorCoordinates",
-            JSON.stringify({ lat: data.latitude, lon: data.longitude })
+            JSON.stringify({ lat: data.latitude, lon: data.longitude }),
           );
           setVLat(data.latitude);
           setVLon(data.longitude);
@@ -2171,7 +2191,7 @@ export const CustomerProvider = ({ children }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const data = await response.json();
       console.log("data response", data);
@@ -2223,7 +2243,7 @@ export const CustomerProvider = ({ children }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -2339,7 +2359,7 @@ export const CustomerProvider = ({ children }) => {
         localVendorPayload,
         "local vendor payload ",
         serviceType,
-        "service"
+        "service",
       );
 
       try {
@@ -2360,6 +2380,7 @@ export const CustomerProvider = ({ children }) => {
         }
         if (data.status === true) {
           toast.success("Form Submitted Succesfully !");
+          toast.success("SMS Sent Successfully !");
           setExpanded(expanded === "open6" ? false : "open6");
           setVenderAssign(true);
           handleAssignSubmitOpen();
@@ -2394,6 +2415,7 @@ export const CustomerProvider = ({ children }) => {
         if (data.status === true) {
           localStorage.removeItem("statusrej_vendorID");
           toast.success("Form Submitted Succesfully !");
+           toast.success("SMS Sent Successfully !");
           setExpanded(expanded === "open6" ? false : "open6");
           setVenderAssign(true);
           handleAssignSubmitOpen();
@@ -2484,7 +2506,7 @@ export const CustomerProvider = ({ children }) => {
           ? formUploadAssist.itoD_KM.replace(/[^0-9.]/g, "")
           : "",
         totalKilometersCharges: String(
-          formUploadAssist.totalKilometersCharges || "0"
+          formUploadAssist.totalKilometersCharges || "0",
         ), // swagger expects string
       };
       console.log("clicke inside");
@@ -2496,7 +2518,7 @@ export const CustomerProvider = ({ children }) => {
         body: JSON.stringify(cleanedPayload),
       });
       const data = await responce.json();
-     
+
       setExpanded(expanded === "open8" ? "open9" : "open8");
       if (data.status === true) {
         toast.success("Form Submited SuccesFully !");
@@ -2559,7 +2581,7 @@ export const CustomerProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`
+        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`,
       );
       const data = await response.json();
       setSuggestions(data);
@@ -2576,7 +2598,7 @@ export const CustomerProvider = ({ children }) => {
 
     try {
       const response = await fetch(
-        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`
+        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`,
       );
       const data = await response.json();
       if (Array.isArray(data)) {
@@ -2597,14 +2619,13 @@ export const CustomerProvider = ({ children }) => {
     }
   };
 
-
   const handleInputChange = (e) => {
     if (isSelecting) return;
     setIsTyping(true);
     setInputValue(e.target.value);
     setFormAssistance((prev) => ({ ...prev, location: e.target.value }));
   };
- 
+
   const handleSelect = (place) => {
     const state = extractState(place.description);
     const city = extractCity(place.description);
@@ -2711,7 +2732,7 @@ export const CustomerProvider = ({ children }) => {
     // Call Coordinates API using your POST API
     const dropCoords = await handleCoordinatesAPI(
       dropPlace.description,
-      "drop"
+      "drop",
     );
     const pickupCoords = await handleCoordinatesAPI(IncidentPlace, "pickup");
     setLocalincidentlat(pickupCoords.lat);
@@ -2759,7 +2780,7 @@ export const CustomerProvider = ({ children }) => {
       incidentLats,
       incidentLans,
       dropCoords.lat,
-      dropCoords.lon
+      dropCoords.lon,
     );
 
     // console.log("Distance:", distanceText, distanceValue);
@@ -2779,7 +2800,7 @@ export const CustomerProvider = ({ children }) => {
       }));
     } else {
       alert(
-        "Pickup or Drop coordinates missing, can't calculate distance yet."
+        "Pickup or Drop coordinates missing, can't calculate distance yet.",
       );
     }
     // CODE RM4
@@ -2796,12 +2817,12 @@ export const CustomerProvider = ({ children }) => {
     setSuggestions_Vedor([]);
     const localVendorCoords = await handleCoordinatesAPI(
       dropPlace.description,
-      "vendor"
+      "vendor",
     );
 
     if (!localVendorCoords?.lat || !localVendorCoords?.lon) {
       alert(
-        "Pickup or Local Vendor coordinates missing, can't calculate distance yet."
+        "Pickup or Local Vendor coordinates missing, can't calculate distance yet.",
       );
       setIsSelectingVendor(false);
       return;
@@ -2819,20 +2840,20 @@ export const CustomerProvider = ({ children }) => {
       v,
       v_,
       location_d1,
-      location_d2
+      location_d2,
     );
     const [Vendor_incident, Vendor_incident_v] = await getDistance(
       v,
       v_,
       location_p1,
-      location_p2
+      location_p2,
     );
 
     const incident_drop = localStorage.getItem("distance_value");
     const incident_drop_v = localStorage.getItem("distance_text");
     const srn_no = localStorage.getItem("genratedSRN");
     const total_gtog = parseFloat(
-      Vendor_incident_v + parseFloat(Vendor_drop_v) + parseFloat(incident_drop)
+      Vendor_incident_v + parseFloat(Vendor_drop_v) + parseFloat(incident_drop),
     );
 
     const avg_distance = total_gtog ? total_gtog / 1000 : 0;
@@ -2876,7 +2897,7 @@ export const CustomerProvider = ({ children }) => {
     rate,
     index,
     ratePerKm,
-    e
+    e,
   ) => {
     const location = JSON.parse(localStorage.getItem("dropLat"));
     const location_ = JSON.parse(localStorage.getItem("dropLon"));
@@ -2899,7 +2920,7 @@ export const CustomerProvider = ({ children }) => {
       incedent_lat,
       incedent_lon,
       venLat,
-      venLon
+      venLon,
     );
     if (
       storedServiceType === "2W-Flatbed" ||
@@ -2915,7 +2936,7 @@ export const CustomerProvider = ({ children }) => {
         location,
         location_,
         venLat,
-        venLon
+        venLon,
       );
     }
     const calcultedDistanceItoD = localStorage.getItem("distance_text");
@@ -3008,7 +3029,7 @@ export const CustomerProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`
+        `${baseURL}/GetAreaSuggestions?input=${encodeURIComponent(query)}`,
       );
       const data = await response.json();
       if (Array.isArray(data)) {
@@ -3276,6 +3297,8 @@ export const CustomerProvider = ({ children }) => {
         service,
         vendorSerachLoading,
         vendorApiFulfilled,
+
+       
 
         showViewMore,
         setShowViewMore,

@@ -71,7 +71,7 @@ const CreateCustomerTicket = () => {
     showPopup,
     setShowPopup,
   } = useContext(CustomerContext);
-  console.log(multipleRecords, "multipleRecordsksjkdf");
+  console.log(fetcdataListItems?.srN_No, "fetcdataListItems");
 
   const MySwal = withReactContent(Swal);
 
@@ -187,6 +187,7 @@ const CreateCustomerTicket = () => {
                       return selected;
                     }}
                     disabled={
+                      fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -377,10 +378,11 @@ const CreateCustomerTicket = () => {
                         }
                         onChange={handleChange}
                         variant="outlined"
-                        InputProps={{
-                          readOnly: true,
-                        }}
+                        // InputProps={{
+                        //   readOnly: true,
+                        // }}
                         disabled={
+                          !!fetcdataListItems?.srN_No ||
                           fetcdataListItems?.rsaStatus === "Case Completed" ||
                           fetcdataListItems?.srN_Status ===
                             "Vendor Close Issue" ||
@@ -404,6 +406,7 @@ const CreateCustomerTicket = () => {
                         onChange={handleChange}
                         variant="outlined"
                         disabled={
+                          !!fetcdataListItems?.srN_No ||
                           fetcdataListItems?.rsaStatus === "Case Completed" ||
                           fetcdataListItems?.srN_Status ===
                             "Vendor Close Issue" ||
@@ -487,9 +490,9 @@ const CreateCustomerTicket = () => {
                         }
                         onChange={handleChange}
                         variant="outlined"
-                        InputProps={{
-                          readOnly: true,
-                        }}
+                        // InputProps={{
+                        //   readOnly: true,
+                        // }}
                         disabled={
                           fetcdataListItems?.rsaStatus === "Case Completed" ||
                           fetcdataListItems?.srN_Status ===
@@ -1102,6 +1105,7 @@ const CreateCustomerTicket = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1128,6 +1132,7 @@ const CreateCustomerTicket = () => {
                       type="text"
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1151,6 +1156,7 @@ const CreateCustomerTicket = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1178,6 +1184,7 @@ const CreateCustomerTicket = () => {
                       type="text"
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1204,6 +1211,7 @@ const CreateCustomerTicket = () => {
                       type="text"
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1230,6 +1238,7 @@ const CreateCustomerTicket = () => {
                       type="email"
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1257,6 +1266,7 @@ const CreateCustomerTicket = () => {
                       type="telephone"
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1282,6 +1292,9 @@ const CreateCustomerTicket = () => {
                       value={formData.ChargerNo || ""}
                       onChange={handleChange}
                       variant="outlined"
+                      disabled={
+                        !!fetcdataListItems?.srN_No
+                      }
                       // disabled={
                       //   fetcdataListItems?.rsaStatus === "Case Completed" ||
                       //   fetcdataListItems?.srN_Status ===
@@ -1309,6 +1322,7 @@ const CreateCustomerTicket = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1335,6 +1349,7 @@ const CreateCustomerTicket = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1369,6 +1384,7 @@ const CreateCustomerTicket = () => {
                       InputLabelProps={{ shrink: true }}
                       fullWidth
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||

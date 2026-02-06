@@ -577,7 +577,7 @@ const VendorSearch = () => {
           body: formData,
         });
         console.log("hii", response);
-        alert("SMS sent successfully.");
+        // alert("SMS sent successfully.");
       } catch (error) {
         console.error("Error in SMS API:", error);
         alert("Failed to send SMS. Please try again.");

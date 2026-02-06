@@ -118,10 +118,10 @@ const AssistData = () => {
 
   const modelList = JSON.parse(localStorage.getItem("modelVariantList"));
   console.log(
-    formData?.AlternateNumber,
+    formData.Make,
     "getallclaimdatakkkdfkjd",
-    fetcdataListItems?.AlternateNumber,
-    "fetcdataListItemsksdjkfd"
+    fetcdataListItems?.make,
+    "getallclaimdatakkkdfkjd"
   );
 
   return (
@@ -254,6 +254,7 @@ const AssistData = () => {
                     }
                     variant="outlined"
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -283,6 +284,7 @@ const AssistData = () => {
                     fullWidth
                     required={!disabledFromStates.Make}
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       // disabledFromStates.Make ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
@@ -290,7 +292,7 @@ const AssistData = () => {
                       fetcdataListItems?.caseType === "Case Denied" ||
                       fetcdataListItems?.caseType === "Case Cancelled"
                     }
-                    value={formData.Make || ""}
+                    value={formData.Make || fetcdataListItems?.make || ""}
                     displayEmpty
                     renderValue={(selected) =>
                       !selected ? "Select Make" : selected
@@ -340,6 +342,7 @@ const AssistData = () => {
                     onChange={handleChange}
                     disabled={
                       // disabledFromStates.Model_Variant === true ||
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -380,10 +383,11 @@ const AssistData = () => {
                       }
                       onChange={handleChange}
                       variant="outlined"
-                      InputProps={{
-                        readOnly: true,
-                      }}
+                      // InputProps={{
+                      //   readOnly: true,
+                      // }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -403,6 +407,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -429,6 +434,7 @@ const AssistData = () => {
                     onChange={handleChange}
                     variant="outlined"
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -453,6 +459,7 @@ const AssistData = () => {
                     onChange={handleChange}
                     variant="outlined"
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -486,6 +493,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -506,6 +514,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -622,6 +631,7 @@ const AssistData = () => {
                     // onChange={handleChange}
                     variant="outlined"
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       disabledFromStates.State === true ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
@@ -691,6 +701,7 @@ const AssistData = () => {
                     variant="outlined"
                     required
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -729,10 +740,11 @@ const AssistData = () => {
                       }
                       onChange={handleChange}
                       variant="outlined"
-                      InputProps={{
-                        readOnly: true,
-                      }}
+                      // InputProps={{
+                      //   readOnly: true,
+                      // }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -754,6 +766,7 @@ const AssistData = () => {
                       variant="outlined"
                       required
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -788,6 +801,7 @@ const AssistData = () => {
                         readOnly: true,
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -805,6 +819,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -839,6 +854,7 @@ const AssistData = () => {
                         readOnly: true,
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -856,6 +872,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -891,6 +908,7 @@ const AssistData = () => {
                         readOnly: true,
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -908,6 +926,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -935,6 +954,7 @@ const AssistData = () => {
                     onChange={handleChange}
                     variant="outlined"
                     disabled={
+                      !!fetcdataListItems?.srN_No ||
                       fetcdataListItems?.rsaStatus === "Case Completed" ||
                       fetcdataListItems?.srN_Status === "Vendor Close Issue" ||
                       fetcdataListItems?.caseType === "Complete-Enquiry" ||
@@ -963,6 +983,7 @@ const AssistData = () => {
                         readOnly: true,
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -980,6 +1001,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1010,6 +1032,7 @@ const AssistData = () => {
                         readOnly: true,
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1027,6 +1050,7 @@ const AssistData = () => {
                       onChange={handleChange}
                       variant="outlined"
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||
@@ -1090,6 +1114,7 @@ const AssistData = () => {
                         height: "35px",
                       }}
                       disabled={
+                        !!fetcdataListItems?.srN_No ||
                         fetcdataListItems?.rsaStatus === "Case Completed" ||
                         fetcdataListItems?.srN_Status ===
                           "Vendor Close Issue" ||

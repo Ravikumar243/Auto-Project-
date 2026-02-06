@@ -509,9 +509,8 @@ const CompleteDeatils = () => {
                       variant="h6"
                       gutterBottom
                     >
-                      {/* setRemove(true) */}
                       Select Location*
-                      <button
+                      {/* <button
                         className="mr-0"
                         type="button"
                         onClick={() => {
@@ -527,7 +526,25 @@ const CompleteDeatils = () => {
                         {" "}
                         <ReplayIcon className="ml-2" />
                         Refresh
-                      </button>
+                      </button> */}
+                      {!fetcdataListItems?.dropLocation && (
+                        <button
+                          className="mr-0"
+                          type="button"
+                          onClick={() => {
+                            handleSync();
+                            setRemove(true);
+                          }}
+                          style={{
+                            border: "none",
+                            float: "right",
+                            color: "Blue",
+                          }}
+                        >
+                          <ReplayIcon className="ml-2" />
+                          Refresh
+                        </button>
+                      )}
                     </Typography>
 
                     <div
@@ -1196,7 +1213,8 @@ const CompleteDeatils = () => {
                             "Vendor Close Issue" ||
                           fetcdataListItems?.caseType === "Complete-Enquiry" ||
                           fetcdataListItems?.caseType === "Case Denied" ||
-                          fetcdataListItems?.caseType === "Case Cancelled"
+                          fetcdataListItems?.caseType === "Case Cancelled" ||
+                          Boolean(fetcdataListItems?.dropLocation)
                         }
                       >
                         Submit
